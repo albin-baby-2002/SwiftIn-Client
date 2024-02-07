@@ -6,6 +6,7 @@ interface ButtonProps {
   disabled?: boolean;
   outline?: boolean;
   Icon?: IconType;
+  small?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   outline,
   Icon,
+  small,
 }) => {
   return (
     <button
@@ -30,12 +32,13 @@ const Button: React.FC<ButtonProps> = ({
         ${outline ? "bg-white" : "bg-black"}
          ${outline ? "text-black" : "text-white"}
           ${outline ? "border-black" : "border-white"}
+          ${small ? " text-sm" : ""}
           
           border-2
-          py-3
+          py-2
           font-bold`}
     >
-      {Icon && <Icon size={24} className=" absolute left-4 top-3" />}
+      {Icon && <Icon size={24} className=" absolute left-4 top-2" />}
       {label}
     </button>
   );

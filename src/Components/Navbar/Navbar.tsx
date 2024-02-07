@@ -5,11 +5,13 @@ import NavMenuIcons from "./SubComponents/NavMenuIcons";
 
 const Navbar = () => {
   return (
-    <div className=" fixed w-full bg-white z-10  shadow-sm">
+    <nav className=" fixed w-full bg-white z-10  ">
       <div
         className=" 
               py-4 
-              border-b-[1px]"
+              
+               border-b-2
+            "
       >
         <Container>
           <div
@@ -23,14 +25,21 @@ const Navbar = () => {
           >
             <Logo />
 
-            <div className=" flex items-center gap-5">
+            <div className=" flex items-center gap-3">
+              <div className="  bg-slate-900 py-[15px] rounded-md">
+                <p className=" text-slate-100 font-semibold px-3 text-sm">
+                  {" "}
+                  Feature your property
+                </p>
+              </div>
+
               <NavMenuIcons />
               <GiHamburgerMenu className=" sm:hidden text-3xl cursor-pointer" />
             </div>
           </div>
         </Container>
       </div>
-    </div>
+    </nav>
   );
 };
 

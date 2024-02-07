@@ -10,7 +10,7 @@ interface ModelProps {
   title?: string;
   body?: React.ReactElement;
   footer?: React.ReactElement;
-  submitActionLabel?: string;
+  submitActionLabel: string;
 }
 
 const Modal: React.FC<ModelProps> = ({
@@ -48,24 +48,28 @@ const Modal: React.FC<ModelProps> = ({
     onSubmit();
   };
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <div
       className=" 
-            fixed flex justify-center items-center inset-0 bg-black/25 z-20"
+            fixed flex justify-center items-center inset-0 bg-black/25 z-20  "
     >
       <div
         className="
-       w-full  xl:w-2/5 lg:w-3/6 md:w-2/3  my-6 mx-auto h-full  md:h-auto"
+       w-full  xl:w-2/5 lg:w-2/5 md:w-2/3  my-6 mx-auto h-full  md:h-auto   "
       >
         <div
           className={` 
         translate duration-300 
         ${showModal ? "translate-y-0" : "translate-y-full"}
-        ${showModal ? "opacity-100" : "opacity-0"}`}
+        ${showModal ? "opacity-100" : "opacity-0"}  `}
         >
           <div
             className="
-                translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex  flex-col w-full bg-white 
+                translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex  flex-col w-full bg-white pb-4  max-h-[95vh]
             "
           >
             <div className=" flex items-center rounded-t justify-center border-b-[1px] py-4 px-4  ">
@@ -73,13 +77,17 @@ const Modal: React.FC<ModelProps> = ({
                 <IoMdClose size={25} />
               </button>
 
-              <p className=" font-bold text-lg">{title}</p>
+              <p className=" font-bold text-md">{title}</p>
             </div>
 
-            <div className=" p-4">{body}</div>
+            <div className="overflow-y-scroll  max-h-[95vh]">
+              <div className="py-4 px-8 ">{body}</div>
 
-            <div className=" p-4">
-              <Button  label={"continue"} onClick={handleSubmit} />
+              <div className="py-4 px-8">
+                <Button label={submitActionLabel} onClick={handleSubmit} />
+              </div>
+
+              {footer && <div className="py-4 px-8">{footer}</div>}
             </div>
           </div>
         </div>

@@ -1,15 +1,20 @@
-import Modal from "./Components/Modals/Modal"
-import Navbar from "./Components/Navbar/Navbar"
 
+import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom"
+import Home from "./Pages/Home"
 
 function App() {
-
+  
+  const router = createBrowserRouter(createRoutesFromElements(
+    <>
+    
+    <Route path='/' element={<Home/>} />
+    
+    </>
+    
+  ))
 
   return (
-    <>
-      <Navbar/>
-      <Modal isOpen={true} onClose={()=>{}} onSubmit={()=>{}} title={'SignUp'}/>
-    </>
+   <RouterProvider router={router}></RouterProvider>
   )
 }
 
