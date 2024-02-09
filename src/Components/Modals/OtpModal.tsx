@@ -3,35 +3,40 @@ import useOtpModal from "../../Hooks/useOtpModal";
 
 import logo from "../../Assets/logo3.png";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { Axios } from "../../Api/Axios";
+import { VERIFY_OTP_URL } from "../../Api/EndPoints";
+import useLoginModal from "../../Hooks/useLoginModal";
+
 
 const OtpModal = () => {
   const OtpModal = useOtpModal();
+  
+  const loginModal = useLoginModal();
 
   const [otp, setOtp] = useState<string[]>(new Array(4).fill(""));
-  
-  const focusRef = useRef(0)
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
   useEffect(() => {
-    if (inputRefs.current[0]) {
+    setOtp(new Array(4).fill(""));
+
+    if (inputRefs.current[0] && otp[0] === "") {
       inputRefs.current[0].focus();
     }
-  },[]);
-  
-  useEffect
+  }, [OtpModal.isOpen]);
+
+  useEffect;
 
   const handleChange = (
     index: number,
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     let value = e.target.value;
-    
-    console.log(value)
+
+    console.log(value);
 
     if (isNaN(Number(value))) {
-        
-        
       console.log("not nu");
       return;
     }
@@ -44,48 +49,82 @@ const OtpModal = () => {
 
     setOtp(newOtp);
 
-    if ( value && index < 3 && inputRefs.current[index+1]) {
-        
-        setTimeout(()=>{
-            
-            inputRefs.current[index + 1].focus();
-            
-        },100)
-        
-            
+    if (value && index < 3 && inputRefs.current[index + 1]) {
+      setTimeout(() => {
+        inputRefs.current[index + 1].focus();
+      }, 100);
     }
-    
-    
   };
-  
-  const handleClick = (index:number)=>{
+
+  const handleClick = (index: number) => {
+    inputRefs.current[index].setSelectionRange(1, 1);
+  };
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    if (index > 0 && e.key === "Backspace" && !otp[index]) {
+      console.log("back");
+
+      inputRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleSubmit = async () => {
+    let value = otp.join("");
+
+    let email = OtpModal.email;
+
+    let userId = OtpModal.userId;
+
+    try {
         
-    inputRefs.current[index].setSelectionRange(1,1)
-  }
-  
-  const handleKeyDown = ( e: React.KeyboardEvent<HTMLInputElement>,index:number)=>{
-    
-        if(index > 0 && e.key === 'Backspace' && !otp[index] ){
-            
-            console.log('back')
-            
-            inputRefs.current[index-1].focus()
-        } 
-  }
+       await Axios.post(VERIFY_OTP_URL, {
+        otp: value,
+        email,
+        userId,
+      });
+
+      toast.success("verification success");
+      
+      OtpModal.onClose();
+      
+      loginModal.onOpen();
+      
+      
+
+    } catch (err: any) {
+      console.log(err);
+
+      
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 409) {
+        toast.error("Email Already Registered");
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Verification Failed");
+      }
+    }
+  };
 
   const bodyContent = (
     <div className=" flex  flex-col items-center mt-3">
       <img className="py-3" src={logo} alt="" height={80} width={80} />
 
       <p className="  text-sm py-5 font-bold text-center  w-5/6  leading-6 ">
-        We have send an email to your email address please enter it to verify
-        your account
+        We have send an OTP to your email address please enter it to verify your
+        account
       </p>
 
       <div className=" flex  gap-3  py-5">
         {otp.map((val, index) => (
           <input
-          key={index}
+            key={index}
             ref={(input) => {
               input && (inputRefs.current[index] = input);
             }}
@@ -95,8 +134,12 @@ const OtpModal = () => {
             onChange={(e) => {
               handleChange(index, e);
             }}
-            onClick={(e)=>{handleClick(index)}}
-            onKeyDown={(e)=>{handleKeyDown(e,index)}}
+            onClick={(e) => {
+              handleClick(index);
+            }}
+            onKeyDown={(e) => {
+              handleKeyDown(e, index);
+            }}
           />
         ))}
       </div>
@@ -106,7 +149,7 @@ const OtpModal = () => {
   return (
     <Modal
       title="Email Verification"
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
       isOpen={OtpModal.isOpen}
       onClose={OtpModal.onClose}
       submitActionLabel="verify"

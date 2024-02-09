@@ -1,4 +1,3 @@
-import { GiHamburgerMenu } from "react-icons/gi";
 import Container from "../Container";
 import Logo from "./SubComponents/Logo";
 import NavMenuIcons from "./SubComponents/NavMenuIcons";
@@ -8,9 +7,8 @@ const Navbar = () => {
     <nav className=" fixed w-full bg-white z-10  ">
       <div
         className=" 
-              py-4 
-              
-               border-b-2
+              py-6 
+              border-b-2 
             "
       >
         <Container>
@@ -23,18 +21,35 @@ const Navbar = () => {
                 gap-3
                 md:gap-0"
           >
-            <Logo />
+            <div className=" ">
+              <Logo />
+            </div>
 
-            <div className=" flex items-center gap-3">
-              <div className="  bg-slate-900 py-[15px] rounded-md">
-                <p className=" text-slate-100 font-semibold px-3 text-sm">
+            <div
+              className="  justify-between items-center gap-3 hidden
+              md:flex 
+            "
+            >
+              <div
+                className=" flex text-[15px] gap-6  tracking-wider text-white bg-black    shadow-md border-[1px]  border-slate-400 px-8 py-3 rounded-full   font-Righteous  
+              "
+              >
+                <p className=" transform transition  duration-200 hover:scale-110 hover:text-neutral-200 cursor-pointer">
+                  Reservations
+                </p>
+                <p className=" transform transition  duration-200 hover:scale-110 hover:text-neutral-200 cursor-pointer">
                   {" "}
-                  Feature your property
+                  Wishlists
+                </p>
+                <p className=" transform transition  duration-200 hover:scale-110 hover:text-neutral-200 cursor-pointer">
+                  {" "}
+                  Contact Us
                 </p>
               </div>
+            </div>
 
+            <div className="  flex justify-end ">
               <NavMenuIcons />
-              <GiHamburgerMenu className=" sm:hidden text-3xl cursor-pointer" />
             </div>
           </div>
         </Container>

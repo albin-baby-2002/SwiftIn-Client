@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { FcGoogle } from "react-icons/fc";
-import { AiFillGithub } from "react-icons/ai";
 
 import Modal from "./Modal";
 import Heading from "../Heading";
@@ -12,7 +11,15 @@ import Input from "../Inputs/Input";
 import Button from "../Button";
 
 import useRegisterModal from "../../Hooks/useRegisterModal";
+import { Axios } from "../../Api/Axios";
+import toast from "react-hot-toast";
+import { REGISTER_URL } from "../../Api/EndPoints";
+import useOtpModal from "../../Hooks/useOtpModal";
 
+interface UserData {
+  userId: string;
+  email: string;
+}
 
 // zod schema for validating react hook form
 
@@ -38,15 +45,18 @@ const SignUpSchema = z
   });
 
 const RegisterModal = () => {
-    
-  // registerModal state management Zustand 
-    
+  // registerModal , otpModal state management Zustand
+
   const registerModal = useRegisterModal();
+
+  const otpModal = useOtpModal();
+  
+  // loading state 
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // react hook form with default values and zod for validation 
-  
+  // react hook form with default values and zod for validation
+
   const {
     register,
     handleSubmit,
@@ -60,13 +70,39 @@ const RegisterModal = () => {
     },
     resolver: zodResolver(SignUpSchema),
   });
-  
+
   // onSubmit function to pass as callback for handleSubmit of react hook form
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
 
-    console.log("submit", data);
+    try {
+      const response = await Axios.post<UserData>(REGISTER_URL, data);
+
+      toast.success("User created successfully");
+
+      setIsLoading(false);
+
+      otpModal.setData(response.data.userId, response.data.email);
+
+      registerModal.onClose();
+
+      otpModal.onOpen();
+    } catch (err: any) {
+      setIsLoading(false);
+
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 409) {
+        toast.error("Email Already Registered");
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Registration Failed");
+      }
+    }
   };
 
   // body content for input form
@@ -99,7 +135,7 @@ const RegisterModal = () => {
       </div>
     </div>
   );
-  
+
   // footer content for modal - google and gitHub oAuth buttons
 
   const footer = (
@@ -110,15 +146,9 @@ const RegisterModal = () => {
         outline={true}
         Icon={FcGoogle}
       />
-      <Button
-        label="GitHub"
-        onClick={() => {}}
-        outline={true}
-        Icon={AiFillGithub}
-      />
     </div>
   );
-  
+
   // actual model made from boiler plate modal
 
   return (

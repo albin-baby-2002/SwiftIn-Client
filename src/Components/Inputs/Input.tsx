@@ -21,7 +21,7 @@ const Input: React.FC<InputProps> = ({
   errors,
 }) => {
   useEffect(() => {
-    console.log(errors[id]?.message);
+    
   }, [errors]);
 
   return (

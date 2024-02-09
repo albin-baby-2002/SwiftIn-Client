@@ -6,8 +6,11 @@ import { useState } from "react";
 import Menu from "./Menu";
 import useRegisterModal from "../../../Hooks/useRegisterModal";
 import useLoginModal from "../../../Hooks/useLoginModal";
+import useAuth from "../../../Hooks/useAuth";
 
 const NavMenuIcons = () => {
+  const auth = useAuth();
+
   const registerModal = useRegisterModal();
 
   const loginModal = useLoginModal();
@@ -27,37 +30,54 @@ const NavMenuIcons = () => {
 
   return (
     <div
-      className="relative flex-row items-center flex gap-3 justify-around rounded-xl px-[13px] py-2 sm:border-  border-black
+      className="relative flex-row items-center justify-around flex gap-3  w-2/3  px-10 py-2 rounded-xl  border-2 border-black
     "
     >
-      {/* <div className=" cursor-pointer">
-        <MdOutlineTune className="   text-3xl sm:text-2xl" />
-      </div> */}
+      <div className=" cursor-pointer">
+        <MdOutlineTune className="   text-[26px] hover:scale-110  transform  transition duration-150" />
+      </div>
 
       <div
         onClick={toggleMainMenu}
         className="
               
-             p-3
-             rounded-md
              
-              bg-black
+             bg-
              
              hidden
              sm:block
-             cursor-pointer 
-             "
+             cursor-pointer "
       >
-        <AiFillAppstore className=" text-white  text-2xl" />
+        <AiFillAppstore className=" text-  text-[26px] hover:scale-110 transform  transition duration-150" />
 
         {mainMenu && (
           <Menu>
             <MenuItem onClick={() => {}} label="Listings" />
             <MenuItem onClick={() => {}} label="Reservation" />
+
+            {auth.accessToken && <MenuItem onClick={() => {}} label="Logout" />}
+
+            {!auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  registerModal.onOpen();
+                }}
+                label="SignUp"
+              />
+            )}
+
+            {!auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  loginModal.onOpen();
+                }}
+                label="Login"
+              />
+            )}
           </Menu>
         )}
       </div>
-{/* 
+      {/* 
       <div
         onClick={toggleProfileMenu}
         className="
@@ -78,18 +98,7 @@ const NavMenuIcons = () => {
 
         {profileMenu && (
           <Menu>
-            <MenuItem
-              onClick={() => {
-                registerModal.onOpen();
-              }}
-              label="SignUp"
-            />
-            <MenuItem
-              onClick={() => {
-                loginModal.onOpen();
-              }}
-              label="Login"
-            />
+           
           </Menu>
         )}
       </div> */}

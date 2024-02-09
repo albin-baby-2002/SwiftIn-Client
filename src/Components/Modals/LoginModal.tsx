@@ -7,7 +7,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../Button";
 import { FcGoogle } from "react-icons/fc";
-import { AiFillGithub } from "react-icons/ai";
+
+import { Axios } from "../../Api/Axios";
+import { AUTH_URL } from "../../Api/EndPoints";
+import useAuth from "../../Hooks/useAuth";
+import toast from "react-hot-toast";
+
+interface AuthResponse {
+  accessToken: string;
+  roles: number[];
+  username: string;
+}
 
 const loginSchema = z.object({
     email:z.string().email('Enter a valid email'),
@@ -17,6 +27,8 @@ const loginSchema = z.object({
 
 const LoginModal = () => {
     
+    const auth = useAuth()
+    
     const loginModal = useLoginModal();
     
     const {register,handleSubmit,formState:{errors}} = useForm<FieldValues>({defaultValues:{
@@ -24,7 +36,50 @@ const LoginModal = () => {
         password:''
     },resolver:zodResolver(loginSchema)})
     
-    const onSubmit:SubmitHandler<FieldValues>= (data)=>{
+    const onSubmit:SubmitHandler<FieldValues>= async(data)=>{
+        
+        
+        try{
+            
+            const response = await Axios.post<AuthResponse>(AUTH_URL,data,{withCredentials:true});
+            
+            // with credentials true is req for login req otherwise cookie will not be saved
+            
+            
+                auth.setAuth(
+                  response.data.accessToken,
+                  response.data.roles,
+                  response.data.username,
+                );
+                
+                
+                toast.success('login successful');
+                
+                loginModal.onClose()
+            
+        }
+        
+        catch(err:any){
+            
+            console.log(err)
+                
+            
+            
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else if (err.response?.status === 404) {
+        toast.error('Email not registered. Please SignUp');
+      } else {
+        toast.error("Registration Failed");
+      }
+        }
+        
         
     }
     
@@ -46,12 +101,7 @@ const LoginModal = () => {
            outline={true}
            Icon={FcGoogle}
          />
-         <Button
-           label="GitHub"
-           onClick={() => {}}
-           outline={true}
-           Icon={AiFillGithub}
-         />
+         
        </div>
      );
     
