@@ -48,7 +48,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="  flex justify-end ">
+            <div className="  max-w-[120px] flex justify-end ">
               <NavMenuIcons />
             </div>
           </div>

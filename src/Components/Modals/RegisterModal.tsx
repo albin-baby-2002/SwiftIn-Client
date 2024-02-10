@@ -15,6 +15,7 @@ import { Axios } from "../../Api/Axios";
 import toast from "react-hot-toast";
 import { REGISTER_URL } from "../../Api/EndPoints";
 import useOtpModal from "../../Hooks/useOtpModal";
+import { useGoogleLogin } from "@react-oauth/google";
 
 interface UserData {
   userId: string;
@@ -50,8 +51,8 @@ const RegisterModal = () => {
   const registerModal = useRegisterModal();
 
   const otpModal = useOtpModal();
-  
-  // loading state 
+
+  // loading state
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -105,6 +106,26 @@ const RegisterModal = () => {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async(response) => {
+      
+       try{
+        
+        await Axios.post('/auth/google',{code:response.code},{withCredentials:true})
+        
+       }
+       catch(err){
+        
+        console.log('google auth err' , err)
+       }
+      
+      
+      
+    },
+    onError: (err) => console.log(err),
+  });
+
   // body content for input form
 
   const bodyContent = (
@@ -142,7 +163,9 @@ const RegisterModal = () => {
     <div className=" flex  flex-col items-center gap-4">
       <Button
         label="Google"
-        onClick={() => {}}
+        onClick={() => {
+          console.log("google"), googleLogin();
+        }}
         outline={true}
         Icon={FcGoogle}
       />
