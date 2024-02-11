@@ -6,6 +6,7 @@ export default {
       fontFamily: {
         Texturina: ["Texturina"],
         Righteous: ["Righteous"],
+        Sen: ["Sen"],
       },
     },
   },

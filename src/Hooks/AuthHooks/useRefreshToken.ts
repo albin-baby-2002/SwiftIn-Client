@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
-import { Axios } from "../Api/Axios";
-import useAuth from "./useAuth";
+import { Axios } from "../../Api/Axios";
+import useAuth from "../zustandStore/useAuth";
 
 const UseRefreshToken = () => {
   const auth = useAuth();

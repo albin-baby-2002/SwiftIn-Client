@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import useAuth from "../Hooks/useAuth";
-import UseRefreshToken from "../Hooks/useRefreshToken";
+import useAuth from "../Hooks/zustandStore/useAuth";
+import UseRefreshToken from "../Hooks/AuthHooks/useRefreshToken";
 import loader from "../Assets/fade-stagger-squares.svg";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";

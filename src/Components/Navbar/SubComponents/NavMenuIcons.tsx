@@ -4,9 +4,10 @@ import { MdOutlineTune } from "react-icons/md";
 import MenuItem from "./MenuItem";
 import { useState } from "react";
 import Menu from "./Menu";
-import useRegisterModal from "../../../Hooks/useRegisterModal";
-import useLoginModal from "../../../Hooks/useLoginModal";
-import useAuth from "../../../Hooks/useAuth";
+import useRegisterModal from "../../../Hooks/zustandStore/useRegisterModal";
+import useLoginModal from "../../../Hooks/zustandStore/useLoginModal";
+import useAuth from "../../../Hooks/zustandStore/useAuth";
+import useLogout from "../../../Hooks/AuthHooks/useLogout";
 
 const NavMenuIcons = () => {
   const auth = useAuth();
@@ -14,6 +15,8 @@ const NavMenuIcons = () => {
   const registerModal = useRegisterModal();
 
   const loginModal = useLoginModal();
+
+  const logout = useLogout();
 
   const [profileMenu, setProfileMenu] = useState(false);
   const [mainMenu, setMainMenu] = useState(false);
@@ -55,7 +58,14 @@ const NavMenuIcons = () => {
             <MenuItem onClick={() => {}} label="Listings" />
             <MenuItem onClick={() => {}} label="Reservation" />
 
-            {auth.accessToken && <MenuItem onClick={() => {}} label="Logout" />}
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  logout();
+                }}
+                label="Logout"
+              />
+            )}
 
             {!auth.accessToken && (
               <MenuItem

@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { axiosPrivate } from "../../Api/Axios";
-import UseRefreshToken from "../useRefreshToken";
-import useAuth from "../useAuth";
-
+import UseRefreshToken from "../AuthHooks/useRefreshToken";
+import useAuth from "../zustandStore/useAuth";
 
 const useAxiosPrivate = () => {
-  const auth = useAuth()
+  const auth = useAuth();
 
   const refresh = UseRefreshToken();
 
@@ -28,8 +27,6 @@ const useAxiosPrivate = () => {
 
         if (err?.response?.status === 403 && !err.config._isRetry) {
           err.config._isRetry = true;
-          
-          
 
           const newAccessToken = await refresh();
 

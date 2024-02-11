@@ -10,16 +10,24 @@ import Heading from "../Heading";
 import Input from "../Inputs/Input";
 import Button from "../Button";
 
-import useRegisterModal from "../../Hooks/useRegisterModal";
+import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import { Axios } from "../../Api/Axios";
 import toast from "react-hot-toast";
 import { REGISTER_URL } from "../../Api/EndPoints";
-import useOtpModal from "../../Hooks/useOtpModal";
+import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
 import { useGoogleLogin } from "@react-oauth/google";
+import useAuth from "../../Hooks/zustandStore/useAuth";
+import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
 
 interface UserData {
   userId: string;
   email: string;
+}
+
+interface googleAuthResponse {
+  accessToken: string;
+  roles: number[];
+  user: string;
 }
 
 // zod schema for validating react hook form
@@ -51,6 +59,10 @@ const RegisterModal = () => {
   const registerModal = useRegisterModal();
 
   const otpModal = useOtpModal();
+
+  const auth = useAuth();
+
+  const googleLogin = UseGoogleLogin();
 
   // loading state
 
@@ -106,25 +118,33 @@ const RegisterModal = () => {
     }
   };
 
-  const googleLogin = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: async(response) => {
-      
-       try{
-        
-        await Axios.post('/auth/google',{code:response.code},{withCredentials:true})
-        
-       }
-       catch(err){
-        
-        console.log('google auth err' , err)
-       }
-      
-      
-      
-    },
-    onError: (err) => console.log(err),
-  });
+  // const googleLogin = useGoogleLogin({
+  //   flow: "auth-code",
+  //   onSuccess: async (response) => {
+  //     try {
+  //       const res = await Axios.post<googleAuthResponse>(
+  //         "/auth/google",
+  //         { code: response.code },
+  //         { withCredentials: true },
+  //       );
+
+  //       auth.setAuth(res.data.accessToken, res.data.roles, res.data.user);
+
+  //       registerModal.onClose();
+
+  //       let message = `Welcome to SwiftIn ${res.data.user}`;
+
+  //       toast.success(message);
+  //     } catch (err) {
+  //       toast.error("Google Login Failed Try Again");
+  //       console.log(err);
+  //     }
+  //   },
+  //   onError: (err) => {
+  //     toast.error("Google Login Failed Try Again");
+  //     console.log(err);
+  //   },
+  // });
 
   // body content for input form
 
@@ -164,7 +184,7 @@ const RegisterModal = () => {
       <Button
         label="Google"
         onClick={() => {
-          console.log("google"), googleLogin();
+          googleLogin();
         }}
         outline={true}
         Icon={FcGoogle}

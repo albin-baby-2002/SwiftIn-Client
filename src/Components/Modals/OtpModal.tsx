@@ -1,17 +1,16 @@
 import Modal from "./Modal";
-import useOtpModal from "../../Hooks/useOtpModal";
+import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
 
 import logo from "../../Assets/logo3.png";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Axios } from "../../Api/Axios";
 import { VERIFY_OTP_URL } from "../../Api/EndPoints";
-import useLoginModal from "../../Hooks/useLoginModal";
-
+import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
 
 const OtpModal = () => {
   const OtpModal = useOtpModal();
-  
+
   const loginModal = useLoginModal();
 
   const [otp, setOtp] = useState<string[]>(new Array(4).fill(""));
@@ -79,25 +78,20 @@ const OtpModal = () => {
     let userId = OtpModal.userId;
 
     try {
-        
-       await Axios.post(VERIFY_OTP_URL, {
+      await Axios.post(VERIFY_OTP_URL, {
         otp: value,
         email,
         userId,
       });
 
       toast.success("verification success");
-      
-      OtpModal.onClose();
-      
-      loginModal.onOpen();
-      
-      
 
+      OtpModal.onClose();
+
+      loginModal.onOpen();
     } catch (err: any) {
       console.log(err);
 
-      
       if (!err?.response) {
         toast.error("No Server Response");
       } else if (err.response?.status === 400) {
