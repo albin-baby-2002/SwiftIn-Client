@@ -31,6 +31,7 @@ const loginSchema = z.object({
 });
 
 const LoginModal = () => {
+  
   const auth = useAuth();
 
   const loginModal = useLoginModal();
