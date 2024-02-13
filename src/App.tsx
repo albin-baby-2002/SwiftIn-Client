@@ -6,13 +6,14 @@ import {
 } from "react-router-dom";
 import Home from "./Pages/Home";
 import PersistentLogin from "./HOC/persistentLogin";
-import AdminLogin from "./Pages/AdminPages.tsx/AdminLogin";
+import AdminLogin from "./Pages/AdminPages/AdminLogin";
 import PrivateRoute from "./HOC/privateRoute";
 import { ROLES_LIST } from "./Config/userRoles";
 import useLogout from "./Hooks/AuthHooks/useLogout";
-import Dashboard from "./Pages/AdminPages.tsx/Console";
-import Console from "./Pages/AdminPages.tsx/Console";
-import Users from "./Pages/AdminPages.tsx/Users";
+import Dashboard from "./Pages/AdminPages/Console";
+import Console from "./Pages/AdminPages/Console";
+import Users from "./Pages/AdminPages/Users";
+import Profile from "./Pages/UserPages/Profile";
 
 function App() {
   const logout = useLogout();
@@ -23,6 +24,16 @@ function App() {
       <>
         <Route path="/" element={<PersistentLogin />}>
           <Route index element={<Home />} />
+
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute
+                Element={Profile}
+                allowedRoles={[ROLES_LIST.User]}
+              />
+            }
+          />
 
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
@@ -38,13 +49,9 @@ function App() {
           <Route
             path="/admin/users"
             element={
-              <PrivateRoute
-                Element={Users}
-                allowedRoles={[ROLES_LIST.Admin]}
-              />
+              <PrivateRoute Element={Users} allowedRoles={[ROLES_LIST.Admin]} />
             }
           />
-          
         </Route>
       </>,
     ),
