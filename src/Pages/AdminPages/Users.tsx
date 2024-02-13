@@ -1,10 +1,10 @@
-import Container from "../../Components/Container";
+import Container from "../../Components/UiComponents/Container";
 
 import { FaChevronRight, FaEdit, FaSearch } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import Navbar from "../../Components/Admin/Navbar";
+import Navbar from "../../Components/Admin/Navbar/Navbar";
 import { RiUserForbidFill } from "react-icons/ri";
 
 import AddUserModal from "../../Components/Admin/Modals/AddUserModal";

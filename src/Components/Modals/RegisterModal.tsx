@@ -6,9 +6,9 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 
 import Modal from "./Modal";
-import Heading from "../Heading";
+import Heading from "../UiComponents/Heading";
 import Input from "../Inputs/Input";
-import Button from "../Button";
+import Button from "../UiComponents/Button";
 
 import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import { Axios } from "../../Api/Axios";

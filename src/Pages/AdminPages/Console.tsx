@@ -1,9 +1,9 @@
 import { FaSearch } from "react-icons/fa";
 
-import Container from "../../Components/Container";
+import Container from "../../Components/UiComponents/Container";
 
 import { IoIosAddCircle } from "react-icons/io";
-import Navbar from "../../Components/Admin/Navbar";
+import Navbar from "../../Components/Admin/Navbar/Navbar";
 import { useEffect } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 
@@ -36,7 +36,7 @@ const Console = () => {
 
   return (
     <div className=" flex  min-h-full ">
-      <Navbar closeNav={()=>{}} />
+      <Navbar closeNav={() => {}} />
 
       <main>
         <Container>

@@ -1,4 +1,4 @@
-import Container from "../Container";
+import Container from "../UiComponents/Container";
 import Logo from "./SubComponents/Logo";
 import NavMenuIcons from "./SubComponents/NavMenuIcons";
 

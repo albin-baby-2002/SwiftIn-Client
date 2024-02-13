@@ -1,10 +1,10 @@
-import Container from "../../Components/Container";
+import Container from "../../Components/UiComponents/Container";
 import Input from "../../Components/Inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import swiftIn from "../../Assets/logo3.png";
-import Button from "../../Components/Button";
+import Button from "../../Components/UiComponents/Button";
 import { AUTH_URL } from "../../Api/EndPoints";
 
 import toast from "react-hot-toast";
@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import { Axios } from "../../Api/Axios";
 import { ROLES_LIST } from "../../Config/userRoles";
-
 
 interface AuthResponse {
   accessToken: string;
