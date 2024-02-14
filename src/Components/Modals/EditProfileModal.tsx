@@ -1,71 +1,119 @@
-import {
-  FieldValue,
-  FieldValues,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import Heading from "../UiComponents/Heading";
-import Input from "../Inputs/Input";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+
 import Modal from "./Modal";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../UiComponents/Button";
-import { FcGoogle } from "react-icons/fc";
 
-import { Axios } from "../../Api/Axios";
-import { AUTH_URL } from "../../Api/EndPoints";
+import { Axios, axiosPrivate } from "../../Api/Axios";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import toast from "react-hot-toast";
-import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
+import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
+import Input from "../Inputs/Input";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import { useEffect } from "react";
 
-interface AuthResponse {
-  accessToken: string;
-  roles: number[];
-  username: string;
-}
-
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "Minimum length is 8"),
+const EditProfileSchema = z.object({
+  username: z.string().min(5, "user name should have min 5 character"),
+  phone: z.string().refine((value) => {
+    if (!value) return true;
+    const IND_PHONE_REGEX = /^(\+91[\-\s]?)?[6789]\d{9}$/;
+    return IND_PHONE_REGEX.test(value);
+  }, "Invalid phone . It Should be 10 digits"),
+  aboutYou: z.string(),
+  addressLine: z.string(),
+  locality: z.string(),
+  city: z.string(),
+  state: z.string(),
+  country: z.string(),
+  district: z.string(),
+  pinCode: z.string(),
 });
 
-const LoginModal = () => {
+interface TProfileInfo {
+  _id: string;
+  username: string;
+  email: string;
+  phone: string;
+  wallet: number;
+  aboutYou: string;
+  addressLine: string;
+  locality: string;
+  city: string;
+  district: string;
+  state: string;
+  country: string;
+  pinCode: string;
+}
+interface ProfileResponse {
+  userData: TProfileInfo;
+}
+
+interface EditUserModalProps {
+  reFetchData: () => void;
+}
+
+const EditProfileModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
+  const AxiosPrivate = useAxiosPrivate();
   const auth = useAuth();
 
-  const loginModal = useLoginModal();
-
-  const googleLogin = UseGoogleLogin();
+  const editProfileModalState = useEditProfileModal();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      email: "",
-      password: "",
+      username: "",
+      phone: "",
+      aboutYou: "",
+      addressLine: "",
+      locality: "",
+      city: "",
+      district: "",
+      state: "",
+      country: "",
+      pinCode: "",
     },
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(EditProfileSchema),
   });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const response =
+          await AxiosPrivate.get<ProfileResponse>("/user/profile");
+
+        if (isMounted) {
+          reset(response.data.userData);
+
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
-      const response = await Axios.post<AuthResponse>(AUTH_URL, data, {
-        withCredentials: true,
-      });
+      await AxiosPrivate.patch("/user/profile", data);
 
-      // with credentials true is req for login req otherwise cookie will not be saved
+      toast.success("Profile Edited SuccessFully");
 
-      auth.setAuth(
-        response.data.accessToken,
-        response.data.roles,
-        response.data.username,
-      );
+      editProfileModalState.onClose();
 
-      toast.success("login successful");
-
-      loginModal.onClose();
+      reFetchData();
     } catch (err: any) {
       console.log(err);
 
@@ -87,42 +135,77 @@ const LoginModal = () => {
 
   const bodyContent = (
     <div>
-      <Heading title="Welcome Back To SwiftIn" />
-
-      <Input id="email" label="Email" errors={errors} register={register} />
       <Input
-        id="password"
-        label="password"
+        id="username"
+        label="username"
         errors={errors}
         register={register}
       />
-    </div>
-  );
 
-  const footer = (
-    <div className=" flex  flex-col items-center gap-4">
-      <Button
-        label="Google"
-        onClick={() => {
-          googleLogin();
-        }}
-        outline={true}
-        Icon={FcGoogle}
+      <Input id="phone" label="PhoneNo" errors={errors} register={register} />
+
+      <Input
+        id="addressLine"
+        label="addressLine"
+        errors={errors}
+        register={register}
+      />
+
+        <Input
+          id="locality"
+          label="Locality"
+          errors={errors}
+          register={register}
+        />
+
+        <Input id="city" label="City" errors={errors} register={register} />
+      
+
+     
+        <Input
+          id="district"
+          label="District"
+          errors={errors}
+          register={register}
+        />
+        <Input id="state" label="state" errors={errors} register={register} />
+     
+
+     
+        <Input
+          id="country"
+          label="Country"
+          errors={errors}
+          register={register}
+        />
+
+        <Input
+          id="pinCode"
+          label="Pincode"
+          errors={errors}
+          register={register}
+        />
+     
+      <Input
+        id="aboutYou"
+        label="AboutYou"
+        errors={errors}
+        register={register}
+        textBox
       />
     </div>
   );
 
   return (
     <Modal
-      title="Login"
-      onClose={loginModal.onClose}
+      title="Edit Profile"
+      onClose={editProfileModalState.onClose}
       onSubmit={handleSubmit(onSubmit)}
-      isOpen={loginModal.isOpen}
-      submitActionLabel="Login"
+      isOpen={editProfileModalState.isOpen}
+      submitActionLabel="Edit"
       body={bodyContent}
-      footer={footer}
     />
   );
 };
 
-export default LoginModal;
+export default EditProfileModal;

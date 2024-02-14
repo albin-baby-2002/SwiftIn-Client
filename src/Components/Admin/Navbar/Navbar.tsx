@@ -1,7 +1,7 @@
 import { BiSolidBuildings, BiSolidUserRectangle } from "react-icons/bi";
 import { FaChartSimple, FaPeopleGroup, FaX } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
-import swiftIn from "../../Assets/logo5.png";
+import swiftIn from "../../../Assets/logo5.png";
 import {
   IoMdArrowDropleftCircle,
   IoMdClose,
