@@ -8,8 +8,12 @@ import useRegisterModal from "../../../Hooks/zustandStore/useRegisterModal";
 import useLoginModal from "../../../Hooks/zustandStore/useLoginModal";
 import useAuth from "../../../Hooks/zustandStore/useAuth";
 import useLogout from "../../../Hooks/AuthHooks/useLogout";
+import { useNavigate } from "react-router-dom";
 
 const NavMenuIcons = () => {
+  
+  const navigate = useNavigate();
+  
   const auth = useAuth();
 
   const registerModal = useRegisterModal();
@@ -43,12 +47,6 @@ const NavMenuIcons = () => {
       <div
         onClick={toggleMainMenu}
         className="
-              
-             
-             bg-
-             
-             hidden
-             sm:block
              cursor-pointer "
       >
         <AiFillAppstore className=" text-  text-[26px] hover:scale-110 transform  transition duration-150" />
@@ -64,6 +62,15 @@ const NavMenuIcons = () => {
                   logout();
                 }}
                 label="Logout"
+              />
+            )}
+
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  navigate('/profile')
+                }}
+                label="Profile"
               />
             )}
 

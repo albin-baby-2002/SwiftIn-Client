@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Container from "../../Components/UiComponents/Container";
 import swiftin from "../../Assets/logo3.png";
 import profileImg from "../../Assets/profile.svg";
@@ -21,6 +21,11 @@ import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import useUploadProfileImgModal from "../../Hooks/zustandStore/useProfileImgUploadModal";
 import UploadProfileImgModal from "../../Components/Modals/uploadProfileImgModal";
+import { Cloudinary } from "@cloudinary/url-gen/index";
+import { AdvancedImage, lazyload } from "@cloudinary/react";
+import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { Link } from "react-router-dom";
 
 interface TProfileInfo {
   _id: string;
@@ -37,6 +42,7 @@ interface TProfileInfo {
   state: string;
   country: string;
   pinCode: string;
+  image: string;
 }
 interface ProfileResponse {
   userData: TProfileInfo;
@@ -50,9 +56,8 @@ const Profile = () => {
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
   const editProfileModalState = useEditProfileModal();
-  
+
   const uploadProfileImgModalState = useUploadProfileImgModal();
-  
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -63,6 +68,31 @@ const Profile = () => {
   const toggleMainMenu = () => {
     setMainMenu((value) => !value);
   };
+
+  const cloudinaryRef = useRef<any>();
+  const widgetRef = useRef<any>();
+
+  useEffect(() => {
+    cloudinaryRef.current = window.cloudinary;
+
+    if (cloudinaryRef.current) {
+      widgetRef.current = cloudinaryRef.current.createUploadWidget(
+        {
+          cloudName: "dfm8vhuea",
+          uploadPreset: "lmyyofoj",
+        },
+        async function (error: any, result: any) {
+          console.log(result.info.public_id, "result of upload");
+
+          if (result.info.public_id) {
+            await AxiosPrivate.patch("/user/profileImg", {
+              publicID: result.info.public_id,
+            });
+          }
+        },
+      );
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -91,6 +121,15 @@ const Profile = () => {
     };
   }, [triggerRefetch]);
 
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "dfm8vhuea",
+    },
+  });
+
+  const myImage = cld.image(profileInfo?.image);
+  myImage.resize(thumbnail().height(150)).roundCorners(byRadius(250));
+
   return (
     <>
       <header className=" ">
@@ -111,9 +150,11 @@ const Profile = () => {
                 gap-3
                 md:gap-0"
               >
-                <div className=" ">
-                  <img src={swiftin} height={120} width={120} alt="" />
-                </div>
+                <Link to="/">
+                  <div className=" ">
+                    <img src={swiftin} height={120} width={120} alt="" />
+                  </div>
+                </Link>
 
                 <div className=" relative  max-w-[120px] flex justify-end ">
                   {/* asdf */}
@@ -178,18 +219,28 @@ const Profile = () => {
             </div>
           </div>
 
+          {/* // <AdvancedImage cldImg={myImage} plugins={[lazyload()]} /> */}
           <div className=" pt-8 flex flex-col sm:flex-row items-center  sm:items-stretch mt-4  gap-8 ">
             <div className="   h-[300px] sm:h-auto  justify-center  w-3/4 sm:w-1/3  flex flex-col items-center border-2   px-10 py-12 border-neutral-400 rounded-xl">
-              <div className=" relative flex  justify-center ">
-                <img
-                  className="w-9/12  rounded-full    "
-                  src={profileImg}
-                  alt=""
-                />
+              <div className=" relative flex  justify-center rounded-full ">
+                {profileInfo?.image ? (
+                  <img
+                    className="w-9/12  rounded-full    "
+                    src={` https://res.cloudinary.com/dfm8vhuea/image/upload/c_fill,w_200,h_200/${profileInfo.image}`}
+                    alt=""
+                  />
+                ) : (
+                  <img
+                    className="w-9/12  rounded-full    "
+                    src={profileImg}
+                    alt=""
+                  />
+                )}
+
                 <div
                   className=" absolute right-0 rounded-lg bg-black px-1 py-1 cursor-pointer"
                   onClick={() => {
-                    uploadProfileImgModalState.onOpen();
+                    widgetRef.current.open();
                   }}
                 >
                   <FaFileUpload className="   text-xl text-white   " />
@@ -226,7 +277,7 @@ const Profile = () => {
             </div>
 
             <div className=" h-[300px] sm:h-auto  w-3/4 sm:w-1/3 flex flex-col items-center justify-center border-2   px-4 py-12 border-neutral-400 rounded-xl">
-              <div className=" w-2/4 sm:w-3/4 mx-auto border-2   border-neutral-400  py-8 rounded-full">
+              <div className=" w-2/4 sm:w-3/4 mx-auto border-4    border-neutral-400  py-8 rounded-full">
                 <p className=" text-center text-3xl font-bold font-Sen">
                   {profileInfo?.wallet || " zero"}
                 </p>

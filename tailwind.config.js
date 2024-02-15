@@ -7,6 +7,7 @@ export default {
         Texturina: ["Texturina"],
         Righteous: ["Righteous"],
         Sen: ["Sen"],
+        Inter: ["Inter"],
       },
     },
   },

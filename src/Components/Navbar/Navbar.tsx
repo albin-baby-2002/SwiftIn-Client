@@ -4,11 +4,11 @@ import NavMenuIcons from "./SubComponents/NavMenuIcons";
 
 const Navbar = () => {
   return (
-    <nav className=" fixed w-full bg-white z-10  ">
+    <nav className=" fixed w-screen bg-white z-10  ">
       <div
         className=" 
               py-6 
-              border-b-2 
+              border-b-2
             "
       >
         <Container>

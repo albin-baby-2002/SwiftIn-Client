@@ -58,7 +58,8 @@ const AdminLogin = () => {
 
       toast.success("login successful");
 
-      navigate("/admin");
+      navigate("/admin/users");
+      
     } catch (err: any) {
       console.log(err);
 
@@ -81,7 +82,7 @@ const AdminLogin = () => {
   useEffect(() => {
     if (auth?.accessToken) {
       if (auth.roles.includes(ROLES_LIST.Admin)) {
-        navigate("/admin", { replace: true });
+        navigate("/admin/users", { replace: true });
       } else {
         navigate("/", { replace: true });
 
@@ -94,9 +95,9 @@ const AdminLogin = () => {
     <>
       <main>
         <Container>
-          <div className=" w-1/2 mx-auto flex  flex-col items-center  justify-center h-screen gap-8">
+          <div className=" md:w-2/3 lg:w-1/2 mx-auto flex  flex-col items-center  justify-center h-screen gap-8">
             <img src={swiftIn} alt="" height={150} width={150} />
-            <h1 className=" text-3xl  font-Righteous  font-bold">
+            <h1 className=" text-4xl  font-sen text-center  font-bold">
               Welcome Back Admin
             </h1>
 
