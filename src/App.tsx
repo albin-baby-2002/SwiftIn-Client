@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import Home from "./Pages/Home";
+import Home from "./Pages/GeneralPages/Home";
 import PersistentLogin from "./HOC/persistentLogin";
 import AdminLogin from "./Pages/AdminPages/AdminLogin";
 import PrivateRoute from "./HOC/privateRoute";
@@ -14,11 +14,12 @@ import Dashboard from "./Pages/AdminPages/Console";
 import Console from "./Pages/AdminPages/Console";
 import Users from "./Pages/AdminPages/Users";
 import Profile from "./Pages/UserPages/Profile";
+import HotelDetailsPage from "./Pages/GeneralPages/HotelDetailsPage";
+import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
 
 function App() {
   const logout = useLogout();
 
-  
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
@@ -34,6 +35,10 @@ function App() {
               />
             }
           />
+
+          <Route path="/hotel/details" element={<HotelDetailsPage />} />
+
+          <Route path="/property/listing" element={<PropertyListingPage />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
