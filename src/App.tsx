@@ -16,6 +16,7 @@ import Users from "./Pages/AdminPages/Users";
 import Profile from "./Pages/UserPages/Profile";
 import HotelDetailsPage from "./Pages/GeneralPages/HotelDetailsPage";
 import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
+import ManageListings from "./Pages/Host Pages/ManageListings";
 
 function App() {
   const logout = useLogout();
@@ -39,6 +40,8 @@ function App() {
           <Route path="/hotel/details" element={<HotelDetailsPage />} />
 
           <Route path="/property/listing" element={<PropertyListingPage />} />
+
+          <Route path="/manage/property" element={<ManageListings />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
