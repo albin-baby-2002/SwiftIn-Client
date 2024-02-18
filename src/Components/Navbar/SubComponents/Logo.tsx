@@ -1,4 +1,4 @@
-import LogoImg from "../../../Assets/logo.png";
+import LogoImg from "../../../Assets/logo.webp";
 
 const Logo = () => {
   return (
@@ -7,7 +7,7 @@ const Logo = () => {
         className="cursor-pointer pb-3 "
         src={LogoImg}
         alt="Logo"
-        height={130}
+      
         width={130}
       />
     </div>

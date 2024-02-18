@@ -133,21 +133,21 @@ const Users = () => {
 
       <main className=" w-full">
         <Container>
-          <div className=" flex justify-between items-center  py-6    text-sm border-b-2 ">
-            <div className=" flex  items-center gap-2 bg-black text-white px-2 py-2 ">
-              <FaChevronRight
-                className=" text-xl"
-                onClick={() => {
-                  setNavBar(true);
-                }}
-              />
-              <p className=" hidden sm:block font-Sen  font-bold text-xl">
+          <div className=" flex items-center justify-between  border-b-2    py-6 text-sm ">
+            <div
+              className=" flex  cursor-pointer items-center gap-2 bg-black px-2 py-2 text-white "
+              onClick={() => {
+                setNavBar(true);
+              }}
+            >
+              <FaChevronRight className=" text-xl" />
+              <p className=" hidden font-Sen text-xl  font-bold sm:block">
                 Manage Users
               </p>
             </div>
 
-            <div className="    flex  gap-4 justify-end ">
-              <div className=" flex items-center px-2 sm:px-4 sm:py-2  border-2  rounded-md border-black gap-3 max-w-[190px] sm:max-w-max">
+            <div className="    flex  justify-end gap-4 ">
+              <div className=" flex max-w-[190px] items-center gap-3 rounded-md  border-2  border-black px-2 sm:max-w-max sm:px-4 sm:py-2">
                 <FaSearch />
                 <input
                   value={search}
@@ -161,7 +161,7 @@ const Users = () => {
                 />
               </div>
 
-              <div className=" flex border-2   font-Sen rounded-md  px-4 py-2 font-semibold  items-center gap-2 bg-black  text-white  ">
+              <div className=" flex items-center   gap-2 rounded-md  border-2 bg-black px-4  py-2 font-Sen font-semibold  text-white  ">
                 {/* <FaUserPlus className=" text-lg font-bold" /> */}
 
                 <p className="  cursor-pointer" onClick={addUserModal.onOpen}>
@@ -174,22 +174,22 @@ const Users = () => {
 
         {/* main users table  */}
 
-        <div className=" lg:mx-10 mx-2 max-w-screen overflow-x-scroll pb-5 ">
-          <div className=" mt-10 min-w-[590px] overflow-x-scroll max-w-[1050px] lg:mx-auto  ">
-            <div className="   font-Sen font-bold text-sm lg:text-lg">
-              <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,150px)_150px] gap-2 align-middle    ">
-                <p className="  text-center text-wrap">username</p>
+        <div className=" max-w-screen mx-2 overflow-x-scroll pb-5 lg:mx-10 ">
+          <div className=" mt-10 min-w-[590px] max-w-[1050px] overflow-x-scroll lg:mx-auto  ">
+            <div className="   font-Sen text-sm font-bold lg:text-lg">
+              <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,150px)_150px]    ">
+                <p className="  text-wrap text-center">username</p>
                 <p className="  text-center">email</p>
                 <p className="  text-center">verified</p>
                 <p className="  text-center">blocked</p>
-                <p className="  text-center text-wrap">createdAt</p>
+                <p className="  text-wrap text-center">createdAt</p>
                 <p className="  text-center">options</p>
               </div>
             </div>
 
             {usersList?.map((user, index) => (
               <div key={index} className=" mt-6  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,150px)_150px] align-middle py-4 border-2 border-neutral-600 rounded-xl font-Sen font-semibold text-sm  gap-2">
+                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_120px] gap-2 rounded-xl border-2 border-neutral-600 py-4 align-middle font-Sen text-sm font-semibold md:grid-cols-[minmax(100px,1fr)_minmax(160px,200px)_repeat(3,1fr)_120px]  lg:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,150px)_150px]">
                   <p className=" text-center  lowercase ">{user.username}</p>
                   <p className=" text-center    ">{user.email}</p>
                   <p className=" text-center ">
@@ -199,13 +199,13 @@ const Users = () => {
                     {user.blocked ? "true" : "false"}
                   </p>
                   <p className=" text-center ">{user.joinedDate}</p>
-                  <div className=" flex items-center  gap-4 justify-center  text-xl">
+                  <div className=" flex items-center  justify-center gap-4  text-xl">
                     {user.blocked ? (
                       <p
                         onClick={() => {
                           unBlockUser(user._id);
                         }}
-                        className=" bg-black px-2 py-1 rounded-lg text-white text-sm cursor-pointer"
+                        className=" cursor-pointer rounded-lg bg-black px-2 py-1 text-xs text-white"
                       >
                         open
                       </p>
@@ -214,7 +214,7 @@ const Users = () => {
                         onClick={() => {
                           blockUser(user._id);
                         }}
-                        className=" bg-black px-2 py-1 rounded-lg text-white text-sm cursor-pointer"
+                        className=" cursor-pointer rounded-lg bg-black px-2 py-1 text-xs text-white"
                       >
                         block
                       </p>
@@ -231,14 +231,14 @@ const Users = () => {
               </div>
             ))}
 
-            <div className=" pt-8 pb-6 flex justify-between items-center  font-Sen ">
+            <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
               <div className=" font-bold ">
                 {" "}
                 page {page} of {totalPages}
               </div>
               <div className="  flex   gap-3 ">
                 <button
-                  className=" px-4 w-20 text-center py-1 text-white bg-black rounded-md"
+                  className=" w-20 rounded-md bg-black px-4 py-1 text-center text-white"
                   onClick={() => setPage((page) => page - 1)}
                   disabled={page <= 1}
                 >
@@ -246,7 +246,7 @@ const Users = () => {
                 </button>
 
                 <button
-                  className=" px-4 w-20 text-center py-1  border-2 border-black rounded-md"
+                  className=" w-20 rounded-md border-2 border-black  px-4 py-1 text-center"
                   onClick={() => setPage((page) => page + 1)}
                   disabled={page >= totalPages}
                 >

@@ -8,8 +8,14 @@ import Menu from "../../Components/Navbar/SubComponents/Menu";
 import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import useLogout from "../../Hooks/AuthHooks/useLogout";
-import { MdEmail } from "react-icons/md";
-import { FaFileUpload, FaLinkedin, FaPhoneAlt } from "react-icons/fa";
+import { MdEditDocument, MdEmail, MdOutlinePhotoCamera } from "react-icons/md";
+import {
+  FaEdit,
+  FaFileUpload,
+  FaLinkedin,
+  FaPhoneAlt,
+  FaUserEdit,
+} from "react-icons/fa";
 import {
   FaLocationDot,
   FaSquareFacebook,
@@ -49,25 +55,13 @@ interface ProfileResponse {
 }
 
 const Profile = () => {
-  const [mainMenu, setMainMenu] = useState(false);
-
   const [profileInfo, setProfileInfo] = useState<TProfileInfo | null>(null);
 
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
   const editProfileModalState = useEditProfileModal();
 
-  const uploadProfileImgModalState = useUploadProfileImgModal();
-
   const AxiosPrivate = useAxiosPrivate();
-
-  const auth = useAuth();
-
-  const logout = useLogout();
-
-  const toggleMainMenu = () => {
-    setMainMenu((value) => !value);
-  };
 
   const cloudinaryRef = useRef<any>();
   const widgetRef = useRef<any>();
@@ -88,6 +82,8 @@ const Profile = () => {
             await AxiosPrivate.patch("/user/profileImg", {
               publicID: result.info.public_id,
             });
+
+            setTriggerRefetch((val) => !val);
           }
         },
       );
@@ -132,96 +128,30 @@ const Profile = () => {
 
   return (
     <>
-      <header className=" ">
-        <nav className=" fixed w-full bg-white z-10  px-2 lg:px-6 border-b-2">
-          <div
-            className=" 
-              py-4 
-              
-            "
-          >
-            <Container>
-              <div
-                className="
-                flex
-                flex-row
-                items-center
-                justify-between
-                gap-3
-                md:gap-0"
-              >
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={120} width={120} alt="" />
-                  </div>
-                </Link>
-
-                <div className=" relative  max-w-[120px] flex justify-end ">
-                  {/* asdf */}
-
-                  <div
-                    onClick={toggleMainMenu}
-                    className="
-              
-             
-             bg-
-             
-             
-             cursor-pointer border-2  border-black px-2 rounded-md py-1 "
-                  >
-                    <AiFillAppstore className="     text-[30px] hover:scale-110 transform  transition duration-150" />
-
-                    {mainMenu && (
-                      <Menu>
-                        <MenuItem onClick={() => {}} label="Listings" />
-                        <MenuItem onClick={() => {}} label="Reservation" />
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              logout();
-                            }}
-                            label="Logout"
-                          />
-                        )}
-                      </Menu>
-                    )}
-                  </div>
-                  {/* asdf */}
-                </div>
-              </div>
-            </Container>
-          </div>
-        </nav>
-      </header>
-
-      <main className=" pt-[118px] px-2 lg:px-6 md:px-6 sm:px-4 ">
-        <div className=" max-w-[900px] mx-auto">
-          <div>
-            <div className=" flex flex-col  gap-3 sm:flex-row justify-between mx-2 items-center">
-              <h1 className=" hidden sm:block font-bold md:text-[34px] text-3xl text-center">
-                Manage SwiftIn Account
-              </h1>
-
-              <h1 className="sm:hidden block font-bold md:text-[34px] text-3xl text-center">
+      <main className="  px-6 pt-[50px]   ">
+        <div className=" mx-auto max-w-[1000px] lg:px-9">
+          <div className=" text- rounded-lg     px-4 py-4 font-Sen">
+            <div className=" justify- justify- mx-2   flex flex-col  items-center  gap-5 md:flex-row">
+              <h1 className="  text-center text-4xl font-semibold    md:text-[38px]">
                 SwiftIn Account
               </h1>
 
               <button
-                className=" bg-black text-white px-3 py-2 mt-2 rounded-lg font-semibold cursor-pointer "
+                className=" mt-4 flex cursor-pointer items-center rounded-full border-2  border-black py-[6px] pe-[4px] ps-[8px] font-semibold  md:mt-0 "
                 onClick={() => {
                   editProfileModalState.onOpen();
                 }}
               >
-                <p className=" hidden sm:block">Edit Profile</p>
-                <p className=" sm:hidden block">Edit Account </p>
+                <FaUserEdit className="  text-lg" />
+                {/* <p className=" hidden sm:block">Edit Profile</p> */}
+                {/* <p className="  font-Inter text-xl">EDIT </p> */}
               </button>
             </div>
           </div>
 
           {/* // <AdvancedImage cldImg={myImage} plugins={[lazyload()]} /> */}
-          <div className=" pt-8 flex flex-col sm:flex-row items-center  sm:items-stretch mt-4  gap-8 ">
-            <div className="   h-[300px] sm:h-auto  justify-center  w-3/4 sm:w-1/3  flex flex-col items-center border-2   px-10 py-12 border-neutral-400 rounded-xl">
+          <div className=" mt-4 flex flex-col items-center gap-8  pt-7 sm:flex-row  sm:items-stretch ">
+            <div className="   flex h-[300px]  w-3/4  flex-col items-center  justify-center rounded-xl   border-black bg-slate-50  px-10  py-12 shadow-lg sm:h-auto sm:w-1/3">
               <div className=" relative flex  justify-center rounded-full ">
                 {profileInfo?.image ? (
                   <img
@@ -238,75 +168,78 @@ const Profile = () => {
                 )}
 
                 <div
-                  className=" absolute right-0 rounded-lg bg-black px-1 py-1 cursor-pointer"
+                  className=" absolute bottom-2 flex  cursor-pointer items-center rounded-full bg-black px-[6px] py-[6px]"
                   onClick={() => {
                     widgetRef.current.open();
                   }}
                 >
-                  <FaFileUpload className="   text-xl text-white   " />
+                  <MdOutlinePhotoCamera className="    text-white   " />
                 </div>
               </div>
 
-              <p className="  pt-3 font-Sen  font-bold text-xl">
+              <p className="  pt-3 text-center  font-Sen text-xl font-bold capitalize text-blue-950">
                 {" "}
                 {profileInfo?.username || "undefined"}{" "}
               </p>
             </div>
 
-            <div className=" h-[300px] sm:h-auto  w-3/4 sm:w-1/3 flex flex-col gap-2  items-center justify-around border-2   px-2 py-12 border-neutral-400 rounded-xl">
-              <div className=" w-full  flex  flex-col items-center gap-2 ">
-                {/* <MdEmail className=" text-xl justify-self-center" /> */}
+            <div className=" flex h-[300px]  w-3/4 flex-col items-center justify-around gap-2  rounded-xl    border-black bg-slate-50  px-2   py-12 text-sm shadow-lg sm:h-auto sm:w-1/3">
+              <div className=" flex   w-full  items-center  justify-center gap-2 ">
+                <MdEmail className=" text-xl " />
                 <p className="   font-Sen  font-bold ">
                   {" "}
                   {profileInfo?.email || "undefined"}
                 </p>
               </div>
-              <div className=" w-full flex  flex-col items-center gap-3  ">
-                {/* <FaPhoneAlt className=" text-xl justify-self-center" /> */}
+
+              <div className=" flex w-full items-center justify-center gap-3 ">
+                <FaLocationDot className=" justify-self-center text-xl" />
+                <p className="   font-Sen  font-bold  ">
+                  {" "}
+                  {profileInfo?.city
+                    ? `${profileInfo.city}`
+                    : " Location unknown"}{" "}
+                </p>
+              </div>
+              <div className=" flex w-full  items-center justify-center gap-3  ">
+                <FaPhoneAlt className=" justify-self-center text-xl" />
                 <p className="   font-Sen  font-bold ">
                   +91 {profileInfo?.phone || " xx-xx-xx-xx-xx"}
                 </p>
               </div>
-              <div className=" w-full flex  flex-col items-center gap-3 ">
-                {/* <FaLocationDot className=" text-xl justify-self-center" /> */}
-                <p className="   font-Sen  font-bold  ">
-                  {" "}
-                  {profileInfo?.city ? `${profileInfo.city}` : "undefined"}{" "}
-                </p>
-              </div>
             </div>
 
-            <div className=" h-[300px] sm:h-auto  w-3/4 sm:w-1/3 flex flex-col items-center justify-center border-2   px-4 py-12 border-neutral-400 rounded-xl">
-              <div className=" w-2/4 sm:w-3/4 mx-auto border-4    border-neutral-400  py-8 rounded-full">
-                <p className=" text-center text-3xl font-bold font-Sen">
+            <div className=" flex h-[300px]  w-3/4 flex-col items-center justify-center rounded-xl   border-black bg-slate-50  px-4   py-12 shadow-lg sm:h-auto sm:w-1/3">
+              <div className=" mx-auto w-2/4 rounded-full border-4    border-black  py-8 sm:w-3/4">
+                <p className=" text-center font-Sen text-3xl font-bold">
                   {profileInfo?.wallet || " zero"}
                 </p>
               </div>
 
-              <p className="  pt-6 font-Sen  font-bold text-xl">
+              <p className="  pt-6 font-Sen  text-xl font-bold">
                 SwiftIn Wallet{" "}
               </p>
             </div>
           </div>
 
-          <div className=" w-3/4 sm:w-auto mx-auto sm:mx-0 flex  flex-col sm:flex-row items-center justify-center my-7 border-2 border-neutral-400 rounded-xl text-center sm:text-start">
-            <div className=" flex flex-col w-[90%] py-10 sm:ps-10 gap-10  ">
-              <div className=" flex flex-col  gap-6 sm:gap-0 sm:flex-row items-center">
-                <p className=" text-2xl sm:w-[40%] font-Sen font-bold">
+          <div className=" mx-auto my-7 flex w-3/4 flex-col  items-center justify-center rounded-xl    border-black bg-slate-50  text-center shadow-lg sm:mx-0 sm:w-auto sm:flex-row sm:text-start">
+            <div className=" flex w-[90%] flex-col gap-10 py-10 sm:ps-10  ">
+              <div className=" flex flex-col  items-center gap-6 sm:flex-row sm:gap-0">
+                <p className=" font-Sen text-lg font-bold sm:w-[40%] md:text-2xl">
                   About You
                 </p>
-                <p className=" font-Sen font-bold">
+                <p className=" px-2 font-Sen text-sm font-bold md:px-0 md:text-base ">
                   {profileInfo?.aboutYou ||
                     " Explain about yourself and your travel"}
                 </p>
               </div>
 
-              <div className=" flex flex-col gap-6 sm:gap-0 sm:flex-row items-center">
-                <p className=" text-2xl sm:w-[40%] font-Sen font-bold">
-                  Address
+              <div className=" flex flex-col items-center gap-6 sm:flex-row sm:gap-0">
+                <p className=" font-Sen text-lg font-bold sm:w-[40%] md:text-2xl">
+                  Business Address
                 </p>
 
-                <div>
+                <div className=" px-2 text-sm md:px-0 md:text-base">
                   <p className=" font-Sen font-bold">
                     {profileInfo?.address
                       ? `${profileInfo.addressLine} , ${profileInfo.locality}`
@@ -322,7 +255,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className=" flex sm:flex-col gap-2 text-3xl pb-4 sm:pb-0">
+            <div className=" flex gap-2 pb-6 text-3xl sm:flex-col sm:pb-0">
               <FaSquareFacebook />
               <FaLinkedin />
               <FaSquareInstagram />

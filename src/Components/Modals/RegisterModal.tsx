@@ -15,8 +15,6 @@ import { Axios } from "../../Api/Axios";
 import toast from "react-hot-toast";
 import { REGISTER_URL } from "../../Api/EndPoints";
 import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
-import { useGoogleLogin } from "@react-oauth/google";
-import useAuth from "../../Hooks/zustandStore/useAuth";
 import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
 
 interface UserData {
@@ -24,11 +22,7 @@ interface UserData {
   email: string;
 }
 
-interface googleAuthResponse {
-  accessToken: string;
-  roles: number[];
-  user: string;
-}
+
 
 // zod schema for validating react hook form
 
@@ -54,13 +48,13 @@ const SignUpSchema = z
   });
 
 const RegisterModal = () => {
-  // registerModal , otpModal state management Zustand
+  // state management Zustand
 
-  const registerModal = useRegisterModal();
+  const registerModalState = useRegisterModal();
 
-  const otpModal = useOtpModal();
-
-  const auth = useAuth();
+  const otpModalState = useOtpModal();
+  
+  // google login hook 
 
   const googleLogin = UseGoogleLogin();
 
@@ -73,6 +67,7 @@ const RegisterModal = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
@@ -91,18 +86,32 @@ const RegisterModal = () => {
 
     try {
       const response = await Axios.post<UserData>(REGISTER_URL, data);
-
-      toast.success("User created successfully");
+      
+      if(response.status === 201){
+        
+        toast.success("User created successfully");
+      }
+      
+      if(response.status === 200){
+        
+        toast.success('Account already exist but not verified. Verify now')
+      }
+      
 
       setIsLoading(false);
 
-      otpModal.setData(response.data.userId, response.data.email);
+      otpModalState.setData(response.data.userId, response.data.email);
 
-      registerModal.onClose();
+      registerModalState.onClose();
 
-      otpModal.onOpen();
+      otpModalState.onOpen();
+      
+      reset()
+      
     } catch (err: any) {
       setIsLoading(false);
+      
+ 
 
       if (!err?.response) {
         toast.error("No Server Response");
@@ -118,41 +127,13 @@ const RegisterModal = () => {
     }
   };
 
-  // const googleLogin = useGoogleLogin({
-  //   flow: "auth-code",
-  //   onSuccess: async (response) => {
-  //     try {
-  //       const res = await Axios.post<googleAuthResponse>(
-  //         "/auth/google",
-  //         { code: response.code },
-  //         { withCredentials: true },
-  //       );
-
-  //       auth.setAuth(res.data.accessToken, res.data.roles, res.data.user);
-
-  //       registerModal.onClose();
-
-  //       let message = `Welcome to SwiftIn ${res.data.user}`;
-
-  //       toast.success(message);
-  //     } catch (err) {
-  //       toast.error("Google Login Failed Try Again");
-  //       console.log(err);
-  //     }
-  //   },
-  //   onError: (err) => {
-  //     toast.error("Google Login Failed Try Again");
-  //     console.log(err);
-  //   },
-  // });
-
   // body content for input form
 
   const bodyContent = (
     <div className=" flex flex-col gap-1">
       <Heading title="Welcome to SwiftIn" />
 
-      <div className=" flex gap-3 flex-col">
+      <div className=" flex flex-col gap-3">
         <Input
           id="username"
           label="Username"
@@ -180,9 +161,17 @@ const RegisterModal = () => {
   // footer content for modal - google and gitHub oAuth buttons
 
   const footer = (
-    <div className=" flex  flex-col items-center gap-4">
+    <div className=" mb-4   flex flex-col items-center gap-6">
+      <div className=" relative flex  w-full flex-col items-center justify-center">
+        <div className="absolute  h-[1.25px] w-full  bg-gray-400"></div>
+
+        <div className=" z-20 mb-1 bg-white px-4  font-semibold text-gray-400">
+          or
+        </div>
+      </div>
+
       <Button
-        label="Google"
+        label="Sign up with Google"
         onClick={() => {
           googleLogin();
         }}
@@ -197,8 +186,8 @@ const RegisterModal = () => {
   return (
     <Modal
       disabled={isLoading}
-      isOpen={registerModal.isOpen}
-      onClose={registerModal.onClose}
+      isOpen={registerModalState.isOpen}
+      onClose={registerModalState.onClose}
       onSubmit={handleSubmit(onSubmit)}
       title="Register"
       submitActionLabel="continue"

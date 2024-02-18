@@ -1,11 +1,10 @@
-import React from 'react'
-import { Axios } from '../../Api/Axios';
-import { useGoogleLogin } from '@react-oauth/google';
-import useRegisterModal from '../zustandStore/useRegisterModal';
-import toast from 'react-hot-toast';
-import useAuth from '../zustandStore/useAuth';
-import LoginModal from '../../Components/Modals/LoginModal';
-import useLoginModal from '../zustandStore/useLoginModal';
+import { Axios } from "../../Api/Axios";
+import { useGoogleLogin } from "@react-oauth/google";
+import useRegisterModal from "../zustandStore/useRegisterModal";
+import toast from "react-hot-toast";
+import useAuth from "../zustandStore/useAuth";
+import useLoginModal from "../zustandStore/useLoginModal";
+import { GOOGLE_AUTH_URL } from "../../Api/EndPoints";
 
 interface googleAuthResponse {
   accessToken: string;
@@ -14,33 +13,28 @@ interface googleAuthResponse {
 }
 
 const UseGoogleLogin = () => {
-    
-    const registerModal = useRegisterModal();
-    
-    const LoginModal = useLoginModal()
-    
-    const auth = useAuth();
-  
-    
+  const registerModalState = useRegisterModal();
+
+  const LoginModalState = useLoginModal();
+
+  const auth = useAuth();
+
   const googleLogin = useGoogleLogin({
     flow: "auth-code",
     onSuccess: async (response) => {
       try {
         const res = await Axios.post<googleAuthResponse>(
-          "/auth/google",
+          GOOGLE_AUTH_URL,
           { code: response.code },
           { withCredentials: true },
         );
 
         auth.setAuth(res.data.accessToken, res.data.roles, res.data.user);
-            
-        if(registerModal.isOpen){
-            
-            registerModal.onClose();
-        }
-        else if (LoginModal.isOpen){
-            
-            LoginModal.onClose();
+
+        if (registerModalState.isOpen) {
+          registerModalState.onClose();
+        } else if (LoginModalState.isOpen) {
+          LoginModalState.onClose();
         }
 
         let message = `Welcome to SwiftIn ${res.data.user}`;
@@ -56,11 +50,8 @@ const UseGoogleLogin = () => {
       console.log(err);
     },
   });
-  
-  
+
   return googleLogin;
+};
 
-    
-}
-
-export default UseGoogleLogin
+export default UseGoogleLogin;

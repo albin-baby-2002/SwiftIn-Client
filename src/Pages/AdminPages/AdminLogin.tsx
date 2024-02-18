@@ -59,7 +59,6 @@ const AdminLogin = () => {
       toast.success("login successful");
 
       navigate("/admin/users");
-      
     } catch (err: any) {
       console.log(err);
 
@@ -93,15 +92,15 @@ const AdminLogin = () => {
 
   return (
     <>
-      <main>
+      <main className=" max-h-screen  overflow-y-hidden">
         <Container>
-          <div className=" md:w-2/3 lg:w-1/2 mx-auto flex  flex-col items-center  justify-center h-screen gap-8">
-            <img src={swiftIn} alt="" height={150} width={150} />
-            <h1 className=" text-4xl  font-sen text-center  font-bold">
+          <div className="  mx-auto my-10 flex   flex-col items-center  justify-center gap-4 rounded-lg border-2 py-12 shadow-md md:w-2/3 lg:w-2/5 ">
+            <img src={swiftIn} alt="" height={100} width={100} />
+            <h1 className=" font-sen  text-center text-2xl  font-bold">
               Welcome Back Admin
             </h1>
 
-            <div className=" w-[80%] flex flex-col gap-6">
+            <div className=" flex w-[80%] flex-col gap-6">
               <Input
                 id="email"
                 label="Email"

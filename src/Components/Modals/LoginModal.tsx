@@ -101,6 +101,14 @@ const LoginModal = () => {
 
   const footer = (
     <div className=" flex  flex-col items-center gap-4">
+      <div className=" relative flex  w-full flex-col items-center justify-center">
+        <div className="absolute  h-[1.25px] w-full  bg-gray-400"></div>
+
+        <div className=" z-20 mb-1 bg-white px-4  font-semibold text-gray-400">
+          or
+        </div>
+      </div>
+
       <Button
         label="Google"
         onClick={() => {

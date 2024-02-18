@@ -87,7 +87,7 @@ const Modal: React.FC<ModelProps> = ({
                 <Button label={submitActionLabel} onClick={handleSubmit} />
               </div>
 
-              {footer && <div className="py-4 px-8">{footer}</div>}
+              {footer && <div className="py-2 px-8">{footer}</div>}
             </div>
           </div>
         </div>
