@@ -56,11 +56,15 @@ const Profile = () => {
         {
           cloudName: "dfm8vhuea",
           uploadPreset: "lmyyofoj",
+          clientAllowedFormats: ["jpg", "jpeg", "png", "webP"],
         },
         async function (error: any, result: any) {
           if (error) {
             toast.error("Failed to upload profile Img");
+            
+            return;
           }
+          
 
           if (result.info.public_id) {
             try {
@@ -168,7 +172,6 @@ const Profile = () => {
               </div>
 
               <p className="  pt-3 text-center  font-Sen text-xl font-bold capitalize text-blue-950">
-                
                 {profileInfo?.username || "undefined"}
               </p>
             </div>
@@ -177,7 +180,6 @@ const Profile = () => {
               <div className=" flex   w-full  items-center  justify-center gap-2 ">
                 <MdEmail className=" text-xl " />
                 <p className="   font-Sen  font-bold ">
-                  
                   {profileInfo?.email || "undefined"}
                 </p>
               </div>
@@ -185,7 +187,6 @@ const Profile = () => {
               <div className=" flex w-full items-center justify-center gap-3 ">
                 <FaLocationDot className=" justify-self-center text-xl" />
                 <p className="   font-Sen  font-bold  ">
-                  
                   {profileInfo?.city
                     ? `${profileInfo.city}`
                     : " Location unknown"}

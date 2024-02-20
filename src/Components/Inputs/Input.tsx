@@ -10,6 +10,7 @@ interface InputProps {
   textBox?: boolean;
   register: UseFormRegister<FieldValues>;
   errors: FieldErrors<FieldValues>;
+  HalfWidth?:boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,12 +22,15 @@ const Input: React.FC<InputProps> = ({
   required,
   textBox,
   errors,
+  HalfWidth
 }) => {
   useEffect(() => {}, [errors]);
 
   return (
-    <div className="  flex flex-col gap-2  text-sm">
-      <label className=" font-bold text-neutral-400 px-2 pt-2">{label}</label>
+    <div
+      className={`${HalfWidth ? "w-full" : ""} flex flex-col gap-2  text-sm`}
+    >
+      <label className=" px-2 pt-2 font-bold text-neutral-400">{label}</label>
 
       <div className="relative flex flex-col">
         {textBox ? (
@@ -34,7 +38,7 @@ const Input: React.FC<InputProps> = ({
             id={id}
             disabled={disabled}
             {...register(id)}
-            className={`border-2  py-2 px-2 rounded-md focus:outline-none
+            className={`rounded-md  border-2 px-2 py-2 focus:outline-none
           ${errors[id] ? "focus:border-rose-400" : "focus:border-black"}
           ${errors[id] ? "border-rose-400" : "border-neutral-400"}
           ${textBox ? "h-20" : ""}
@@ -46,7 +50,7 @@ const Input: React.FC<InputProps> = ({
             type={type}
             disabled={disabled}
             {...register(id)}
-            className={`border-2  py-2 px-2 rounded-md focus:outline-none
+            className={`rounded-md  border-2 px-2 py-2 focus:outline-none
           ${errors[id] ? "focus:border-rose-400" : "focus:border-black"}
           ${errors[id] ? "border-rose-400" : "border-neutral-400"}
           ${textBox ? "h-20" : ""}
@@ -55,7 +59,7 @@ const Input: React.FC<InputProps> = ({
         )}
 
         {errors[id] && (
-          <p className=" pt-2  ps-1 text-xs  text-rose-400 font-semibold  ">
+          <p className=" ps-1  pt-2 text-xs  font-semibold text-rose-400  ">
             {errors[id]?.message as string}
           </p>
         )}
