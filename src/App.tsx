@@ -19,7 +19,7 @@ import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
 import ManageListings from "./Pages/Host Pages/ManageListings";
 
 function App() {
-  const logout = useLogout();
+ 
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -44,8 +44,9 @@ function App() {
           <Route path="/manage/property" element={<ManageListings />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
+          
           <Route
-            path="/admin/console"
+            path="/admin/console/test"
             element={
               <PrivateRoute
                 Element={Console}

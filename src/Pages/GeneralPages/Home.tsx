@@ -1,11 +1,9 @@
-import { useEffect } from "react";
+
 import LoginModal from "../../Components/Modals/LoginModal";
 import OtpModal from "../../Components/Modals/OtpModal";
 import RegisterModal from "../../Components/Modals/RegisterModal";
 import Navbar from "../../Components/Navbar/Navbar";
-import useAuth from "../../Hooks/zustandStore/useAuth";
 import Container from "../../Components/UiComponents/Container";
-import heroImg from "../Assets/heroimg.jpg";
 
 const Home = () => {
   return (

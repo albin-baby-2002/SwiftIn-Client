@@ -1,51 +1,24 @@
-import z from "zod";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-
-import { FcGoogle } from "react-icons/fc";
-
-import Modal from "./Modal";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Heading from "../UiComponents/Heading";
-import Input from "../Inputs/Input";
 import Button from "../UiComponents/Button";
+import { FcGoogle } from "react-icons/fc";
+import Input from "../Inputs/Input";
+import { useState } from "react";
+import Modal from "./ParentModal/Modal";
 
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
-import { Axios } from "../../Api/Axios";
 import toast from "react-hot-toast";
+import { Axios } from "../../Api/Axios";
 import { REGISTER_URL } from "../../Api/EndPoints";
+import { SignUpSchema } from "../../Schemas/signUpSchema";
 import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
 import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
+import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 
 interface UserData {
   userId: string;
   email: string;
 }
-
-
-
-// zod schema for validating react hook form
-
-const SignUpSchema = z
-
-  .object({
-    email: z.string().email("Enter a valid email"),
-    username: z.string().min(5, "user name should have min 5 character"),
-    password: z
-      .string()
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        {
-          message:
-            "minimum 8 char & min one (uppercase & lowercase letter, special char & number)",
-        },
-      ),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Confirm Password does not match original password",
-    path: ["confirmPassword"],
-  });
 
 const RegisterModal = () => {
   // state management Zustand
@@ -53,8 +26,8 @@ const RegisterModal = () => {
   const registerModalState = useRegisterModal();
 
   const otpModalState = useOtpModal();
-  
-  // google login hook 
+
+  // google login hook
 
   const googleLogin = UseGoogleLogin();
 
@@ -86,17 +59,14 @@ const RegisterModal = () => {
 
     try {
       const response = await Axios.post<UserData>(REGISTER_URL, data);
-      
-      if(response.status === 201){
-        
+
+      if (response.status === 201) {
         toast.success("User created successfully");
       }
-      
-      if(response.status === 200){
-        
-        toast.success('Account already exist but not verified. Verify now')
+
+      if (response.status === 200) {
+        toast.success("Account already exist but not verified. Verify now");
       }
-      
 
       setIsLoading(false);
 
@@ -105,13 +75,10 @@ const RegisterModal = () => {
       registerModalState.onClose();
 
       otpModalState.onOpen();
-      
-      reset()
-      
+
+      reset();
     } catch (err: any) {
       setIsLoading(false);
-      
- 
 
       if (!err?.response) {
         toast.error("No Server Response");
@@ -158,7 +125,7 @@ const RegisterModal = () => {
     </div>
   );
 
-  // footer content for modal - google and gitHub oAuth buttons
+  // footer content for modal - google oAuth button
 
   const footer = (
     <div className=" mb-4   flex flex-col items-center gap-6">

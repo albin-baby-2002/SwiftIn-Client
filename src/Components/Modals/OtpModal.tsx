@@ -1,4 +1,4 @@
-import Modal from "./Modal";
+import Modal from "./ParentModal/Modal";
 import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
 import logo from "../../Assets/logo3.png";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +13,8 @@ const OtpModal = () => {
   const otpModalState = useOtpModal();
 
   const loginModalState = useLoginModal();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [otp, setOtp] = useState<string[]>(new Array(4).fill(""));
 
@@ -73,7 +75,7 @@ const OtpModal = () => {
   // submit function
 
   const handleSubmit = async () => {
-    console.log("submit");
+    setIsLoading(true);
 
     let value = otp.join("");
 
@@ -88,12 +90,15 @@ const OtpModal = () => {
         userId,
       });
 
+      setIsLoading(false);
+
       toast.success("verification success");
 
       otpModalState.onClose();
 
       loginModalState.onOpen();
     } catch (err: any) {
+      setIsLoading(false);
       console.log(err);
 
       if (!err?.response) {
@@ -127,7 +132,6 @@ const OtpModal = () => {
       });
 
       toast.success("OTP send to your email ");
-
     } catch (err: any) {
       console.log(err);
 
@@ -153,8 +157,11 @@ const OtpModal = () => {
       <img className="py-3" src={logo} alt="" height={80} width={80} />
 
       <p className="  w-5/6 py-5 text-center text-sm  font-bold  leading-6 ">
-        We have send an OTP to your email address please enter it to verify your
-        account
+        We have send an OTP to
+        {otpModalState.email
+          ? ` ${otpModalState.email} `
+          : "your email address"}
+        please enter the OTP to verify your account
       </p>
 
       <div className=" flex  gap-3  py-5">
@@ -184,7 +191,7 @@ const OtpModal = () => {
         onClick={() => {
           resendOtp();
         }}
-        className=" mb-3 mt-4 font-semibold cursor-pointer"
+        className=" mb-3 mt-4 cursor-pointer font-semibold"
       >
         Resend OTP
       </p>
@@ -199,6 +206,7 @@ const OtpModal = () => {
       onClose={otpModalState.onClose}
       submitActionLabel="verify"
       body={bodyContent}
+      disabled={isLoading}
     />
   );
 };

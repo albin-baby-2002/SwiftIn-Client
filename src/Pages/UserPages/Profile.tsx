@@ -1,37 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import Container from "../../Components/UiComponents/Container";
-import swiftin from "../../Assets/logo3.png";
-import profileImg from "../../Assets/profile.svg";
-
-import { AiFillAppstore } from "react-icons/ai";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
-import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
-import useAuth from "../../Hooks/zustandStore/useAuth";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
-import { MdEditDocument, MdEmail, MdOutlinePhotoCamera } from "react-icons/md";
-import {
-  FaEdit,
-  FaFileUpload,
-  FaLinkedin,
-  FaPhoneAlt,
-  FaUserEdit,
-} from "react-icons/fa";
 import {
   FaLocationDot,
   FaSquareFacebook,
   FaSquareInstagram,
 } from "react-icons/fa6";
 
-import EditProfileModal from "../../Components/Modals/EditProfileModal";
 import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
+
+import profileImg from "../../Assets/profile.svg";
+import { useEffect, useRef, useState } from "react";
+import { MdEmail, MdOutlinePhotoCamera } from "react-icons/md";
+import { FaLinkedin, FaPhoneAlt, FaUserEdit } from "react-icons/fa";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import useUploadProfileImgModal from "../../Hooks/zustandStore/useProfileImgUploadModal";
-import UploadProfileImgModal from "../../Components/Modals/uploadProfileImgModal";
-import { Cloudinary } from "@cloudinary/url-gen/index";
-import { AdvancedImage, lazyload } from "@cloudinary/react";
-import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
-import { thumbnail } from "@cloudinary/url-gen/actions/resize";
-import { Link } from "react-router-dom";
+import EditProfileModal from "../../Components/Modals/EditProfileModal";
+import { PROFILE_DATA_URL, UPDATE_PROFILE_IMG_URL } from "../../Api/EndPoints";
+import toast from "react-hot-toast";
 
 interface TProfileInfo {
   _id: string;
@@ -76,14 +58,34 @@ const Profile = () => {
           uploadPreset: "lmyyofoj",
         },
         async function (error: any, result: any) {
-          console.log(result.info.public_id, "result of upload");
+          if (error) {
+            toast.error("Failed to upload profile Img");
+          }
 
           if (result.info.public_id) {
-            await AxiosPrivate.patch("/user/profileImg", {
-              publicID: result.info.public_id,
-            });
+            try {
+              await AxiosPrivate.patch(UPDATE_PROFILE_IMG_URL, {
+                publicID: result.info.public_id,
+              });
 
-            setTriggerRefetch((val) => !val);
+              toast.success("profile img updated");
+
+              setTriggerRefetch((val) => !val);
+            } catch (err: any) {
+              console.log(err);
+
+              if (!err?.response) {
+                toast.error("No Server Response");
+              } else if (err.response?.status === 400) {
+                toast.error(err.response.data.message);
+              } else if (err.response?.status === 500) {
+                toast.error(
+                  "Oops! Something went wrong. Please try again later.",
+                );
+              } else {
+                toast.error("Login Failed");
+              }
+            }
           }
         },
       );
@@ -96,7 +98,7 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         const response =
-          await AxiosPrivate.get<ProfileResponse>("/user/profile");
+          await AxiosPrivate.get<ProfileResponse>(PROFILE_DATA_URL);
 
         console.log(response);
 
@@ -117,15 +119,6 @@ const Profile = () => {
     };
   }, [triggerRefetch]);
 
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: "dfm8vhuea",
-    },
-  });
-
-  const myImage = cld.image(profileInfo?.image);
-  myImage.resize(thumbnail().height(150)).roundCorners(byRadius(250));
-
   return (
     <>
       <main className="  px-6 pt-[50px]   ">
@@ -143,13 +136,10 @@ const Profile = () => {
                 }}
               >
                 <FaUserEdit className="  text-lg" />
-                {/* <p className=" hidden sm:block">Edit Profile</p> */}
-                {/* <p className="  font-Inter text-xl">EDIT </p> */}
               </button>
             </div>
           </div>
 
-          {/* // <AdvancedImage cldImg={myImage} plugins={[lazyload()]} /> */}
           <div className=" mt-4 flex flex-col items-center gap-8  pt-7 sm:flex-row  sm:items-stretch ">
             <div className="   flex h-[300px]  w-3/4  flex-col items-center  justify-center rounded-xl   border-black bg-slate-50  px-10  py-12 shadow-lg sm:h-auto sm:w-1/3">
               <div className=" relative flex  justify-center rounded-full ">
@@ -178,8 +168,8 @@ const Profile = () => {
               </div>
 
               <p className="  pt-3 text-center  font-Sen text-xl font-bold capitalize text-blue-950">
-                {" "}
-                {profileInfo?.username || "undefined"}{" "}
+                
+                {profileInfo?.username || "undefined"}
               </p>
             </div>
 
@@ -187,7 +177,7 @@ const Profile = () => {
               <div className=" flex   w-full  items-center  justify-center gap-2 ">
                 <MdEmail className=" text-xl " />
                 <p className="   font-Sen  font-bold ">
-                  {" "}
+                  
                   {profileInfo?.email || "undefined"}
                 </p>
               </div>
@@ -195,10 +185,10 @@ const Profile = () => {
               <div className=" flex w-full items-center justify-center gap-3 ">
                 <FaLocationDot className=" justify-self-center text-xl" />
                 <p className="   font-Sen  font-bold  ">
-                  {" "}
+                  
                   {profileInfo?.city
                     ? `${profileInfo.city}`
-                    : " Location unknown"}{" "}
+                    : " Location unknown"}
                 </p>
               </div>
               <div className=" flex w-full  items-center justify-center gap-3  ">
@@ -217,7 +207,7 @@ const Profile = () => {
               </div>
 
               <p className="  pt-6 font-Sen  text-xl font-bold">
-                SwiftIn Wallet{" "}
+                SwiftIn Wallet
               </p>
             </div>
           </div>
@@ -263,11 +253,6 @@ const Profile = () => {
           </div>
         </div>
         <EditProfileModal
-          reFetchData={() => {
-            setTriggerRefetch((val) => !val);
-          }}
-        />
-        <UploadProfileImgModal
           reFetchData={() => {
             setTriggerRefetch((val) => !val);
           }}

@@ -2,7 +2,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Modal from "../../Modals/Modal.tsx";
+import Modal from "../../Modals/ParentModal/Modal.tsx";
 import toast from "react-hot-toast";
 import Input from "../../Inputs/Input.tsx";
 
@@ -114,12 +114,10 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
       }
     }
   };
-  
- 
 
   const bodyContent = (
     <>
-      <div className=" flex gap-3 flex-col">
+      <div className=" flex flex-col gap-3">
         <Input
           id="username"
           label="Username"

@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { RiHeartFill, RiTvLine } from "react-icons/ri";
 import hotel from "../../Assets/hotel.webp";
+import hotel2 from "../../Assets/hotel2.webp";
+import hotel3 from "../../Assets/hotel3.webp";
+import hotel4 from "../../Assets/hotel4.webp";
+import hotel5 from "../../Assets/hotel5.webp";
 import { Link } from "react-router-dom";
 import { AiFillAppstore } from "react-icons/ai";
 import Menu from "../../Components/Navbar/SubComponents/Menu";
@@ -12,17 +16,15 @@ import swiftin from "../../Assets/logo3.png";
 import host from "../../Assets/host.webp";
 import {
   FaCar,
+  FaHeart,
   FaHotTub,
-  FaRegMinusSquare,
-  FaRegPlusSquare,
+  FaRegHeart,
   FaRegSnowflake,
   FaRupeeSign,
-  FaWifi,
 } from "react-icons/fa";
 import { TiWiFi } from "react-icons/ti";
 import { MdOutlinePool } from "react-icons/md";
-import { HiCurrencyRupee } from "react-icons/hi";
-import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
+
 import { BiMinus, BiPlus } from "react-icons/bi";
 
 const HotelDetailsPage = () => {
@@ -41,23 +43,23 @@ const HotelDetailsPage = () => {
   return (
     <>
       <header>
-        <nav className=" fixed z-10 w-full  bg-white px-2  lg:px-6 ">
-          <div className=" py-6 ">
-            <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
+        <nav className=" fixed z-10 w-full  bg-white px-2   ">
+          <div className=" border-b-2 px-6 py-5 ">
+            <div className=" mx-auto max-w-[1300px] px-2 sm:px-6 lg:px-10 ">
               <div
                 className=" flex flex-row items-center justify-between gap-3 
                 md:gap-0"
               >
                 <Link to="/">
                   <div className=" ">
-                    <img src={swiftin} height={95} width={95} alt="" />
+                    <img src={swiftin} height={85} width={85} alt="" />
                   </div>
                 </Link>
 
                 <div className=" relative  flex max-w-[120px] justify-end ">
                   <div
                     onClick={toggleMainMenu}
-                    className="cursor-pointer rounded-md  border-2 border-black px-2 py-1 "
+                    className="cursor-pointer rounded-md  border-2 border-black px-[6px] py-1 "
                   >
                     <AiFillAppstore className="     transform text-[24px] transition  duration-150 hover:scale-110" />
 
@@ -84,47 +86,56 @@ const HotelDetailsPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[110px]">
+      <main className="  pt-[34px]">
         <div
           className="
            mx-auto
-           max-w-[1100px]
+           max-w-[1300px]
            px-2
+           
            sm:px-6
-           lg:px-10"
+           "
         >
-          <div className="   rounded-3xl border-2   px-10 py-14 font-Sen">
-            <div className=" mx-6 grid grid-cols-[minmax(0,6fr)_minmax(0,1fr)] gap-5 ">
-              <h1 className=" text-[18px] font-bold md:text-2xl lg:ps-10   lg:text-[29px]">
-                Romantic Overwater Chalet With Jacuzzi
-              </h1>
-              <div className=" flex justify-self-center  ">
-                <div className=" flex h-9 items-center rounded-3xl bg-black px-3 py-2 text-xl text-white">
-                  <RiHeartFill />
+          <div className="      pt-14 font-Inter">
+            <div className=" flex  justify-center  gap-5 ">
+              <div className=" flex  w-[92%] flex-col  ">
+                <h1 className=" py-[10px] text-[26px] font-semibold">
+                  Romantic Overwater Chalet With Jacuzzi Adult Only
+                </h1>
+                <div className=" mt-1 flex gap-3">
+                  <div className=" flex  h-[270px] w-[50%]   rounded-l-xl  ">
+                    <img
+                      className="  h-full w-full rounded-l-xl"
+                      src={hotel}
+                      alt=""
+                    />
+                  </div>
+
+                  <div className=" flex max-h-[270px] w-[25%]  flex-col gap-3   ">
+                    <img className="  h-1/2   " src={hotel2} alt="" />
+                    <img className=" h-1/2     " src={hotel3} alt="" />
+                  </div>
+
+                  <div className=" flex h-[270px] w-[25%]  flex-col  gap-3  ">
+                    <img
+                      className=" h-1/2  rounded-tr-xl"
+                      src={hotel4}
+                      alt=""
+                    />
+                    <img
+                      className=" h-1/2   rounded-br-xl"
+                      src={hotel5}
+                      alt=""
+                    />
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            <div className=" mx-6 mt-6 grid grid-cols-[minmax(0,6fr)_minmax(0,1fr)]  ">
-              <div className=" flex max-h-[350px] w-[80%] items-center  justify-center lg:ps-10  ">
-                <img
-                  className=" h-[90%] w-full rounded-2xl"
-                  src={hotel}
-                  alt=""
-                />
-              </div>
-
-              <div className=" grid grid-rows-3  items-center  gap-5">
-                <img className="  rounded-2xl" src={hotel} alt="" />
-                <img className="  rounded-2xl" src={hotel} alt="" />
-                <img className="  rounded-2xl" src={hotel} alt="" />
               </div>
             </div>
           </div>
 
-          <div className=" my-14 flex justify-center">
-            <div className=" flex  items-center gap-4 font-Inter text-2xl font-semibold">
-              <div className=" h-10 w-10">
+          <div className=" mx-auto mt-9 flex w-[92%] justify-center font-Inter ">
+            <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
+              <div className=" h-8 w-8">
                 <img
                   className=" h-full w-full rounded-full"
                   src={host}

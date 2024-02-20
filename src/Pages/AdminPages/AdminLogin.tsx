@@ -1,30 +1,24 @@
-import Container from "../../Components/UiComponents/Container";
-import Input from "../../Components/Inputs/Input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
+import Container from "../../Components/UiComponents/Container";
 import { zodResolver } from "@hookform/resolvers/zod";
-import swiftIn from "../../Assets/logo3.png";
-import Button from "../../Components/UiComponents/Button";
+import Input from "../../Components/Inputs/Input";
 import { AUTH_URL } from "../../Api/EndPoints";
-
+import swiftIn from "../../Assets/logo3.png";
 import toast from "react-hot-toast";
 
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import useAuth from "../../Hooks/zustandStore/useAuth";
 import { Axios } from "../../Api/Axios";
+import { useNavigate } from "react-router-dom";
 import { ROLES_LIST } from "../../Config/userRoles";
+import useAuth from "../../Hooks/zustandStore/useAuth";
+import Button from "../../Components/UiComponents/Button";
+import { AdminLoginSchema } from "../../Schemas/adminLoginSchema";
 
 interface AuthResponse {
   accessToken: string;
   roles: number[];
   username: string;
 }
-
-const AdminLoginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "password is min 8 character long"),
-});
 
 const AdminLogin = () => {
   const auth = useAuth();
@@ -73,7 +67,7 @@ const AdminLogin = () => {
       } else if (err.response?.status === 404) {
         toast.error("Email not registered. Please SignUp");
       } else {
-        toast.error("Registration Failed");
+        toast.error("Login Failed");
       }
     }
   };

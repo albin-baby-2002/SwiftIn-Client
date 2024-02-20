@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import Button from "../UiComponents/Button";
+import Button from "../../UiComponents/Button";
 
 interface ModelProps {
   isOpen: boolean;
@@ -55,11 +55,11 @@ const Modal: React.FC<ModelProps> = ({
   return (
     <div
       className=" 
-            fixed flex justify-center items-center inset-0 bg-black/25 z-20  "
+            fixed inset-0 z-20 flex items-center justify-center bg-black/25  "
     >
       <div
         className="
-       w-full  xl:w-2/5 lg:w-2/5 md:w-2/3  my-6 mx-auto h-full  md:h-auto   "
+       mx-auto  my-6 h-full w-full  md:h-auto md:w-2/3 lg:w-2/5  xl:w-2/5   "
       >
         <div
           className={` 
@@ -69,25 +69,25 @@ const Modal: React.FC<ModelProps> = ({
         >
           <div
             className="
-                translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex  flex-col w-full bg-white pb-4  max-h-[95vh]
+                translate relative flex h-full max-h-[95vh] w-full flex-col rounded-lg border-0  bg-white pb-4 shadow-lg md:h-auto  lg:h-auto
             "
           >
-            <div className=" flex items-center rounded-t justify-center border-b-[1px] py-4 px-4  ">
+            <div className=" flex items-center justify-center rounded-t border-b-[1px] px-4 py-4  ">
               <button className="absolute left-9 " onClick={handleClose}>
                 <IoMdClose size={25} />
               </button>
 
-              <p className=" font-bold text-md">{title}</p>
+              <p className=" text-md font-bold">{title}</p>
             </div>
 
-            <div className="overflow-y-scroll  max-h-[95vh]">
-              <div className="py-4 px-8 ">{body}</div>
+            <div className="max-h-[95vh]  overflow-y-scroll">
+              <div className="px-8 py-4 ">{body}</div>
 
-              <div className="py-4 px-8">
+              <div className="px-8 py-4">
                 <Button label={submitActionLabel} onClick={handleSubmit} />
               </div>
 
-              {footer && <div className="py-2 px-8">{footer}</div>}
+              {footer && <div className="px-8 py-2">{footer}</div>}
             </div>
           </div>
         </div>

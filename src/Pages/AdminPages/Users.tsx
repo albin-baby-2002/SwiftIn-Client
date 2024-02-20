@@ -1,17 +1,14 @@
-import Container from "../../Components/UiComponents/Container";
-
-import { FaChevronRight, FaEdit, FaSearch } from "react-icons/fa";
-
-import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import Navbar from "../../Components/Admin/Navbar/Navbar";
-import { RiUserForbidFill } from "react-icons/ri";
-
 import AddUserModal from "../../Components/Admin/Modals/AddUserModal";
+import { FaChevronRight, FaEdit, FaSearch } from "react-icons/fa";
+import Container from "../../Components/UiComponents/Container";
+import Navbar from "../../Components/Admin/Navbar/Navbar";
+
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import useAddUserModal from "../../Hooks/zustandStore/useAddUserModal";
 import useEditUserModal from "../../Hooks/zustandStore/useEditUserModal";
 import EditUserModal from "../../Components/Admin/Modals/EditUserModal";
-import toast from "react-hot-toast";
 
 interface user {
   _id: string;
@@ -162,7 +159,7 @@ const Users = () => {
               </div>
 
               <div className=" flex items-center   gap-2 rounded-md  border-2 bg-black px-4  py-2 font-Sen font-semibold  text-white  ">
-                {/* <FaUserPlus className=" text-lg font-bold" /> */}
+               
 
                 <p className="  cursor-pointer" onClick={addUserModal.onOpen}>
                   Add User

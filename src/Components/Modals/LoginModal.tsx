@@ -1,22 +1,18 @@
-import {
-  FieldValue,
-  FieldValues,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import Heading from "../UiComponents/Heading";
-import Input from "../Inputs/Input";
-import Modal from "./Modal";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Heading from "../UiComponents/Heading";
 import Button from "../UiComponents/Button";
 import { FcGoogle } from "react-icons/fc";
+import Modal from "./ParentModal/Modal";
+import Input from "../Inputs/Input";
 
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { Axios } from "../../Api/Axios";
 import { AUTH_URL } from "../../Api/EndPoints";
 import useAuth from "../../Hooks/zustandStore/useAuth";
-import toast from "react-hot-toast";
+import { loginSchema } from "../../Schemas/loginSchema";
 import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
 
 interface AuthResponse {
@@ -25,17 +21,14 @@ interface AuthResponse {
   username: string;
 }
 
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "Minimum length is 8"),
-});
-
 const LoginModal = () => {
   const auth = useAuth();
 
   const loginModal = useLoginModal();
 
   const googleLogin = UseGoogleLogin();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -51,11 +44,15 @@ const LoginModal = () => {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
+      setIsLoading(true);
+
       const response = await Axios.post<AuthResponse>(AUTH_URL, data, {
         withCredentials: true,
       });
 
       // with credentials true is req for login req otherwise cookie will not be saved
+
+      setIsLoading(false);
 
       auth.setAuth(
         response.data.accessToken,
@@ -67,6 +64,7 @@ const LoginModal = () => {
 
       loginModal.onClose();
     } catch (err: any) {
+      setIsLoading(false);
       console.log(err);
 
       if (!err?.response) {
@@ -78,9 +76,9 @@ const LoginModal = () => {
       } else if (err.response?.status === 500) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else if (err.response?.status === 404) {
-        toast.error("Email not registered. Please SignUp");
+        toast.error("Failed to identify user. Login again");
       } else {
-        toast.error("Registration Failed");
+        toast.error("Login Failed");
       }
     }
   };
@@ -129,6 +127,7 @@ const LoginModal = () => {
       submitActionLabel="Login"
       body={bodyContent}
       footer={footer}
+      disabled={isLoading}
     />
   );
 };

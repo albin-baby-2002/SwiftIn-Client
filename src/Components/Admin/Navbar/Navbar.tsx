@@ -1,13 +1,8 @@
 import { BiSolidBuildings, BiSolidUserRectangle } from "react-icons/bi";
-import { FaChartSimple, FaPeopleGroup, FaX } from "react-icons/fa6";
+import { FaChartSimple, FaPeopleGroup } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 import swiftIn from "../../../Assets/logo5.png";
-import {
-  IoMdArrowDropleftCircle,
-  IoMdClose,
-  IoMdCloseCircle,
-} from "react-icons/io";
-import { BsArrowLeftSquare } from "react-icons/bs";
+import { IoMdClose } from "react-icons/io";
 
 interface NavProps {
   closeNav: () => void;
@@ -15,32 +10,32 @@ interface NavProps {
 
 const Navbar: React.FC<NavProps> = ({ closeNav }) => {
   return (
-    <div className=" fixed z-20 bg-white w-full sm:w-3/6 md:w-3/6 lg:w-2/6   transition-all duration-300 px-2  min-h-screen   border-r-2 rounded-3xl  shadow-lg  max-h-screen   ">
+    <div className=" fixed z-20 max-h-screen min-h-screen w-full rounded-3xl border-r-2   bg-white px-2 shadow-lg  transition-all   duration-300 sm:w-3/6  md:w-3/6  lg:w-2/6   ">
       <nav className="  max-h-screen   ">
-        <div className=" flex  justify-end my-4  mr-4">
+        <div className=" my-4  mr-4 flex  cursor-pointer justify-end ">
           <IoMdClose className=" text-2xl font-bold" onClick={closeNav} />
         </div>
 
-        <div className=" max-w-[500px]  mx-auto   flex  flex-col  justify-between  max-h-[90vh] overflow-y-scroll  pb-6   ">
-          <div className=" flex  flex-col items-center  justify-center   mb-5 mx-4 border-black bg-black text-white  border-2  rounded-xl shadow-lg ">
+        <div className=" mx-auto  flex   max-h-[90vh]  max-w-[500px]  flex-col  justify-between overflow-y-scroll  pb-6   ">
+          <div className=" mx-4  mb-5 flex  flex-col   items-center justify-center rounded-xl border-2 border-black  bg-black  text-white shadow-lg ">
             <img
-              className="  py-4 max-h-[70px] "
+              className="  max-h-[70px] py-4 "
               src={swiftIn}
               alt=""
               height={90}
               width={90}
             />
 
-            <p className=" font-Sen  font-semibold pb-4 ">Admin Dashboard</p>
+            <p className=" pb-4  font-Sen font-semibold ">Admin Dashboard</p>
           </div>
 
-          <div className=" flex flex-col gap-6 mt-4  font-Sen  font-bold   text-sm px-4  ">
+          <div className=" mt-4 flex flex-col gap-6  px-4  font-Sen   text-sm font-bold  ">
             <NavLink
               to="/admin/console"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center  justify-between  px-4 py-2 border-2 border-black  rounded-md hover:scale-105  transition-transform duration-300 "
-                  : "  flex items-center  justify-between  px-4 py-2  rounded-md border-2 border-neutral-400 hover:scale-105  transition-transform duration-300 "
+                  ? "flex items-center  justify-between  rounded-md border-2 border-black px-4  py-2 transition-transform  duration-300 hover:scale-105 "
+                  : "  flex items-center  justify-between  rounded-md border-2  border-neutral-400 px-4 py-2 transition-transform  duration-300 hover:scale-105 "
               }
             >
               <p>Admin Console</p>
@@ -51,8 +46,8 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
               to="/admin/users"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center  justify-between  px-4 py-2 border-2 border-black  rounded-md hover:scale-105  transition-transform duration-300 "
-                  : "  flex items-center  justify-between  px-4 py-2  rounded-md border-2 border-neutral-400  hover:scale-105  transition-transform duration-300"
+                  ? "flex items-center  justify-between  rounded-md border-2 border-black px-4  py-2 transition-transform  duration-300 hover:scale-105 "
+                  : "  flex items-center  justify-between  rounded-md border-2  border-neutral-400 px-4 py-2  transition-transform  duration-300 hover:scale-105"
               }
             >
               <p>User Management</p>
@@ -63,8 +58,8 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
               to="/"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center  justify-between  px-4 py-2 border-2 border-black  rounded-md hover:scale-105  transition-transform duration-300 "
-                  : "  flex items-center  justify-between  px-4 py-2  rounded-md border-2 border-neutral-400 hover:scale-105  transition-transform duration-300 "
+                  ? "flex items-center  justify-between  rounded-md border-2 border-black px-4  py-2 transition-transform  duration-300 hover:scale-105 "
+                  : "  flex items-center  justify-between  rounded-md border-2  border-neutral-400 px-4 py-2 transition-transform  duration-300 hover:scale-105 "
               }
             >
               <p>Listings Management</p>
@@ -74,8 +69,8 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
             <NavLink
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center  justify-between  px-4 py-2 border-2 border-black  rounded-md hover:scale-105  transition-transform duration-300 "
-                  : "  flex items-center  justify-between  px-4 py-2  rounded-md border-2 border-neutral-400 hover:scale-105  transition-transform duration-300 "
+                  ? "flex items-center  justify-between  rounded-md border-2 border-black px-4  py-2 transition-transform  duration-300 hover:scale-105 "
+                  : "  flex items-center  justify-between  rounded-md border-2  border-neutral-400 px-4 py-2 transition-transform  duration-300 hover:scale-105 "
               }
               to="/"
             >
@@ -86,8 +81,8 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
             <NavLink
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center  justify-between  px-4 py-2 border- bg-black  rounded-md hover:scale-105  transition-transform duration-300 "
-                  : "  flex items-center  justify-center  px-4 py-2  rounded-md border-2 border-neutral-400 hover:scale-105  transition-transform duration-300 mt-2  bg-black text-white   "
+                  ? "border- flex  items-center  justify-between rounded-md bg-black px-4  py-2 transition-transform  duration-300 hover:scale-105 "
+                  : "  mt-2 flex  items-center  justify-center rounded-md  border-2 border-neutral-400 bg-black px-4  py-2 text-white transition-transform  duration-300 hover:scale-105   "
               }
               to="/"
             >
