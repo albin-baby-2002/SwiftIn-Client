@@ -1,57 +1,62 @@
-import { RiBuilding2Fill, RiBuilding4Fill, RiTvLine } from "react-icons/ri";
-
-import hotel from "../../Assets/hotel.webp";
-import hotel2 from "../../Assets/hotel2.webp";
-import hotel3 from "../../Assets/hotel3.webp";
-import hotel4 from "../../Assets/hotel4.webp";
-import hotel5 from "../../Assets/hotel5.webp";
-
-import { Link } from "react-router-dom";
-
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import useAuth from "../../Hooks/zustandStore/useAuth";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
-import swiftin from "../../Assets/logo3.png";
-
 import {
-  FaBuilding,
   FaCamera,
   FaCar,
-  FaEdit,
   FaHotTub,
   FaMinus,
   FaPlus,
   FaRegSnowflake,
   FaRupeeSign,
 } from "react-icons/fa";
+
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import swiftin from "../../Assets/logo3.png";
+import { RiTvLine } from "react-icons/ri";
 import { TiWiFi } from "react-icons/ti";
-import { MdBedroomChild, MdOutlinePool } from "react-icons/md";
-import { useEffect, useRef, useState } from "react";
-import { BsFillBuildingsFill } from "react-icons/bs";
+import { Link } from "react-router-dom";
+
 import { z } from "zod";
-import { FieldValues, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Input from "../../Components/Inputs/Input";
 import toast from "react-hot-toast";
 import { TbCameraPlus } from "react-icons/tb";
+import { MdOutlinePool } from "react-icons/md";
+import Input from "../../Components/Inputs/Input";
+import { useEffect, useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { FaTrashCan } from "react-icons/fa6";
 
 const HotelListingSchema = z.object({
-  addressLine: z.string().min(3, " Min length For addressLine is 3").max(20),
+  addressLine: z.string().min(3, " Min length For address is 3").max(20),
   city: z.string().min(3, " Min length For city is 3").max(15),
   district: z.string().min(3, " Min length For district is 3").max(15),
   state: z.string().min(3, " Min length is 3").max(15),
+  totalRooms: z.number().min(1),
+  maxGuests: z.number().min(1),
+  bedsPerRoom: z.number().min(1),
+  bathroomPerRoom: z.number().min(1),
+  amenities: z.array(z.string()),
+  hotelLicenseUrl: z.string().min(1),
+  aboutHotel: z.string().min(20),
+  listingTitle: z.string().min(10).max(20),
+  roomType: z.string().min(3),
+  rentPerNight: z.number().min(1000),
+
+  mainImage: z.string().refine((value) => {
+    return value;
+  }, "Main Img Is Compulsory"),
+
+  otherImages: z.array(z.string()).refine((values) => {
+    let pics = values.filter((val) => val);
+
+    return pics.length >= 4;
+  }, "Needed Four Other Images"),
+
   pinCode: z.string().refine((value) => {
     const INDIAN_PINCODE_REGEX = /^[1-9][0-9]{5}$/;
     return INDIAN_PINCODE_REGEX.test(value);
   }, "Invalid Indian Pincode"),
-  totalRooms: z.number(),
-  maxGuests: z.number(),
-  bedsPerRoom: z.number(),
-  bathroomPerRoom: z.number(),
-  amenities: z.array(z.string()),
-  mainImage: z.string(),
-  otherImages: z.array(z.string()),
 });
+
+// types used
 
 type fields = z.infer<typeof HotelListingSchema>;
 
@@ -59,18 +64,70 @@ type keyOfFields = keyof fields;
 
 interface step {
   id: string;
-  name: string;
   fields: keyOfFields[];
 }
 
+type hotelCapactiyFields =
+  | "totalRooms"
+  | "maxGuests"
+  | "bedsPerRoom"
+  | "bathroomPerRoom";
+
 const PropertyListingPage = () => {
+  // steps and fields to validate by trigger
+
   const steps: step[] = [
     {
       id: "Step 1",
-      name: "Personal Information",
       fields: ["addressLine", "city", "district", "state", "pinCode"],
     },
+
+    {
+      id: "Step 2",
+      fields: ["totalRooms", "maxGuests", "bedsPerRoom", "bathroomPerRoom"],
+    },
+
+    {
+      id: "Step 3",
+      fields: ["amenities"],
+    },
+
+    {
+      id: "Step 4",
+
+      fields: ["mainImage", "otherImages"],
+    },
+
+    {
+      id: "Step 5",
+      fields: ["listingTitle", "aboutHotel", "hotelLicenseUrl", "roomType"],
+    },
+
+    {
+      id: "Step 6",
+      fields: [
+        "rentPerNight",
+        "addressLine",
+        "city",
+        "district",
+        "state",
+        "pinCode",
+        "totalRooms",
+        "maxGuests",
+        "bedsPerRoom",
+        "bathroomPerRoom",
+        "amenities",
+        "mainImage",
+        "otherImages",
+        "listingTitle",
+        "aboutHotel",
+        "hotelLicenseUrl",
+        "roomType",
+      ],
+    },
   ];
+
+  // definition for amenities
 
   const amenitiesTypes = {
     WIFI: "freeWifi",
@@ -81,7 +138,11 @@ const PropertyListingPage = () => {
     HOT_TUB: "hotTub",
   } as const;
 
+  // literal types from value of amenities
+
   type amenity = (typeof amenitiesTypes)[keyof typeof amenitiesTypes];
+
+  // add or remove amenities from the list of amenities
 
   const manageAmenities = (amenity: amenity) => {
     if (amenities.includes(amenity)) {
@@ -96,6 +157,8 @@ const PropertyListingPage = () => {
       setValue("amenities", newAmenities);
     }
   };
+
+  // useForm hook with initial values
 
   const {
     register,
@@ -116,11 +179,18 @@ const PropertyListingPage = () => {
       bedsPerRoom: 1,
       bathroomPerRoom: 1,
       amenities: [],
-      mainImg: "",
+      mainImage: "",
       otherImages: ["", "", "", ""],
+      listingTitle: "",
+      roomType: "",
+      hotelLicenseUrl: "",
+      aboutHotel: "",
+      rentPerNight: 1000,
     },
     resolver: zodResolver(HotelListingSchema),
   });
+
+  // watch field values with destructuring
 
   const [
     totalRooms,
@@ -130,6 +200,7 @@ const PropertyListingPage = () => {
     amenities,
     mainImage,
     otherImages,
+    hotelLicenseUrl,
   ] = watch([
     "totalRooms",
     "maxGuests",
@@ -138,10 +209,22 @@ const PropertyListingPage = () => {
     "amenities",
     "mainImage",
     "otherImages",
-  ]) as [number, number, number, number, string[], string, string[]];
+    "hotelLicenseUrl",
+  ]) as [number, number, number, number, string[], string, string[], string];
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    console.log(data, "data");
+
+    try {
+    } catch (err: any) {
+      console.log(err);
+    }
+  };
+
+  // handle hotel capacity values updating
 
   const updateCapacityValues = (
-    field: "totalRooms" | "maxGuests" | "bedsPerRoom" | "bathroomPerRoom",
+    field: hotelCapactiyFields,
     operation: "add" | "sub",
   ) => {
     let RoomCapacity = { totalRooms, maxGuests, bedsPerRoom, bathroomPerRoom };
@@ -155,19 +238,29 @@ const PropertyListingPage = () => {
     }
   };
 
-  const [mainMenu, setMainMenu] = useState(false);
+  const handleDeleteImage = (imageNo: number) => {
+    if (imageNo >= 0 && imageNo < 5) {
+      if (imageNo === 0) {
+        setValue("mainImage", "");
+      } else {
+        let values = otherImages;
+
+        values[imageNo - 1] = "";
+
+        setValue("otherImages", values);
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log(errors, "error");
+  });
 
   const AxiosPrivate = useAxiosPrivate();
 
-  const auth = useAuth();
-
-  const logout = useLogout();
-
-  const toggleMainMenu = () => {
-    setMainMenu((value) => !value);
-  };
-
   const [page, setPage] = useState<number>(1);
+
+  const imgSelectedForUploadRef = useRef(0);
 
   const prevFunction = () => {
     if (page > 0) {
@@ -176,31 +269,39 @@ const PropertyListingPage = () => {
   };
 
   const nextFunction = async () => {
-    if (page < 6) {
+    if (page <= 6) {
       let fields = steps[page - 1]?.fields;
 
       if (fields) {
         const noError = await trigger(fields);
 
+        console.log(errors);
+
         if (!noError) return;
       }
 
-      setPage((val) => val + 1);
+      if (page < 6) {
+        setPage((val) => val + 1);
+      }
     }
   };
 
   const cloudinaryRef = useRef<any>();
-  const widgetRef = useRef<any>();
+  const imageWidgetRef = useRef<any>();
+  const pdfWidgetRef = useRef<any>();
 
   useEffect(() => {
     cloudinaryRef.current = window.cloudinary;
 
     if (cloudinaryRef.current) {
-      widgetRef.current = cloudinaryRef.current.createUploadWidget(
+      // hotel image upload widget
+
+      imageWidgetRef.current = cloudinaryRef.current.createUploadWidget(
         {
           cloudName: "dfm8vhuea",
           uploadPreset: "lmyyofoj",
           clientAllowedFormats: ["jpg", "jpeg", "png", "webP"],
+          maxFiles: 1,
         },
         async function (error: any, result: any) {
           if (error) {
@@ -209,21 +310,44 @@ const PropertyListingPage = () => {
 
           if (result.info.public_id) {
             try {
-              toast.success("profile img updated");
-            } catch (err: any) {
-              console.log(err);
+              if (imgSelectedForUploadRef.current === 0) {
+                setValue("mainImage", result.info.public_id);
+              } else if (imgSelectedForUploadRef.current < 5) {
+                let values = otherImages;
 
-              if (!err?.response) {
-                toast.error("No Server Response");
-              } else if (err.response?.status === 400) {
-                toast.error(err.response.data.message);
-              } else if (err.response?.status === 500) {
-                toast.error(
-                  "Oops! Something went wrong. Please try again later.",
-                );
-              } else {
-                toast.error("Login Failed");
+                values[imgSelectedForUploadRef.current - 1] =
+                  result.info.public_id;
+
+                setValue("otherImages", values);
               }
+
+              toast.success(" Image Uploaded");
+            } catch (err: any) {
+              toast.error(" Failed image Upload");
+            }
+          }
+        },
+      );
+
+      pdfWidgetRef.current = cloudinaryRef.current.createUploadWidget(
+        {
+          cloudName: "dfm8vhuea",
+          uploadPreset: "lmyyofoj",
+          clientAllowedFormats: ["pdf", "docx"],
+          maxFiles: 1,
+        },
+        async function (error: any, result: any) {
+          if (error) {
+            toast.error("Failed to upload  Document");
+          }
+
+          if (result.info.public_id) {
+            try {
+              setValue("hotelLicenseUrl", result.info.public_id);
+
+              toast.success("pdf upload successful");
+            } catch (err: any) {
+              toast.error(" Failed File Upload");
             }
           }
         },
@@ -264,7 +388,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[105px]">
+      <main className="  pt-[100px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -284,13 +408,15 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className="  flex w-full justify-center  py-8 font-Inter">
+          <div className="  flex w-full justify-center  py-7 font-Inter">
             <div className="   flex w-full flex-col gap-1   text-sm">
               <Input
                 id="addressLine"
                 label="Address Line"
                 register={register}
                 errors={errors}
+                labelBlack
+                textBase
               />
 
               <Input
@@ -298,6 +424,8 @@ const PropertyListingPage = () => {
                 label="City"
                 register={register}
                 errors={errors}
+                labelBlack
+                textBase
               />
 
               <Input
@@ -305,6 +433,8 @@ const PropertyListingPage = () => {
                 label="District"
                 register={register}
                 errors={errors}
+                labelBlack
+                textBase
               />
 
               <div className=" flex   justify-between gap-3">
@@ -314,6 +444,8 @@ const PropertyListingPage = () => {
                     label="State"
                     register={register}
                     errors={errors}
+                    labelBlack
+                    textBase
                     HalfWidth
                   />
                 </div>
@@ -323,6 +455,8 @@ const PropertyListingPage = () => {
                     label="PinCode"
                     register={register}
                     errors={errors}
+                    labelBlack
+                    textBase
                     HalfWidth
                   />
                 </div>
@@ -337,7 +471,7 @@ const PropertyListingPage = () => {
   const pageTwo = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
+        <nav className="  fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
           <div className=" pt-8">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
@@ -367,6 +501,17 @@ const PropertyListingPage = () => {
               </div>
             </div>
           </div>
+
+          {(errors["totalRooms"] ||
+            errors["maxGuests"] ||
+            errors["bedsPerRoom"] ||
+            errors["bathroomPerRoom"]) && (
+            <div className="   absolute inset-10 top-10  z-0 flex items-center justify-center">
+              <p className="  rounded-lg bg-black px-2 py-2  font-Inter  font-semibold text-rose-500">
+                All Fields Should be greater than zero
+              </p>
+            </div>
+          )}
         </nav>
       </header>
 
@@ -543,6 +688,15 @@ const PropertyListingPage = () => {
               </div>
             </div>
           </div>
+
+          {errors["amenities"] && (
+            <div className="   absolute inset-10 top-10  z-0 flex items-center justify-center">
+              <p className="  rounded-lg bg-black px-2 py-2  font-Inter  font-semibold text-rose-500">
+                Unexpected Error : Try again and if issue persist contact
+                support
+              </p>
+            </div>
+          )}
         </nav>
       </header>
 
@@ -671,6 +825,14 @@ const PropertyListingPage = () => {
               </div>
             </div>
           </div>
+
+          {(errors["mainImage"] || errors["otherImages"]) && (
+            <div className="   absolute inset-10 top-12 text-xs  z-0 flex items-center justify-center">
+              <p className="  rounded-lg bg-black px-2 py-2  font-Inter  font-semibold text-rose-500">
+                You need to fill all the Img fields
+              </p>
+            </div>
+          )}
         </nav>
       </header>
 
@@ -697,7 +859,7 @@ const PropertyListingPage = () => {
           <div
             className="  mt-10    hidden h-60 w-[90%] items-center justify-center  rounded-lg border-2 border-black"
             onClick={() => {
-              widgetRef.current.open();
+              imageWidgetRef.current.open();
             }}
           >
             <FaCamera className="  text-9xl" />
@@ -705,75 +867,175 @@ const PropertyListingPage = () => {
         </div>
 
         <div className=" mx-auto mt-10 flex max-w-[80%] gap-4">
-          <div className=" flex  h-[270px] w-[50%]  rounded-l-xl   border-4 border-gray-400  ">
+          <div
+            className={`${mainImage ? "" : " border-4 "}  relative flex  h-[270px] w-[50%]  rounded-l-xl   border-gray-400`}
+          >
             {mainImage ? (
-              <img
-                className="  h-full w-full rounded-l-xl"
-                src={hotel}
-                alt=""
-              />
+              <>
+                <img
+                  className="  h-full w-full rounded-l-lg"
+                  src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${mainImage}`}
+                  alt=""
+                />
+
+                <div className=" absolute right-2 top-2 cursor-pointer rounded-lg bg-black px-2 py-2 text-white">
+                  <FaTrashCan
+                    className=" text-sm"
+                    onClick={() => {
+                      handleDeleteImage(0);
+                    }}
+                  />
+                </div>
+              </>
             ) : (
               <div className=" flex  h-full w-full items-center justify-center">
-                <TbCameraPlus className=" text-6xl  text-gray-400 cursor-pointer " />
+                <TbCameraPlus
+                  className=" cursor-pointer  text-6xl text-gray-400 "
+                  onClick={() => {
+                    imgSelectedForUploadRef.current = 0;
+
+                    imageWidgetRef.current.open();
+                  }}
+                />
               </div>
             )}
           </div>
 
           <div className=" gap- flex h-[270px]  w-[25%] flex-col   justify-between   ">
-            <div className="  h-[47%] border-4 border-gray-400   ">
+            <div
+              className={`${otherImages[0] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
+            >
               {otherImages[0] ? (
-                <img
-                  className="  h-full w-full rounded-l-xl"
-                  src={hotel}
-                  alt=""
-                />
+                <>
+                  <img
+                    className="  h-full w-full "
+                    src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[0]}`}
+                    alt=""
+                  />
+
+                  <div className=" absolute right-2 top-2 cursor-pointer rounded-lg bg-black px-[6px] py-[6px] text-white">
+                    <FaTrashCan
+                      className=" text-xs"
+                      onClick={() => {
+                        handleDeleteImage(1);
+                      }}
+                    />
+                  </div>
+                </>
               ) : (
                 <div className=" flex  h-full w-full items-center justify-center">
-                  <TbCameraPlus className=" text-4xl  text-gray-400 cursor-pointer " />
+                  <TbCameraPlus
+                    className=" cursor-pointer  text-4xl text-gray-400 "
+                    onClick={() => {
+                      imgSelectedForUploadRef.current = 1;
+
+                      imageWidgetRef.current.open();
+                    }}
+                  />
                 </div>
               )}
             </div>
 
-            <div className="  h-[47%] border-4 border-gray-400   ">
+            <div
+              className={`${otherImages[1] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
+            >
               {otherImages[1] ? (
-                <img
-                  className="  h-full w-full rounded-l-xl"
-                  src={hotel}
-                  alt=""
-                />
+                <>
+                  <img
+                    className="  h-full w-full "
+                    src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[1]}`}
+                    alt=""
+                  />
+
+                  <div className=" absolute right-2 top-2 cursor-pointer rounded-lg bg-black px-[6px] py-[6px] text-white">
+                    <FaTrashCan
+                      className=" text-xs"
+                      onClick={() => {
+                        handleDeleteImage(2);
+                      }}
+                    />
+                  </div>
+                </>
               ) : (
                 <div className=" flex  h-full w-full items-center justify-center">
-                  <TbCameraPlus className=" text-4xl  text-gray-400 cursor-pointer " />
+                  <TbCameraPlus
+                    className=" cursor-pointer  text-4xl text-gray-400 "
+                    onClick={() => {
+                      imgSelectedForUploadRef.current = 2;
+
+                      imageWidgetRef.current.open();
+                    }}
+                  />
                 </div>
               )}
             </div>
           </div>
 
           <div className=" gap- flex h-[270px]  w-[25%] flex-col   justify-between   ">
-            <div className="  h-[47%]  rounded-tr-lg border-4 border-gray-400   ">
+            <div
+              className={`${otherImages[2] ? "" : "border-4"} relative  h-[47%]  rounded-tr-lg  border-gray-400 `}
+            >
               {otherImages[2] ? (
-                <img
-                  className="  h-full w-full rounded-l-xl"
-                  src={hotel}
-                  alt=""
-                />
+                <>
+                  <img
+                    className="  h-full w-full rounded-tr-lg"
+                    src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[2]}`}
+                    alt=""
+                  />
+
+                  <div className=" absolute right-2 top-2 cursor-pointer rounded-lg bg-black px-[6px] py-[6px] text-white">
+                    <FaTrashCan
+                      className=" text-xs"
+                      onClick={() => {
+                        handleDeleteImage(3);
+                      }}
+                    />
+                  </div>
+                </>
               ) : (
                 <div className=" flex  h-full w-full items-center justify-center">
-                  <TbCameraPlus className=" text-4xl  text-gray-400 cursor-pointer " />
+                  <TbCameraPlus
+                    className=" cursor-pointer  text-4xl text-gray-400 "
+                    onClick={() => {
+                      imgSelectedForUploadRef.current = 3;
+
+                      imageWidgetRef.current.open();
+                    }}
+                  />
                 </div>
               )}
             </div>
 
-            <div className="  h-[47%] rounded-br-lg  border-4 border-gray-400  ">
+            <div
+              className={`${otherImages[3] ? "" : "border-4"} relative  h-[47%]  rounded-br-lg  border-gray-400 `}
+            >
               {otherImages[3] ? (
-                <img
-                  className="  h-full w-full rounded-l-xl"
-                  src={hotel}
-                  alt=""
-                />
+                <>
+                  <img
+                    className="  h-full w-full rounded-br-lg"
+                    src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[3]}`}
+                    alt=""
+                  />
+
+                  <div className=" absolute right-2 top-2 cursor-pointer rounded-lg bg-black px-[6px] py-[6px] text-white">
+                    <FaTrashCan
+                      className=" text-xs"
+                      onClick={() => {
+                        handleDeleteImage(4);
+                      }}
+                    />
+                  </div>
+                </>
               ) : (
                 <div className=" flex  h-full w-full items-center justify-center">
-                  <TbCameraPlus className=" text-4xl  text-gray-400 cursor-pointer " />
+                  <TbCameraPlus
+                    className=" cursor-pointer  text-4xl text-gray-400 "
+                    onClick={() => {
+                      imgSelectedForUploadRef.current = 4;
+
+                      imageWidgetRef.current.open();
+                    }}
+                  />
                 </div>
               )}
             </div>
@@ -823,7 +1085,7 @@ const PropertyListingPage = () => {
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
-              <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
+              <div className=" flex h-full items-center  overflow-y-scroll bg-black px-4 py-1 text-3xl  font-bold text-white">
                 <p>5</p>
               </div>
 
@@ -840,57 +1102,82 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className="  ms-2 mt-10 font-Inter  text-[15px]  font-semibold">
-            Name of the Hotel
-          </div>
-          <div className=" mt-4 font-Inter text-[15px]">
-            <div className=" flex items-center rounded-xl border-2   border-neutral-400 text-lg">
-              {/* <RiBuilding4Fill className=" ms-4 text-xl" /> */}
-              <input
-                className=" w-full rounded-xl py-3 ps-4 text-sm font-semibold   placeholder-gray-400 outline-none"
-                type="text"
-                placeholder=" Add attractive title "
+          <div className=" mt-6 font-Inter text-[15px]">
+            <Input
+              id="listingTitle"
+              label="Listing Title"
+              register={register}
+              errors={errors}
+              textBase
+              labelBlack
+              placeholder="enter an attractive title"
+            />
+
+            <div className=" mt-3">
+              <Input
+                id="roomType"
+                label="Room Type"
+                register={register}
+                errors={errors}
+                textBase
+                labelBlack
+                placeholder="standard / deluxe / suite / custom name"
               />
             </div>
 
-            <div className=" ms-2 mt-6 font-Inter text-[15px]  font-semibold">
-              Room Type
+            <div className=" ms-2 mt-6 font-Inter text-[15px]  font-bold">
+              Hotel License
             </div>
 
-            <div className=" mt-4 flex items-center rounded-xl border-2   border-neutral-400 text-lg">
+            <div
+              className={`${errors["hotelLicenseUrl"] ? "border-rose-400" : " border-neutral-400"} mt-4 flex items-center rounded-md border-2    py-2 text-lg`}
+            >
               {/* <MdBedroomChild className=" ms-4 text-xl" /> */}
 
-              <input
-                className=" w-full  rounded-xl py-3 ps-4 text-sm   font-semibold  placeholder-gray-400  outline-none"
-                type="text"
-                placeholder=" standard / deluxe / suite / custom name "
-              />
-            </div>
+              <div className=" flex w-full  items-center justify-between px-4 font-Inter">
+                {hotelLicenseUrl ? (
+                  <a
+                    href={`https://res.cloudinary.com/dfm8vhuea/raw/upload/${hotelLicenseUrl}`}
+                  >
+                    {" "}
+                    <p className=" cursor-pointer py-1  text-sm font-semibold ">
+                      View File
+                    </p>
+                  </a>
+                ) : (
+                  <p className=" text-[15px]  text-neutral-400">
+                    {" "}
+                    your listing will be verified based on hotel license
+                  </p>
+                )}
 
-            <div className=" ms-2 mt-6 font-Inter text-[15px]  font-semibold">
-              Hotel License - For verification
-            </div>
-
-            <div className=" mt-4 flex items-center rounded-xl border-2   border-neutral-400 py-2 text-lg">
-              {/* <MdBedroomChild className=" ms-4 text-xl" /> */}
-
-              <input
-                className=" w-full rounded-xl py-2 ps-4 text-xs  font-bold   placeholder-slate-500 outline-none"
-                type="file"
-                placeholder=" "
-              />
-            </div>
-
-            <div className=" relative w-full ">
-              <div className=" ms-2 mt-6 font-Inter text-[15px]  font-semibold">
-                Give a detailed explanation of this place
+                <p
+                  className=" cursor-pointer ps-4 text-sm font-semibold "
+                  onClick={() => {
+                    pdfWidgetRef.current.open();
+                  }}
+                >
+                  Select File
+                </p>
               </div>
+            </div>
 
-              <textarea
-                className=" mt-4 h-32 w-full rounded-xl border-2  border-neutral-400 px-4 pt-3 text-lg font-bold outline-none"
-                name=""
-                id=""
-              ></textarea>
+            {errors["hotelLicenseUrl"] && (
+              <p className=" ps-1  pt-2 text-xs  font-semibold text-rose-400  ">
+                This field cannot be empty
+              </p>
+            )}
+
+            <div className=" mt-2">
+              <Input
+                id="aboutHotel"
+                label="Give a detailed explanation of this place"
+                register={register}
+                errors={errors}
+                textBox
+                labelBlack
+                textBase
+              />
             </div>
           </div>
         </div>
@@ -920,12 +1207,12 @@ const PropertyListingPage = () => {
                   </button>
 
                   <button
-                    className="     w-36 rounded-md bg-black   py-[6px] font-semibold text-white"
-                    onClick={() => {
-                      nextFunction();
-                    }}
+                    className="     w-32 rounded-md bg-black   py-[6px] font-semibold text-white"
+                    onClick={handleSubmit(onSubmit, (err, e) => {
+                      console.log(err, "handle error", e);
+                    })}
                   >
-                    List The Property
+                    List The Rooms
                   </button>
                 </div>
               </div>
@@ -955,7 +1242,15 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" mt-12 flex h-[240px] items-center justify-center rounded-xl border-2 border-gray-400">
+          {errors["rentPerNight"] && (
+            <div className="    mt-6 flex items-center justify-center">
+              <p className="  rounded-lg bg-black px-2 py-2  font-Inter  text-xs font-semibold text-rose-500">
+                {errors["rentPerNight"]?.message as string}
+              </p>
+            </div>
+          )}
+
+          <div className=" mt-10 flex h-[240px] items-center justify-center rounded-xl border-2 border-gray-400">
             <div className="  flex  items-center justify-center">
               <div>
                 <FaRupeeSign className=" text-6xl" />
@@ -963,9 +1258,10 @@ const PropertyListingPage = () => {
 
               <div className="  w-[200px]">
                 <input
-                  className="  w-full font-Sen text-7xl font-semibold placeholder-black outline-none"
-                  type="text"
-                  placeholder="15000"
+                  id="rentPerNight"
+                  {...register("rentPerNight", { valueAsNumber: true })}
+                  className="  w-full font-Sen text-7xl font-semibold   outline-none"
+                  type="Number"
                 />
               </div>
             </div>

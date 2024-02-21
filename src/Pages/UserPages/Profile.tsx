@@ -57,14 +57,14 @@ const Profile = () => {
           cloudName: "dfm8vhuea",
           uploadPreset: "lmyyofoj",
           clientAllowedFormats: ["jpg", "jpeg", "png", "webP"],
+          maxFiles: 1,
         },
         async function (error: any, result: any) {
           if (error) {
             toast.error("Failed to upload profile Img");
-            
+
             return;
           }
-          
 
           if (result.info.public_id) {
             try {
