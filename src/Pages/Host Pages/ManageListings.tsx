@@ -7,10 +7,114 @@ import { BiBookHeart, BiEditAlt } from "react-icons/bi";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoPerson } from "react-icons/io5";
 import { CgMenuGridR } from "react-icons/cg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import { z } from "zod";
+import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
+import { GET_HOST_LISTINGS_URL } from "../../Api/EndPoints";
+import toast from "react-hot-toast";
+
+type hostListingsData = z.infer<typeof HotelListingSchema> & {
+  _id: string;
+  isActiveForReservation: Boolean;
+  approvedForReservation: Boolean;
+  hostName: string;
+  location: string;
+};
+
+interface hostListingsResponse {
+  properties: hostListingsData[];
+  totalPages: number;
+}
 
 const ManageListings = () => {
   const [navigation, setNavigation] = useState(true);
+
+  const AxiosPrivate = useAxiosPrivate();
+
+  const [triggerRefetch, setTriggerRefetch] = useState(true);
+
+  const [propertiesList, setPropertiesList] = useState<
+    hostListingsData[] | null
+  >(null);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const response = await AxiosPrivate.get<hostListingsResponse>(
+          GET_HOST_LISTINGS_URL,
+          {
+            params: { search, page },
+          },
+        );
+
+        if (isMounted) {
+          setPropertiesList(response.data.properties);
+
+          setTotalPages(response.data.totalPages);
+
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [triggerRefetch, search, page]);
+
+  const activateListing = async (listingID: string) => {
+    try {
+      await AxiosPrivate.patch("/user/listings/activate/" + `${listingID}`);
+
+      toast.success(" Listing activated for reservations");
+
+      setTriggerRefetch((val) => !val);
+    } catch (err: any) {
+      console.log(err);
+
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Failed to activate listing");
+      }
+    }
+  };
+  
+   const deActivateListing = async (listingID: string) => {
+     try {
+       await AxiosPrivate.patch("/user/listings/deactivate/" + `${listingID}`);
+
+       toast.success(" Listing deactivated ");
+
+       setTriggerRefetch((val) => !val);
+     } catch (err: any) {
+       console.log(err);
+
+       if (!err?.response) {
+         toast.error("No Server Response");
+       } else if (err.response?.status === 400) {
+         toast.error(err.response.data.message);
+       } else if (err.response?.status === 500) {
+         toast.error("Oops! Something went wrong. Please try again later.");
+       } else {
+         toast.error("Failed to deactivate listing");
+       }
+     }
+   };
 
   return (
     <div className=" mx-auto flex h-screen w-screen   max-w-[1800px]  ">
@@ -103,9 +207,18 @@ const ManageListings = () => {
               />
               <p className=" font-semibold">Manage Listing</p>
             </div>
-            <div className=" ms-3  flex max-w-[190px] items-center gap-3 rounded-md  border-2   border-gray-300 text-xs sm:max-w-max sm:px-4 sm:py-2">
+            <div className=" ms-3  flex max-w-[190px] items-center gap-3 rounded-md  border-2   border-gray-400 text-xs sm:max-w-max sm:px-4 sm:py-2 ">
               <FaSearch />
-              <input className=" w-16" type="text" placeholder="search" />
+              <input
+                className=" w-16 focus:outline-none"
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="search"
+              />
             </div>
           </div>
         </div>
@@ -116,9 +229,9 @@ const ManageListings = () => {
               <div className=" border-b-[2px]   px-6 py-5  font-Sen text-sm font-bold  ">
                 <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]   ">
                   <p className=" flex items-center  justify-between  gap-3  text-wrap text-left ">
-                    Property title
+                    Listing title
                   </p>
-                  <p className="  ">Status</p>
+                  <p className="  ">Admin Approved</p>
                   <p className="  ">Rooms</p>
 
                   <p className="  text-wrap ">Location</p>
@@ -127,143 +240,50 @@ const ManageListings = () => {
               </div>
 
               <div className=" ">
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
+                {propertiesList?.map((property, index) => (
+                  <div className="   px-6 font-Sen text-sm ">
+                    <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
+                      <p className=" text-left    "> {property.listingTitle}</p>
+                      <p className=" text-center    ">
+                        {" "}
+                        {property.approvedForReservation ? "true" : "false"}
+                      </p>
+                      <p className=" text-center ">{property.totalRooms}</p>
+                      <p className=" text-center ">{property.location}</p>
 
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
+                      <div className=" flex items-center  justify-center gap-4  text-xl">
+                        <div className="  w-10 rounded-md border-2  border-neutral-500 px-[2px] py-[2px] text-xs">
+                          {property.isActiveForReservation ? (
+                            <p
+                              className=" cursor-pointer "
+                              onClick={() => {
+                                deActivateListing(property._id);
+                              }}
+                            >
+                              block
+                            </p>
+                          ) : (
+                            <p
+                              className=" cursor-pointer "
+                              onClick={() => {
+                                activateListing(property._id);
+                              }}
+                            >
+                              open
+                            </p>
+                          )}
+                        </div>
+
+                        <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
+                          <BiEditAlt
+                            className=" cursor-pointer text-sm"
+                            onClick={() => {}}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="   px-6 font-Sen text-sm ">
-                  <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                    <p className=" text-left    "> Hotel Winston</p>
-                    <p className=" text-center    "> Active</p>
-                    <p className=" text-center ">15</p>
-                    <p className=" text-center ">GOA</p>
-
-                    <div className=" flex items-center  justify-center gap-4  text-xl">
-                      <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                        <BiEditAlt
-                          className=" cursor-pointer text-sm"
-                          onClick={() => {}}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {/* <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
@@ -290,19 +310,27 @@ const ManageListings = () => {
 
         <div className="  mx-auto mt-[18px]  flex max-w-[95%]  items-center justify-between   px-6 2xl:mt-12  ">
           <div className="flex items-center gap-4 text-sm 2xl:text-lg">
-            <p>Total Pages : 10</p>
+            <p>Total Pages : {totalPages}</p>
           </div>
 
           <div className=" flex items-center gap-4 text-sm 2xl:text-lg ">
-            <div>
+            <button
+              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
+              onClick={() => setPage((page) => page - 1)}
+              disabled={page <= 1}
+            >
               <IoIosArrowBack />
-            </div>
+            </button>
 
-            <p>Page 1</p>
+            <p>Page {page}</p>
 
-            <div>
+            <button
+              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
+              disabled={page >= totalPages}
+              onClick={() => setPage((page) => page + 1)}
+            >
               <IoIosArrowForward />
-            </div>
+            </button>
           </div>
         </div>
       </main>

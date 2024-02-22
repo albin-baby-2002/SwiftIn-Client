@@ -5,3 +5,6 @@ export const AUTH_URL = "/auth"
 export const GOOGLE_AUTH_URL = "/auth/google";
 export const PROFILE_DATA_URL = "/user/profile";
 export const UPDATE_PROFILE_IMG_URL = "/user/profileImg";
+export const LIST_PROPERTY_URL = "/property/list";
+export const GET_LISTINGS_URL = "/admin/listings";
+export const GET_HOST_LISTINGS_URL = "/user/listings";

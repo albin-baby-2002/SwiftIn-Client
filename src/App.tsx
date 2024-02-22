@@ -17,6 +17,7 @@ import Profile from "./Pages/UserPages/Profile";
 import HotelDetailsPage from "./Pages/GeneralPages/HotelDetailsPage";
 import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
 import ManageListings from "./Pages/Host Pages/ManageListings";
+import ListingManagement from "./Pages/AdminPages/ListingManagement";
 
 function App() {
  
@@ -44,7 +45,7 @@ function App() {
           <Route path="/manage/property" element={<ManageListings />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
-          
+
           <Route
             path="/admin/console/test"
             element={
@@ -59,6 +60,13 @@ function App() {
             path="/admin/users"
             element={
               <PrivateRoute Element={Users} allowedRoles={[ROLES_LIST.Admin]} />
+            }
+          />
+
+          <Route
+            path="/admin/manage/listings"
+            element={
+              <PrivateRoute Element={ListingManagement} allowedRoles={[ROLES_LIST.Admin]} />
             }
           />
         </Route>

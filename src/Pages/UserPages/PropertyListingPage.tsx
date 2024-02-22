@@ -12,7 +12,7 @@ import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import swiftin from "../../Assets/logo3.png";
 import { RiTvLine } from "react-icons/ri";
 import { TiWiFi } from "react-icons/ti";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { z } from "zod";
 import toast from "react-hot-toast";
@@ -23,38 +23,10 @@ import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FaTrashCan } from "react-icons/fa6";
+import { LIST_PROPERTY_URL } from "../../Api/EndPoints";
+import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
 
-const HotelListingSchema = z.object({
-  addressLine: z.string().min(3, " Min length For address is 3").max(20),
-  city: z.string().min(3, " Min length For city is 3").max(15),
-  district: z.string().min(3, " Min length For district is 3").max(15),
-  state: z.string().min(3, " Min length is 3").max(15),
-  totalRooms: z.number().min(1),
-  maxGuests: z.number().min(1),
-  bedsPerRoom: z.number().min(1),
-  bathroomPerRoom: z.number().min(1),
-  amenities: z.array(z.string()),
-  hotelLicenseUrl: z.string().min(1),
-  aboutHotel: z.string().min(20),
-  listingTitle: z.string().min(10).max(20),
-  roomType: z.string().min(3),
-  rentPerNight: z.number().min(1000),
 
-  mainImage: z.string().refine((value) => {
-    return value;
-  }, "Main Img Is Compulsory"),
-
-  otherImages: z.array(z.string()).refine((values) => {
-    let pics = values.filter((val) => val);
-
-    return pics.length >= 4;
-  }, "Needed Four Other Images"),
-
-  pinCode: z.string().refine((value) => {
-    const INDIAN_PINCODE_REGEX = /^[1-9][0-9]{5}$/;
-    return INDIAN_PINCODE_REGEX.test(value);
-  }, "Invalid Indian Pincode"),
-});
 
 // types used
 
@@ -74,6 +46,8 @@ type hotelCapactiyFields =
   | "bathroomPerRoom";
 
 const PropertyListingPage = () => {
+  
+    const navigate = useNavigate()  
   // steps and fields to validate by trigger
 
   const steps: step[] = [
@@ -212,12 +186,40 @@ const PropertyListingPage = () => {
     "hotelLicenseUrl",
   ]) as [number, number, number, number, string[], string, string[], string];
 
+  
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data, "data");
 
     try {
+      await AxiosPrivate.post(LIST_PROPERTY_URL,data);
+      
+      toast.success('Listing successful')
+      
+      toast.success("Wait For Admin to verify to start hosting");
+      
+      setTimeout(()=>{
+        
+        navigate('/')
+      },500)
+      
+      
+      
+      
     } catch (err: any) {
       console.log(err);
+      
+       if (!err?.response) {
+         toast.error("No Server Response");
+       } else if (err.response?.status === 400) {
+         toast.error(err.response.data.message);
+       } else if (err.response?.status === 401) {
+         toast.error(err.response.data.message);
+       } else if (err.response?.status === 500) {
+         toast.error("Oops! Something went wrong. Please try again later.");
+       }  else {
+         toast.error("Listing Failed");
+       }
     }
   };
 
@@ -827,7 +829,7 @@ const PropertyListingPage = () => {
           </div>
 
           {(errors["mainImage"] || errors["otherImages"]) && (
-            <div className="   absolute inset-10 top-12 text-xs  z-0 flex items-center justify-center">
+            <div className="   absolute inset-10 top-12 z-0  flex items-center justify-center text-xs">
               <p className="  rounded-lg bg-black px-2 py-2  font-Inter  font-semibold text-rose-500">
                 You need to fill all the Img fields
               </p>
