@@ -40,9 +40,25 @@ function App() {
 
           <Route path="/hotel/details" element={<HotelDetailsPage />} />
 
-          <Route path="/property/listing" element={<PropertyListingPage />} />
+          <Route
+            path="/property/listing"
+            element={
+              <PrivateRoute
+                Element={PropertyListingPage}
+                allowedRoles={[ROLES_LIST.User]}
+              />
+            }
+          />
 
-          <Route path="/manage/property" element={<ManageListings />} />
+          <Route
+            path="/manage/property"
+            element={
+              <PrivateRoute
+                Element={ManageListings}
+                allowedRoles={[ROLES_LIST.User]}
+              />
+            }
+          />
 
           <Route path="/admin/login" element={<AdminLogin />} />
 
@@ -66,7 +82,10 @@ function App() {
           <Route
             path="/admin/manage/listings"
             element={
-              <PrivateRoute Element={ListingManagement} allowedRoles={[ROLES_LIST.Admin]} />
+              <PrivateRoute
+                Element={ListingManagement}
+                allowedRoles={[ROLES_LIST.Admin]}
+              />
             }
           />
         </Route>

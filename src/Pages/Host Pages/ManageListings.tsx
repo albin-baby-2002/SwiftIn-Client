@@ -13,6 +13,8 @@ import { z } from "zod";
 import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
 import { GET_HOST_LISTINGS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
+import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
+import EditListingModal from "../../Components/Modals/EditListingModal";
 
 type hostListingsData = z.infer<typeof HotelListingSchema> & {
   _id: string;
@@ -20,6 +22,7 @@ type hostListingsData = z.infer<typeof HotelListingSchema> & {
   approvedForReservation: Boolean;
   hostName: string;
   location: string;
+  buildingName: string;
 };
 
 interface hostListingsResponse {
@@ -29,6 +32,7 @@ interface hostListingsResponse {
 
 const ManageListings = () => {
   const [navigation, setNavigation] = useState(true);
+  const editListingModalState = useEditListingsModal();
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -93,28 +97,28 @@ const ManageListings = () => {
       }
     }
   };
-  
-   const deActivateListing = async (listingID: string) => {
-     try {
-       await AxiosPrivate.patch("/user/listings/deactivate/" + `${listingID}`);
 
-       toast.success(" Listing deactivated ");
+  const deActivateListing = async (listingID: string) => {
+    try {
+      await AxiosPrivate.patch("/user/listings/deactivate/" + `${listingID}`);
 
-       setTriggerRefetch((val) => !val);
-     } catch (err: any) {
-       console.log(err);
+      toast.success(" Listing deactivated ");
 
-       if (!err?.response) {
-         toast.error("No Server Response");
-       } else if (err.response?.status === 400) {
-         toast.error(err.response.data.message);
-       } else if (err.response?.status === 500) {
-         toast.error("Oops! Something went wrong. Please try again later.");
-       } else {
-         toast.error("Failed to deactivate listing");
-       }
-     }
-   };
+      setTriggerRefetch((val) => !val);
+    } catch (err: any) {
+      console.log(err);
+
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Failed to deactivate listing");
+      }
+    }
+  };
 
   return (
     <div className=" mx-auto flex h-screen w-screen   max-w-[1800px]  ">
@@ -227,63 +231,77 @@ const ManageListings = () => {
           <div className="   ">
             <div className="    ">
               <div className=" border-b-[2px]   px-6 py-5  font-Sen text-sm font-bold  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]   ">
+                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(140px,1fr))_100px]   ">
                   <p className=" flex items-center  justify-between  gap-3  text-wrap text-left ">
-                    Listing title
+                    Property title
                   </p>
                   <p className="  ">Admin Approved</p>
                   <p className="  ">Rooms</p>
+                  <p className="  ">Type</p>
 
                   <p className="  text-wrap ">Location</p>
                   <p className="  ">Actions</p>
                 </div>
               </div>
 
-              <div className=" ">
-                {propertiesList?.map((property, index) => (
-                  <div className="   px-6 font-Sen text-sm ">
-                    <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(3,minmax(140px,1fr))_100px]  ">
-                      <p className=" text-left    "> {property.listingTitle}</p>
-                      <p className=" text-center    ">
-                        {" "}
-                        {property.approvedForReservation ? "true" : "false"}
-                      </p>
-                      <p className=" text-center ">{property.totalRooms}</p>
-                      <p className=" text-center ">{property.location}</p>
+              <div className="  ">
+                {propertiesList && propertiesList.length > 0 ? (
+                  propertiesList?.map((property, index) => (
+                    <div className="   px-6 font-Sen text-sm ">
+                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(140px,1fr))_100px]  ">
+                        <p className=" text-left    ">
+                          {" "}
+                          {property.buildingName}
+                        </p>
+                        <p className=" text-center    ">
+                          {" "}
+                          {property.approvedForReservation ? "true" : "false"}
+                        </p>
+                        <p className=" text-center ">{property.totalRooms}</p>
+                        <p className=" text-center ">{property.roomType}</p>
+                        <p className=" text-center ">{property.location}</p>
 
-                      <div className=" flex items-center  justify-center gap-4  text-xl">
-                        <div className="  w-10 rounded-md border-2  border-neutral-500 px-[2px] py-[2px] text-xs">
-                          {property.isActiveForReservation ? (
-                            <p
-                              className=" cursor-pointer "
-                              onClick={() => {
-                                deActivateListing(property._id);
-                              }}
-                            >
-                              block
-                            </p>
-                          ) : (
-                            <p
-                              className=" cursor-pointer "
-                              onClick={() => {
-                                activateListing(property._id);
-                              }}
-                            >
-                              open
-                            </p>
-                          )}
-                        </div>
+                        <div className=" flex items-center  justify-center gap-4  text-xl">
+                          <div className="  w-10 rounded-md border-2  border-neutral-500  text-xs">
+                            {property.isActiveForReservation ? (
+                              <p
+                                className=" cursor-pointer   px-[2px] py-[2px] hover:bg-rose-400 "
+                                onClick={() => {
+                                  deActivateListing(property._id);
+                                }}
+                              >
+                                block
+                              </p>
+                            ) : (
+                              <p
+                                className="  cursor-pointer   px-[2px] py-[2px] hover:bg-green-500"
+                                onClick={() => {
+                                  activateListing(property._id);
+                                }}
+                              >
+                                open
+                              </p>
+                            )}
+                          </div>
 
-                        <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px]">
-                          <BiEditAlt
-                            className=" cursor-pointer text-sm"
-                            onClick={() => {}}
-                          />
+                          <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px] hover:bg-gray-400">
+                            <BiEditAlt
+                              className=" cursor-pointer text-sm"
+                              onClick={() => {
+                                editListingModalState.setData(property._id);
+                                editListingModalState.onOpen();
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className=" flex min-h-[55vh] items-center justify-center font-Inter font-bold">
+                    <p>No Listing Data Found</p>
                   </div>
-                ))}
+                )}
               </div>
 
               {/* <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
@@ -334,6 +352,7 @@ const ManageListings = () => {
           </div>
         </div>
       </main>
+      <EditListingModal reFetchData={()=>{setTriggerRefetch((val)=>!val)}}/>
     </div>
   );
 };
