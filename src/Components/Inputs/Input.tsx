@@ -19,7 +19,7 @@ interface InputProps {
 const Input: React.FC<InputProps> = ({
   id,
   label,
-  type = "text",
+  type ="text",
   disabled,
   register,
   required,
@@ -42,16 +42,16 @@ const Input: React.FC<InputProps> = ({
         {label}
       </label>
 
-      <div className="relative flex flex-col">
+      <div className="relative flex flex-col ">
         {textBox ? (
           <textarea
             id={id}
             disabled={disabled}
             {...register(id)}
-            className={`mt-2  rounded-md border-2 px-2 py-2 focus:outline-none
+            className={`mt-2  rounded-md border-2 px-3 py-3 font-Sen focus:outline-none
           ${errors[id] ? "focus:border-rose-400" : "focus:border-black"}
           ${errors[id] ? "border-rose-400" : "border-neutral-400"}
-          ${textBox ? "h-24" : ""}
+          ${textBox ? "h-28" : ""}
          `}
           ></textarea>
         ) : (
@@ -60,8 +60,12 @@ const Input: React.FC<InputProps> = ({
             type={type}
             disabled={disabled}
             placeholder={placeholder}
-            {...register(id)}
-            className={`rounded-md  border-2 px-4 py-2  focus:outline-none
+            
+            {
+               ...(type&& type === 'number')? {...register(id,{valueAsNumber:true})}: {...register(id)}
+            }
+           
+            className={`rounded-md  border-2 px-4 py-2 font-Sen  focus:outline-none
           ${errors[id] ? "focus:border-rose-400" : "focus:border-black"}
           ${errors[id] ? "border-rose-400" : "border-neutral-400"}
           ${textBox ? "h-20" : ""}

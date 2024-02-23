@@ -231,7 +231,7 @@ const ManageListings = () => {
           <div className="   ">
             <div className="    ">
               <div className=" border-b-[2px]   px-6 py-5  font-Sen text-sm font-bold  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(140px,1fr))_100px]   ">
+                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(120px,1fr))_100px]   ">
                   <p className=" flex items-center  justify-between  gap-3  text-wrap text-left ">
                     Property title
                   </p>
@@ -244,11 +244,11 @@ const ManageListings = () => {
                 </div>
               </div>
 
-              <div className="  ">
+              <div className=" min-h-[60vh] ">
                 {propertiesList && propertiesList.length > 0 ? (
                   propertiesList?.map((property, index) => (
-                    <div className="   px-6 font-Sen text-sm ">
-                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(140px,1fr))_100px]  ">
+                    <div className="   px-6 font-Sen text-sm  border-b-2 ">
+                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(120px,1fr))_100px]  ">
                         <p className=" text-left    ">
                           {" "}
                           {property.buildingName}
@@ -352,7 +352,11 @@ const ManageListings = () => {
           </div>
         </div>
       </main>
-      <EditListingModal reFetchData={()=>{setTriggerRefetch((val)=>!val)}}/>
+      <EditListingModal
+        reFetchData={() => {
+          setTriggerRefetch((val) => !val);
+        }}
+      />
     </div>
   );
 };
