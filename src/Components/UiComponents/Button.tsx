@@ -23,23 +23,37 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={`
       relative
-        disabled:opacity-70
-        disabled:cursor-not-allowed
+        w-full
         rounded-lg
         hover:opacity-80
-        w-full 
+        disabled:cursor-not-allowed
+        disabled:opacity-70 
         
         ${outline ? "bg-white" : "bg-black"}
          ${outline ? "text-black" : "text-white"}
           ${outline ? "border-black" : "border-white"}
           ${small ? " text-sm" : ""}
-          
+          ${Icon && small ? " pl-3 " : ""}
           border-2
           py-2
           font-bold`}
     >
-      {Icon && <Icon size={24} className=" absolute left-4 top-2" />}
-      {label}
+      {Icon ? (
+        small ? (
+          <div className=" flex  items-center justify-center gap-2">
+            <Icon size={20} className="  left-4 top-[8px] " />
+
+            <p className=" pb-[2px]">{label}</p>
+          </div>
+        ) : (
+          <>
+            <Icon size={24} className=" absolute left-4 top-2" />
+            <p>{label}</p>
+          </>
+        )
+      ) : (
+        <>{label}</>
+      )}
     </button>
   );
 };

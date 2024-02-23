@@ -19,7 +19,7 @@ interface InputProps {
 const Input: React.FC<InputProps> = ({
   id,
   label,
-  type ="text",
+  type = "text",
   disabled,
   register,
   required,
@@ -34,7 +34,7 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <div
-      className={`${HalfWidth ? "w-full" : ""} ${textBase ? " " : "text-sm"} flex flex-col gap-2  `}
+      className={`${HalfWidth ? "w-[48%]" : ""} ${textBase ? " " : "text-sm"} flex flex-col gap-2  `}
     >
       <label
         className={`${labelBlack ? " text-black" : " text-neutral-400"} px-2 pt-2 font-bold`}
@@ -60,11 +60,9 @@ const Input: React.FC<InputProps> = ({
             type={type}
             disabled={disabled}
             placeholder={placeholder}
-            
-            {
-               ...(type&& type === 'number')? {...register(id,{valueAsNumber:true})}: {...register(id)}
-            }
-           
+            {...(type && type === "number"
+              ? { ...register(id, { valueAsNumber: true }) }
+              : { ...register(id) })}
             className={`rounded-md  border-2 px-4 py-2 font-Sen  focus:outline-none
           ${errors[id] ? "focus:border-rose-400" : "focus:border-black"}
           ${errors[id] ? "border-rose-400" : "border-neutral-400"}

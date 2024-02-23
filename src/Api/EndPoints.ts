@@ -9,3 +9,5 @@ export const LIST_PROPERTY_URL = "/property/list";
 export const GET_LISTINGS_URL = "/admin/listings";
 export const GET_HOST_LISTINGS_URL = "/user/listings";
 export const SINGLE_LISTING_URL = "/user/listing"
+export const SINGLE_LISTING_IMAGE_UPDATE_URL = "/user/listing/images"
+export const SINGLE_LISTING_ADDRESS_UPDATE_URL = "/user/listing/address"

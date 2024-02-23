@@ -12,6 +12,12 @@ import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { PROFILE_DATA_URL, SINGLE_LISTING_URL } from "../../Api/EndPoints";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import { z } from "zod";
+import Button from "../UiComponents/Button";
+import { MdPhoto } from "react-icons/md";
+import { FcAddressBook, FcPicture } from "react-icons/fc";
+import { HiMiniBuildingLibrary } from "react-icons/hi2";
+import { PiCameraBold } from "react-icons/pi";
+import { RiCamera2Fill } from "react-icons/ri";
 
 const EditListingSchema = z.object({
   totalRooms: z.number().min(1),
@@ -37,6 +43,8 @@ interface ListingInfo {
   roomType: string;
   aboutHotel: string;
   rentPerNight: number;
+  mainImage: string;
+  otherImages: string[];
 }
 interface SingleListingDataResponse {
   listing: ListingInfo;
@@ -91,7 +99,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
   const [amenities] = watch(["amenities"]) as [string[]];
 
   const handleAmenitiesCheckBox = (val: "on" | "off", amenity: amenity) => {
-    console.log(val === "on");
+  
 
     if (val === "on") {
       let existingAmenities = amenities;
@@ -99,7 +107,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
       if (existingAmenities.includes(amenity)) return;
 
       let newAmenities = [...existingAmenities, amenity];
-      console.log(newAmenities);
 
       setValue("amenities", newAmenities);
     } else {
@@ -108,7 +115,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
       if (!existingAmenities.includes(amenity)) return;
 
       let newAmenities = existingAmenities.filter((val) => val !== amenity);
-      console.log(newAmenities);
 
       setValue("amenities", newAmenities);
     }
@@ -124,7 +130,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
         );
 
         if (isMounted) {
-          console.log(response.data, "edit listing");
 
           reset(response.data.listing);
         }
@@ -138,13 +143,12 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
     return () => {
       isMounted = false;
     };
-  }, [editListingModalState.isOpen]);
+  }, [editListingModalState.dataModalIsOpen]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       setIsLoading(true);
 
-      console.log(data);
 
       await AxiosPrivate.patch(
         SINGLE_LISTING_URL + `/${editListingModalState.listingID}`,
@@ -183,7 +187,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
         register={register}
       />
 
-      <div className=" flex justify-between  gap-4">
+      <div className=" flex justify-between  ">
         <Input
           id="totalRooms"
           label="Total Rooms"
@@ -203,7 +207,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
         />
       </div>
 
-      <div className=" flex justify-between  gap-4">
+      <div className=" flex justify-between  ">
         <Input
           id="bedsPerRoom"
           label="Beds Per Room"
@@ -223,7 +227,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
         />
       </div>
 
-      <div className="flex justify-between  gap-4">
+      <div className="flex justify-between  ">
         <Input
           id="roomType"
           label="Room Type"
@@ -248,7 +252,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
 
         <div className=" flex flex-col gap-6 rounded-md border-2  border-neutral-400 py-4 ps-3">
           <div className="  grid grid-cols-3 ">
-            <div className=" flex gap-2">
+            <div className=" flex  items-center gap-2">
               <input
                 className="cursor-pointer"
                 type="checkbox"
@@ -258,7 +262,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-                  console.log(val);
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.WIFI);
@@ -270,14 +273,14 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 }} // Handle checkbox change
               />
               <label
-                className="   text-sm  font-semibold   tracking-wider  text-neutral-500"
+                className="   text-sm  font-semibold   tracking-wide  text-neutral-500"
                 htmlFor="myCheckbox"
               >
                 Free Wifi
               </label>
             </div>
 
-            <div className=" flex gap-2">
+            <div className=" flex items-center gap-2">
               <input
                 className="cursor-pointer"
                 type="checkbox"
@@ -287,7 +290,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-                  console.log(val);
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.POOL);
@@ -299,14 +301,14 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 }} // Handle checkbox change
               />
               <label
-                className="   text-sm  font-semibold   tracking-wider  text-neutral-500"
+                className="   text-sm  font-semibold   tracking-wide  text-neutral-500"
                 htmlFor="myCheckbox"
               >
                 Common Pool
               </label>
             </div>
 
-            <div className=" flex gap-2">
+            <div className=" flex items-center gap-2">
               <input
                 className="cursor-pointer"
                 type="checkbox"
@@ -316,7 +318,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-                  console.log(val);
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.AC);
@@ -328,16 +329,16 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 }} // Handle checkbox change
               />
               <label
-                className="   text-sm  font-semibold   tracking-wider  text-neutral-500"
+                className="   text-sm  font-semibold   tracking-wide  text-neutral-500"
                 htmlFor="myCheckbox"
               >
-                Air Conditioner
+                A/C
               </label>
             </div>
           </div>
 
           <div className="  grid grid-cols-3 ">
-            <div className=" flex gap-2">
+            <div className=" flex items-center gap-2">
               <input
                 className="cursor-pointer"
                 type="checkbox"
@@ -347,7 +348,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-                  console.log(val);
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.PARKING);
@@ -359,14 +359,14 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 }} // Handle checkbox change
               />
               <label
-                className="   text-sm  font-semibold   tracking-wider  text-neutral-500"
+                className="   text-sm  font-semibold   tracking-wide  text-neutral-500"
                 htmlFor="myCheckbox"
               >
                 Car Parking
               </label>
             </div>
 
-            <div className=" flex gap-2">
+            <div className=" flex items-center gap-2">
               <input
                 className="cursor-pointer"
                 type="checkbox"
@@ -376,7 +376,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-                  console.log(val);
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.TV);
@@ -388,14 +387,14 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 }} // Handle checkbox change
               />
               <label
-                className="   text-sm  font-semibold   tracking-wider  text-neutral-500"
+                className="   text-sm  font-semibold   tracking-wide  text-neutral-500"
                 htmlFor="myCheckbox"
               >
                 Cable TV
               </label>
             </div>
 
-            <div className=" flex gap-2">
+            <div className=" flex items-center gap-2">
               <input
                 className="cursor-pointer"
                 type="checkbox"
@@ -405,7 +404,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-                  console.log(val);
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.HOT_TUB);
@@ -417,7 +415,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 }} // Handle checkbox change
               />
               <label
-                className="   text-sm  font-semibold   tracking-wider  text-neutral-500"
+                className="   text-sm  font-semibold   tracking-wide  text-neutral-500"
                 htmlFor="myCheckbox"
               >
                 Hot Tub
@@ -437,15 +435,45 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
     </div>
   );
 
+  const footer = (
+    <div>
+      <div className=" relative flex  w-full flex-col items-center justify-center">
+        <div className="absolute  h-[1.25px] w-full  bg-gray-400"></div>
+
+        <div className=" z-20 mb-1 bg-white px-4  font-semibold text-gray-400">
+          or
+        </div>
+      </div>
+
+      <div className=" my-6 flex gap-4">
+        <Button
+          label="Change Images"
+          onClick={editListingModalState.openImageModal}
+          outline
+          small
+          Icon={RiCamera2Fill}
+        />
+        <Button
+          label="Edit Address"
+          onClick={editListingModalState.openAddressModal}
+          outline
+          small
+          Icon={HiMiniBuildingLibrary}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <Modal
       title="Edit Listing"
       onClose={editListingModalState.onClose}
       onSubmit={handleSubmit(onSubmit)}
-      isOpen={editListingModalState.isOpen}
+      isOpen={editListingModalState.dataModalIsOpen}
       submitActionLabel="Edit"
       body={bodyContent}
       disabled={isLoading}
+      footer={footer}
     />
   );
 };

@@ -440,7 +440,7 @@ const PropertyListingPage = () => {
               />
 
               <div className=" flex   justify-between gap-3">
-                <div className=" flex w-[50%]   ">
+             
                   <Input
                     id="state"
                     label="State"
@@ -450,8 +450,8 @@ const PropertyListingPage = () => {
                     textBase
                     HalfWidth
                   />
-                </div>
-                <div className=" flex w-[50%]  ">
+               
+           
                   <Input
                     id="pinCode"
                     label="PinCode"
@@ -461,7 +461,7 @@ const PropertyListingPage = () => {
                     textBase
                     HalfWidth
                   />
-                </div>
+                
               </div>
             </div>
           </div>
@@ -858,14 +858,6 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div
-            className="  mt-10    hidden h-60 w-[90%] items-center justify-center  rounded-lg border-2 border-black"
-            onClick={() => {
-              imageWidgetRef.current.open();
-            }}
-          >
-            <FaCamera className="  text-9xl" />
-          </div>
         </div>
 
         <div className=" mx-auto mt-10 flex max-w-[80%] gap-4">

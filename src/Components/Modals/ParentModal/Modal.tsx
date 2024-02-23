@@ -11,6 +11,7 @@ interface ModelProps {
   body?: React.ReactElement;
   footer?: React.ReactElement;
   submitActionLabel: string;
+  wider?: boolean;
 }
 
 const Modal: React.FC<ModelProps> = ({
@@ -21,6 +22,7 @@ const Modal: React.FC<ModelProps> = ({
   title,
   body,
   footer,
+  wider,
   submitActionLabel,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -58,8 +60,7 @@ const Modal: React.FC<ModelProps> = ({
             fixed inset-0 z-20 flex items-center justify-center bg-black/25  "
     >
       <div
-        className="
-       mx-auto  my-6 h-full w-full  md:h-auto md:w-2/3 lg:w-2/5  xl:w-2/5   "
+        className={`${wider ? " lg:w-3/4" : "md:w-2/3 lg:w-2/5  xl:w-2/5"} mx-auto  my-6 h-full w-full  md:h-auto  `}
       >
         <div
           className={` 
@@ -84,7 +85,19 @@ const Modal: React.FC<ModelProps> = ({
               <div className="px-8 py-4 ">{body}</div>
 
               <div className="px-8 py-4">
-                <Button label={submitActionLabel} onClick={handleSubmit} />
+                {wider ? (
+                  <div className=" mx-auto my-3 w-4/5">
+                    <Button
+                      label={submitActionLabel}
+                      onClick={handleSubmit}
+                      outline
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <Button label={submitActionLabel} onClick={handleSubmit} />
+                  </>
+                )}
               </div>
 
               {footer && <div className="px-8 py-2">{footer}</div>}

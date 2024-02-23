@@ -15,6 +15,8 @@ import { GET_HOST_LISTINGS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import EditListingModal from "../../Components/Modals/EditListingModal";
+import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
+import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 
 type hostListingsData = z.infer<typeof HotelListingSchema> & {
   _id: string;
@@ -23,6 +25,7 @@ type hostListingsData = z.infer<typeof HotelListingSchema> & {
   hostName: string;
   location: string;
   buildingName: string;
+  mainImage: string;
 };
 
 interface hostListingsResponse {
@@ -231,11 +234,9 @@ const ManageListings = () => {
           <div className="   ">
             <div className="    ">
               <div className=" border-b-[2px]   px-6 py-5  font-Sen text-sm font-bold  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(120px,1fr))_100px]   ">
-                  <p className=" flex items-center  justify-between  gap-3  text-wrap text-left ">
-                    Property title
-                  </p>
-                  <p className="  ">Admin Approved</p>
+                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]   ">
+                  <p className=" text-left  ">Listing AddressLine</p>
+                  <p className="  ">Verified</p>
                   <p className="  ">Rooms</p>
                   <p className="  ">Type</p>
 
@@ -247,25 +248,37 @@ const ManageListings = () => {
               <div className=" min-h-[60vh] ">
                 {propertiesList && propertiesList.length > 0 ? (
                   propertiesList?.map((property, index) => (
-                    <div className="   px-6 font-Sen text-sm  border-b-2 ">
-                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(130px,1fr)_repeat(4,minmax(120px,1fr))_100px]  ">
-                        <p className=" text-left    ">
-                          {" "}
-                          {property.buildingName}
-                        </p>
-                        <p className=" text-center    ">
+                    <div className="   border-b-2 px-6 font-Sen  text-sm ">
+                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
+                        <div className=" flex items-center  gap-2 text-left   ">
+                          <div>
+                            <img
+                              src={`https://res.cloudinary.com/dfm8vhuea/image/upload/c_thumb,h_40,w_50/${property.mainImage}`}
+                              alt=""
+                            />
+                          </div>
+
+                          <p>{property.buildingName}</p>
+                        </div>
+                        <p className=" self-center  text-center    ">
                           {" "}
                           {property.approvedForReservation ? "true" : "false"}
                         </p>
-                        <p className=" text-center ">{property.totalRooms}</p>
-                        <p className=" text-center ">{property.roomType}</p>
-                        <p className=" text-center ">{property.location}</p>
+                        <p className=" self-center  text-center ">
+                          {property.totalRooms}
+                        </p>
+                        <p className=" self-center  text-center ">
+                          {property.roomType}
+                        </p>
+                        <p className=" self-center  text-center ">
+                          {property.location}
+                        </p>
 
                         <div className=" flex items-center  justify-center gap-4  text-xl">
-                          <div className="  w-10 rounded-md border-2  border-neutral-500  text-xs">
+                          <div className="  w-10  text-xs">
                             {property.isActiveForReservation ? (
                               <p
-                                className=" cursor-pointer   px-[2px] py-[2px] hover:bg-rose-400 "
+                                className=" cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white "
                                 onClick={() => {
                                   deActivateListing(property._id);
                                 }}
@@ -274,7 +287,7 @@ const ManageListings = () => {
                               </p>
                             ) : (
                               <p
-                                className="  cursor-pointer   px-[2px] py-[2px] hover:bg-green-500"
+                                className="  cursor-pointer rounded-md border-2  border-neutral-500  px-[2px]   py-[2px]  hover:bg-green-600 hover:text-white"
                                 onClick={() => {
                                   activateListing(property._id);
                                 }}
@@ -289,7 +302,7 @@ const ManageListings = () => {
                               className=" cursor-pointer text-sm"
                               onClick={() => {
                                 editListingModalState.setData(property._id);
-                                editListingModalState.onOpen();
+                                editListingModalState.openDataModal();
                               }}
                             />
                           </div>
@@ -353,6 +366,18 @@ const ManageListings = () => {
         </div>
       </main>
       <EditListingModal
+        reFetchData={() => {
+          setTriggerRefetch((val) => !val);
+        }}
+      />
+
+      <EditListingImageModal
+        reFetchData={() => {
+          setTriggerRefetch((val) => !val);
+        }}
+      />
+
+      <EditListingAddressModal
         reFetchData={() => {
           setTriggerRefetch((val) => !val);
         }}
