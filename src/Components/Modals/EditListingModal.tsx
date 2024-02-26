@@ -26,7 +26,7 @@ const EditListingSchema = z.object({
   bathroomPerRoom: z.number().min(1),
   amenities: z.array(z.string()),
   aboutHotel: z.string().min(20),
-  listingTitle: z.string().min(10).max(30),
+  listingTitle: z.string().min(10).max(60),
   roomType: z.string().min(3),
   rentPerNight: z.number().min(1000),
 });
@@ -99,8 +99,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
   const [amenities] = watch(["amenities"]) as [string[]];
 
   const handleAmenitiesCheckBox = (val: "on" | "off", amenity: amenity) => {
-  
-
     if (val === "on") {
       let existingAmenities = amenities;
 
@@ -130,7 +128,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
         );
 
         if (isMounted) {
-
           reset(response.data.listing);
         }
       } catch (error) {
@@ -148,7 +145,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       setIsLoading(true);
-
 
       await AxiosPrivate.patch(
         SINGLE_LISTING_URL + `/${editListingModalState.listingID}`,
@@ -262,7 +258,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.WIFI);
 
@@ -290,7 +285,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.POOL);
 
@@ -317,7 +311,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 checked={amenities.includes(amenitiesTypes.AC)} // Set the checked attribute based on the state
                 onChange={(e) => {
                   let val = e.target.checked;
-
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.AC);
@@ -348,7 +341,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.PARKING);
 
@@ -376,7 +368,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 onChange={(e) => {
                   let val = e.target.checked;
 
-
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.TV);
 
@@ -403,7 +394,6 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 checked={amenities.includes(amenitiesTypes.HOT_TUB)} // Set the checked attribute based on the state
                 onChange={(e) => {
                   let val = e.target.checked;
-
 
                   if (val) {
                     handleAmenitiesCheckBox("on", amenitiesTypes.HOT_TUB);

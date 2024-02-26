@@ -8,6 +8,7 @@ export default {
         Righteous: ["Righteous"],
         Sen: ["Sen"],
         Inter: ["Inter"],
+        Merriweather: ["Merriweather"],
       },
     },
   },

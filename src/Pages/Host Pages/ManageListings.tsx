@@ -17,6 +17,7 @@ import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal"
 import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
+import { Link, useNavigate } from "react-router-dom";
 
 type hostListingsData = z.infer<typeof HotelListingSchema> & {
   _id: string;
@@ -47,8 +48,12 @@ const ManageListings = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  
+  const navigate = useNavigate()
 
   useEffect(() => {
+    
+    
     let isMounted = true;
 
     const fetchData = async () => {
@@ -133,7 +138,12 @@ const ManageListings = () => {
             <div className=" flex flex-col gap-3 px-4 py-8 md:gap-0">
               <div className="  y-3 flex   flex-col  gap-4   rounded-md border-2  border-black bg-black px-3 py-3  text-[18px]">
                 <div className=" flex h-5    justify-center">
-                  <img src={swiftin} alt="" className=" h-full" />
+                  <img
+                    src={swiftin}
+                    alt=""
+                    className=" h-full cursor-pointer"
+                    onClick={()=>{navigate('/')}}
+                  />
                 </div>
                 {/* 
                 <p className="  text-center font-bold">Host Console</p> */}

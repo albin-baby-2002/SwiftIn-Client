@@ -11,9 +11,8 @@ import useLogout from "../../../Hooks/AuthHooks/useLogout";
 import { useNavigate } from "react-router-dom";
 
 const NavMenuIcons = () => {
-  
   const navigate = useNavigate();
-  
+
   const auth = useAuth();
 
   const registerModal = useRegisterModal();
@@ -37,24 +36,32 @@ const NavMenuIcons = () => {
 
   return (
     <div
-      className="relative flex-row items-center justify-around flex gap-3  w-2/3  px-10 py-2 rounded-xl  border-2 border-black
+      className="relative flex w-2/3 flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[18px] py-[6px]
     "
     >
-      <div className=" cursor-pointer">
-        <MdOutlineTune className="   text-[26px] hover:scale-110  transform  transition duration-150" />
-      </div>
-
+      
       <div
         onClick={toggleMainMenu}
         className="
              cursor-pointer "
       >
-        <AiFillAppstore className=" text-  text-[26px] hover:scale-110 transform  transition duration-150" />
+        <AiFillAppstore className=" transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
 
         {mainMenu && (
           <Menu>
-            <MenuItem onClick={() => {}} label="Listings" />
-            <MenuItem onClick={() => {}} label="Reservation" />
+            <MenuItem
+              onClick={() => {
+                navigate("/manage/property");
+              }}
+              label="Listings"
+            />
+            <MenuItem onClick={() => {}} label="Reservations" />
+            <MenuItem
+              onClick={() => {
+                navigate("/property/listing");
+              }}
+              label="List Your Property"
+            />
 
             {auth.accessToken && (
               <MenuItem
@@ -68,7 +75,7 @@ const NavMenuIcons = () => {
             {auth.accessToken && (
               <MenuItem
                 onClick={() => {
-                  navigate('/profile')
+                  navigate("/profile");
                 }}
                 label="Profile"
               />
@@ -94,31 +101,6 @@ const NavMenuIcons = () => {
           </Menu>
         )}
       </div>
-      {/* 
-      <div
-        onClick={toggleProfileMenu}
-        className="
-              
-             bg-white 
-             px-1 
-             pt-1 
-             pb-[5px] 
-             rounded-full
-             cursor-pointer 
-               hidden
-             sm:block"
-      >
-        <FaUser
-          className="
-                    text-lg"
-        />
-
-        {profileMenu && (
-          <Menu>
-           
-          </Menu>
-        )}
-      </div> */}
     </div>
   );
 };

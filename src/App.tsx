@@ -18,6 +18,7 @@ import HotelDetailsPage from "./Pages/GeneralPages/HotelDetailsPage";
 import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
 import ManageListings from "./Pages/Host Pages/ManageListings";
 import ListingManagement from "./Pages/AdminPages/ListingManagement";
+import SearchPage from "./Pages/GeneralPages/searchPage";
 
 function App() {
  
@@ -38,7 +39,8 @@ function App() {
             }
           />
 
-          <Route path="/hotel/details" element={<HotelDetailsPage />} />
+          <Route path="/hotel/details/:listingID" element={<HotelDetailsPage />} />
+          <Route path="/search" element={<SearchPage />} />
 
           <Route
             path="/property/listing"

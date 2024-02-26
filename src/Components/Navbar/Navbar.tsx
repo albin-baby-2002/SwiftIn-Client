@@ -4,11 +4,11 @@ import NavMenuIcons from "./SubComponents/NavMenuIcons";
 
 const Navbar = () => {
   return (
-    <nav className=" fixed w-screen bg-white z-10  ">
+    <nav id="nav" className=" fixed  flow-root  top-0   w-screen bg-transparent ">
       <div
         className=" 
-              py-6 
-              border-b-2
+             
+              py-[18px]
             "
       >
         <Container>
@@ -26,29 +26,29 @@ const Navbar = () => {
             </div>
 
             <div
-              className="  justify-between items-center gap-3 hidden
+              className="  hidden items-center justify-between gap-3
               md:flex 
             "
             >
               <div
-                className=" flex text-[15px] gap-6  tracking-wider text-white bg-black    shadow-md border-[1px]  border-slate-400 px-8 py-3 rounded-full   font-Righteous  
+                className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
               "
               >
-                <p className=" transform transition  duration-200 hover:scale-110 hover:text-neutral-200 cursor-pointer">
+                <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
                   Reservations
                 </p>
-                <p className=" transform transition  duration-200 hover:scale-110 hover:text-neutral-200 cursor-pointer">
+                <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
                   {" "}
                   Wishlists
                 </p>
-                <p className=" transform transition  duration-200 hover:scale-110 hover:text-neutral-200 cursor-pointer">
+                <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
                   {" "}
                   Contact Us
                 </p>
               </div>
             </div>
 
-            <div className="  max-w-[120px] flex justify-end ">
+            <div className="  flex max-w-[120px] justify-end ">
               <NavMenuIcons />
             </div>
           </div>

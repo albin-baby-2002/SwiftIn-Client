@@ -14,6 +14,16 @@ import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import EditProfileModal from "../../Components/Modals/EditProfileModal";
 import { PROFILE_DATA_URL, UPDATE_PROFILE_IMG_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
+import Container from "../../Components/UiComponents/Container";
+import Logo from "../../Components/Navbar/SubComponents/Logo";
+import useLogout from "../../Hooks/AuthHooks/useLogout";
+import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
+import useAuth from "../../Hooks/zustandStore/useAuth";
+import { useNavigate } from "react-router-dom";
+import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
+import { AiFillAppstore } from "react-icons/ai";
+import Menu from "../../Components/Navbar/SubComponents/Menu";
+import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 
 interface TProfileInfo {
   _id: string;
@@ -123,28 +133,163 @@ const Profile = () => {
     };
   }, [triggerRefetch]);
 
+  const navigate = useNavigate();
+
+  const auth = useAuth();
+
+  const registerModal = useRegisterModal();
+
+  const loginModal = useLoginModal();
+
+  const logout = useLogout();
+
+  const [mainMenu, setMainMenu] = useState(false);
+
+  const toggleMainMenu = () => {
+    setMainMenu((value) => !value);
+  };
+
   return (
     <>
-      <main className="  px-6 pt-[50px]   ">
-        <div className=" mx-auto max-w-[1000px] lg:px-9">
-          <div className=" text- rounded-lg     px-4 py-4 font-Sen">
-            <div className=" justify- justify- mx-2   flex flex-col  items-center  gap-5 md:flex-row">
-              <h1 className="  text-center text-4xl font-semibold    md:text-[38px]">
-                SwiftIn Account
-              </h1>
-
-              <button
-                className=" mt-4 flex cursor-pointer items-center rounded-full border-2  border-black py-[6px] pe-[4px] ps-[8px] font-semibold  md:mt-0 "
-                onClick={() => {
-                  editProfileModalState.onOpen();
-                }}
+      <header>
+        <nav className=" fixed z-10 w-screen border-b-2 bg-white  ">
+          <div
+            className=" 
+             
+              py-[18px]
+            "
+          >
+            <Container>
+              <div
+                className="
+                flex
+                flex-row
+                items-center
+                justify-between
+                gap-3
+                
+                md:gap-0"
               >
-                <FaUserEdit className="  text-lg" />
-              </button>
+                <div className=" ">
+                  <Logo />
+                </div>
+
+                <div
+                  className="  hidden items-center justify-between gap-3
+              md:flex 
+            "
+                >
+                  <div
+                    className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                  >
+                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                      Reservations
+                    </p>
+                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                      {" "}
+                      Wishlists
+                    </p>
+                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                      {" "}
+                      Contact Us
+                    </p>
+                  </div>
+                </div>
+
+                <div className="  flex  justify-end ">
+                  <div
+                    className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-3 py-2
+    "
+                  >
+                    <button
+                      onClick={() => {
+                        editProfileModalState.onOpen();
+                      }}
+                    >
+                      <FaUserEdit className="   transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
+                    </button>
+
+                    <div
+                      onClick={toggleMainMenu}
+                      className="
+             cursor-pointer "
+                    >
+                      <AiFillAppstore className=" transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
+
+                      {mainMenu && (
+                        <Menu>
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/manage/property");
+                            }}
+                            label="Listings"
+                          />
+                          <MenuItem onClick={() => {}} label="Reservations" />
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/property/listing");
+                            }}
+                            label="List Your Property"
+                          />
+
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                logout();
+                              }}
+                              label="Logout"
+                            />
+                          )}
+
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/profile");
+                              }}
+                              label="Profile"
+                            />
+                          )}
+
+                          {!auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                registerModal.onOpen();
+                              }}
+                              label="SignUp"
+                            />
+                          )}
+
+                          {!auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                loginModal.onOpen();
+                              }}
+                              label="Login"
+                            />
+                          )}
+                        </Menu>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Container>
+          </div>
+        </nav>
+      </header>
+
+      <main className="  px-6 pt-[120px]   ">
+        <div className=" mx-auto max-w-[1150px] ">
+          <div className="  rounded-lg     px-4 py-2 font-Sen">
+            <div className=" mx-2   flex  justify-center ">
+              {/* <h1 className="  text-center text-4xl font-semibold    md:text-[38px]">
+                Account
+              </h1> */}
             </div>
           </div>
 
-          <div className=" mt-4 flex flex-col items-center gap-8  pt-7 sm:flex-row  sm:items-stretch ">
+          <div className=" mt- mx-6 flex flex-col items-center  gap-10 pt-7  sm:flex-row sm:items-stretch ">
             <div className="   flex h-[300px]  w-3/4  flex-col items-center  justify-center rounded-xl   border-black bg-slate-50  px-10  py-12 shadow-lg sm:h-auto sm:w-1/3">
               <div className=" relative flex  justify-center rounded-full ">
                 {profileInfo?.image ? (

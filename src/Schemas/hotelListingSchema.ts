@@ -12,7 +12,7 @@ export const HotelListingSchema = z.object({
   amenities: z.array(z.string()),
   hotelLicenseUrl: z.string().min(1),
   aboutHotel: z.string().min(20),
-  listingTitle: z.string().min(10).max(30),
+  listingTitle: z.string().min(10).max(60),
   roomType: z.string().min(3),
   rentPerNight: z.number().min(1000),
 

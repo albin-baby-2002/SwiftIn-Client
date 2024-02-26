@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import useAddUserModal from "../../Hooks/zustandStore/useAddUserModal";
 import useEditUserModal from "../../Hooks/zustandStore/useEditUserModal";
 import EditUserModal from "../../Components/Admin/Modals/EditUserModal";
+import { CgMenuGridR } from "react-icons/cg";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 interface user {
   _id: string;
@@ -128,23 +130,22 @@ const Users = () => {
         />
       )}
 
-      <main className=" w-full">
+      <main className=" w-full ">
         <Container>
           <div className=" flex items-center justify-between  border-b-2    py-6 text-sm ">
             <div
-              className=" flex  cursor-pointer items-center gap-2 bg-black px-2 py-2 text-white "
+              className=" flex  cursor-pointer items-center gap-2 bg-black px-3 py-2 text-white "
               onClick={() => {
                 setNavBar(true);
               }}
             >
-              <FaChevronRight className=" text-xl" />
+              <CgMenuGridR size={20} />
               <p className=" hidden font-Sen text-xl  font-bold sm:block">
                 Manage Users
               </p>
             </div>
-
             <div className="    flex  justify-end gap-4 ">
-              <div className=" flex max-w-[190px] items-center gap-3 rounded-md  border-2  border-black px-2 sm:max-w-max sm:px-4 sm:py-2">
+              <div className=" flex max-w-[180px] items-center gap-3 rounded-md  border-2  border-black px-2 sm:max-w-max sm:px-4 sm:py-2">
                 <FaSearch />
                 <input
                   value={search}
@@ -152,15 +153,13 @@ const Users = () => {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="  text-black focus:outline-none "
+                  className=" w-20  text-black focus:outline-none "
                   type="text"
                   placeholder="Search   "
                 />
               </div>
 
               <div className=" flex items-center   gap-2 rounded-md  border-2 bg-black px-4  py-2 font-Sen font-semibold  text-white  ">
-               
-
                 <p className="  cursor-pointer" onClick={addUserModal.onOpen}>
                   Add User
                 </p>
@@ -171,12 +170,12 @@ const Users = () => {
 
         {/* main users table  */}
 
-        <div className=" max-w-screen mx-2 overflow-x-scroll pb-5 lg:mx-10 ">
-          <div className=" mt-10 min-w-[590px] max-w-[1050px] overflow-x-scroll lg:mx-auto  ">
-            <div className="   font-Sen text-sm font-bold lg:text-lg">
-              <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,150px)_150px]    ">
-                <p className="  text-wrap text-center">username</p>
+        <div className=" max-w-screen overflow-x-scroll bg-gray-200 px-2 pb-5 lg:px-10 ">
+          <div className=" mt-14 min-w-[590px] max-w-[1100px] overflow-x-scroll rounded-xl  bg-white  pb-8 lg:mx-auto ">
+            <div className=" px-8  font-Sen text-sm font-bold lg:text-sm">
+              <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px]  border-b py-8 align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,2fr)_minmax(170px,2fr)_repeat(3,130px)_minmax(170px,1fr)]    ">
                 <p className="  text-center">email</p>
+                <p className="  text-wrap text-center">username</p>
                 <p className="  text-center">verified</p>
                 <p className="  text-center">blocked</p>
                 <p className="  text-wrap text-center">createdAt</p>
@@ -185,10 +184,10 @@ const Users = () => {
             </div>
 
             {usersList?.map((user, index) => (
-              <div key={index} className=" mt-6  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_120px] gap-2 rounded-xl border-2 border-neutral-600 py-4 align-middle font-Sen text-sm font-semibold md:grid-cols-[minmax(100px,1fr)_minmax(160px,200px)_repeat(3,1fr)_120px]  lg:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,150px)_150px]">
-                  <p className=" text-center  lowercase ">{user.username}</p>
-                  <p className=" text-center    ">{user.email}</p>
+              <div key={index} className="   ">
+                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_120px] border-b  px-8 py-8 align-middle font-Sen text-sm font-semibold md:grid-cols-[minmax(100px,1fr)_minmax(160px,200px)_repeat(3,1fr)_120px]  lg:grid-cols-[minmax(100px,2fr)_minmax(170px,2fr)_repeat(3,130px)_minmax(170px,1fr)]">
+                  <p className=" text-center   ">{user.email}</p>
+                  <p className=" text-center    lowercase ">{user.username}</p>
                   <p className=" text-center ">
                     {user.verified ? "true" : "false"}
                   </p>
@@ -202,7 +201,7 @@ const Users = () => {
                         onClick={() => {
                           unBlockUser(user._id);
                         }}
-                        className=" cursor-pointer rounded-lg bg-black px-2 py-1 text-xs text-white"
+                        className=" w-12  cursor-pointer rounded-lg bg-black  py-1 text-center text-xs text-white"
                       >
                         open
                       </p>
@@ -211,43 +210,45 @@ const Users = () => {
                         onClick={() => {
                           blockUser(user._id);
                         }}
-                        className=" cursor-pointer rounded-lg bg-black px-2 py-1 text-xs text-white"
+                        className=" w-12 cursor-pointer rounded-lg bg-black  py-1 text-center text-xs text-white"
                       >
                         block
                       </p>
                     )}
 
-                    <FaEdit
-                      className=" cursor-pointer"
+                    <p
                       onClick={() => {
                         editUserModalState.onOpen(user._id);
                       }}
-                    />
+                      className=" w-12 cursor-pointer rounded-lg bg-black py-1 text-center text-xs text-white"
+                    >
+                      edit
+                    </p>
                   </div>
                 </div>
               </div>
             ))}
 
-            <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
-              <div className=" font-bold ">
-                {" "}
-                page {page} of {totalPages}
-              </div>
-              <div className="  flex   gap-3 ">
+            <div className=" flex items-center justify-between px-10 pb-6 pt-8 font-Sen  text-sm ">
+              <div className="  "> Total pages : {totalPages}</div>
+
+              <div className=" flex items-center gap-4 text-sm 2xl:text-lg ">
                 <button
-                  className=" w-20 rounded-md bg-black px-4 py-1 text-center text-white"
+                  className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
                   onClick={() => setPage((page) => page - 1)}
                   disabled={page <= 1}
                 >
-                  Prev
+                  <IoIosArrowBack />
                 </button>
 
+                <p>Page {page}</p>
+
                 <button
-                  className=" w-20 rounded-md border-2 border-black  px-4 py-1 text-center"
-                  onClick={() => setPage((page) => page + 1)}
+                  className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
                   disabled={page >= totalPages}
+                  onClick={() => setPage((page) => page + 1)}
                 >
-                  Next
+                  <IoIosArrowForward />
                 </button>
               </div>
             </div>

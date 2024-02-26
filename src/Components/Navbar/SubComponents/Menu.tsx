@@ -1,24 +1,23 @@
-interface MenuProps{
-    
-    children:React.ReactNode
+interface MenuProps {
+  children: React.ReactNode;
 }
 
-const Menu:React.FC<MenuProps> = ({children}) => {
+const Menu: React.FC<MenuProps> = ({ children }) => {
   return (
     <div
       className=" 
                 absolute 
-                shadow-md 
-                bg-white 
+                -right-4 
+                top-12 
+                min-w-[180px] 
                 rounded-md 
-                min-w-[150px] 
-                top-16 
-                right-0 
-                border-2"
+                border-2 
+                bg-white 
+                shadow-md"
     >
       {children}
     </div>
   );
-}
+};
 
-export default Menu
+export default Menu;
