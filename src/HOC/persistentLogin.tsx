@@ -4,6 +4,9 @@ import UseRefreshToken from "../Hooks/AuthHooks/useRefreshToken";
 import loader from "../Assets/fade-stagger-squares.svg";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import RegisterModal from "../Components/Modals/RegisterModal";
+import OtpModal from "../Components/Modals/OtpModal";
+import LoginModal from "../Components/Modals/LoginModal";
 
 const PersistentLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +33,11 @@ const PersistentLogin = () => {
   return (
     <>
       <Toaster position="bottom-right" />
+      <RegisterModal />
+      <OtpModal />
+      <LoginModal />
       {isLoading ? (
-        <div className=" flex items-center  justify-center h-screen w-full">
+        <div className=" flex h-screen  w-full items-center justify-center">
           <img src={loader} alt="" height={100} width={100} />{" "}
         </div>
       ) : (

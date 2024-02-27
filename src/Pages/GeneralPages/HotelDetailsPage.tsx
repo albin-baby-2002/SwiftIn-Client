@@ -1,37 +1,24 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { RiHeartFill, RiTvLine } from "react-icons/ri";
-import hotel from "../../Assets/hotel.webp";
-import hotel2 from "../../Assets/hotel2.webp";
-import hotel3 from "../../Assets/hotel3.webp";
-import hotel4 from "../../Assets/hotel4.webp";
-import hotel5 from "../../Assets/hotel5.webp";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { AiFillAppstore } from "react-icons/ai";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
+import { FaCar, FaHotTub, FaRegSnowflake, FaRupeeSign } from "react-icons/fa";
+
 import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import useAuth from "../../Hooks/zustandStore/useAuth";
+import Menu from "../../Components/Navbar/SubComponents/Menu";
+import { useNavigate, useParams } from "react-router-dom";
 import useLogout from "../../Hooks/AuthHooks/useLogout";
-import swiftin from "../../Assets/logo3.png";
-import host from "../../Assets/host.webp";
+import useAuth from "../../Hooks/zustandStore/useAuth";
+import { AiFillAppstore } from "react-icons/ai";
+import { RiTvLine } from "react-icons/ri";
 import LogoImg from "/images/logo5.png";
 
-import {
-  FaCar,
-  FaHeart,
-  FaHotTub,
-  FaRegHeart,
-  FaRegSnowflake,
-  FaRupeeSign,
-} from "react-icons/fa";
-import { TiWiFi } from "react-icons/ti";
-import { MdOutlinePool, MdOutlineTune } from "react-icons/md";
-
-import { BiMinus, BiPlus } from "react-icons/bi";
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import axios, { AxiosRequestConfig } from "axios";
 import toast from "react-hot-toast";
+import { TiWiFi } from "react-icons/ti";
+import { AxiosRequestConfig } from "axios";
+import { TbHeartPlus } from "react-icons/tb";
+import { MdOutlinePool } from "react-icons/md";
+import { BiMinus, BiPlus } from "react-icons/bi";
+import { useEffect, useMemo, useState } from "react";
+import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
+import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 
 interface ListingInfo {
   _id: string;
@@ -51,24 +38,77 @@ interface ListingInfo {
   hostImg: string;
   hotelName: string;
 }
+
 interface SingleListingDataResponse {
   listing: ListingInfo;
 }
 
+const amenitiesTypes = {
+  WIFI: "freeWifi",
+  POOL: "commonPool",
+  AC: "airConditioning",
+  PARKING: "carParking",
+  TV: "cableTv",
+  HOT_TUB: "hotTub",
+} as const;
+
+// the jsx function
+
 const HotelDetailsPage = () => {
-  const [mainMenu, setMainMenu] = useState(false);
+  // state of nav menu
+  const [menu, setMenu] = useState(false);
+
+  // function to toggle the nav menu
+
+  const toggleMenu = () => {
+    setMenu((value) => !value);
+  };
+
+  // state of login and register modal
+
+  const registerModal = useRegisterModal();
+
+  const loginModal = useLoginModal();
+
+  // logout hook
+
+  const logout = useLogout();
+
+  // getting hotel listingID from params
+
+  const { listingID } = useParams();
+
+  // data of property shown on the page
 
   const [propertyData, SetPropertyData] = useState<ListingInfo | null>(null);
+
+  // axios private hook
+
+  const AxiosPrivate = useAxiosPrivate();
+
+  // auth state
+
+  const auth = useAuth();
+
+  // navigate from react router dom
+
+  const navigate = useNavigate();
+
+  // data relating to reservation
 
   const [rooms, setRooms] = useState(1);
 
   const [guests, setGuests] = useState(1);
 
+  // set total guests based on change in no of rooms
+
   useEffect(() => {
     if (propertyData && propertyData.maxGuestsPerRoom) {
       setGuests(propertyData.maxGuestsPerRoom * rooms);
     }
-  }, [rooms]);
+  }, [rooms, propertyData]);
+
+  // Initial check in and check out dates
 
   const currentDate = new Date().toISOString().split("T")[0];
 
@@ -78,22 +118,18 @@ const HotelDetailsPage = () => {
     .toISOString()
     .split("T")[0];
 
-  useEffect(() => {
-    console.log(new Date().getDate() + 1, "date");
-  });
-
   const [checkInDate, setCheckInDate] = useState(currentDate);
   const [checkOutDate, setCheckOutnDate] = useState(tomorrowDate);
+
+  // function to calculate total days based on checkIn and checkOut Dates
 
   const totalDays = useMemo(() => {
     if (checkInDate && checkOutDate) {
       const startDate = new Date(checkInDate);
       const endDate = new Date(checkOutDate);
 
-      // Initialize a counter for the number of days
       let numberOfDays = 0;
 
-      // Iterate through the dates from start to end
       for (
         let date = new Date(startDate);
         date < endDate;
@@ -106,6 +142,8 @@ const HotelDetailsPage = () => {
     }
   }, [checkInDate, checkOutDate]);
 
+  // function to calculate total rent payable
+
   const grandTotal = useMemo(() => {
     if (propertyData && rooms && totalDays) {
       return propertyData.rentPerNight * rooms * totalDays;
@@ -117,34 +155,8 @@ const HotelDetailsPage = () => {
       return (grandTotal * 10) / 100;
     }
   }, [grandTotal]);
-
-  const [triggerRefetch, setTriggerRefetch] = useState(false);
-
-  const { listingID } = useParams();
-
-  const AxiosPrivate = useAxiosPrivate();
-
-  const auth = useAuth();
-  const navigate = useNavigate();
-
-  const logout = useLogout();
-
-  const toggleMainMenu = () => {
-    setMainMenu((value) => !value);
-  };
-
-  const amenitiesTypes = {
-    WIFI: "freeWifi",
-    POOL: "commonPool",
-    AC: "airConditioning",
-    PARKING: "carParking",
-    TV: "cableTv",
-    HOT_TUB: "hotTub",
-  } as const;
-
-  const registerModal = useRegisterModal();
-
-  const loginModal = useLoginModal();
+  
+  // useEffect to get data from the api for displaying listing page
 
   useEffect(() => {
     let isMounted = true;
@@ -163,6 +175,8 @@ const HotelDetailsPage = () => {
           console.log(response.data);
         }
       } catch (error) {
+        
+        toast.error('failed to fetch page data');
         console.error("Error fetching data:", error);
       }
     };
@@ -172,7 +186,41 @@ const HotelDetailsPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [triggerRefetch, listingID]);
+  }, [listingID]);
+  
+  // api request to check if the room is available on specific days
+
+  const checkAvailability = async () => {
+    try {
+      let data = { checkInDate, checkOutDate, rooms, listingID };
+
+      await AxiosPrivate.post(
+        "/user/listing/checkAvailability",
+        data as AxiosRequestConfig<{
+          checkInDate: string;
+          checKOutDate: string;
+          rooms: number;
+          listingID: string;
+        }>,
+      );
+
+      toast.success(" Rooms are available for the given days");
+    } catch (err: any) {
+      console.log(err);
+
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Listing Failed");
+      }
+    }
+  };
 
   const reserve = async () => {
     try {
@@ -205,10 +253,102 @@ const HotelDetailsPage = () => {
       }
     }
   };
+  
+  // function to load the razorPay script
+
+  function loadScript(src: string) {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  // function to display RazorPay and create order / make and validate payment
+  
+  async function displayRazorpay() {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js",
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    // creating a new order
+
+    let data = { checkInDate, checkOutDate, rooms, listingID };
+
+    const result = await AxiosPrivate.post(
+      "/user/listing/reserve/createOrder",
+      data,
+    );
+
+    if (!result) {
+      alert("Server error. Are you online?");
+      return;
+    }
+
+    // Getting the order details back
+    const { amount, id: order_id, currency } = result.data.order;
+
+    const reservationID = result.data.reservationID;
+
+    console.log(result.data, "razor pay data");
+
+    const options = {
+      key: "rzp_test_rijEZunAGfAVNS",
+      amount: amount.toString(),
+      currency: currency,
+      name: "SwiftIn Corp.",
+      description: "Test Transaction",
+
+      order_id: order_id,
+      handler: async function (response: any) {
+        const data = {
+          reservationID,
+          listingID,
+          amount,
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          razorpaySignature: response.razorpay_signature,
+        };
+
+        const result = await AxiosPrivate.post(
+          "/user/listing/reserve/success",
+          data,
+        );
+
+        alert(result.data.message);
+      },
+      prefill: {
+        name: "swiftIn LLC",
+        email: "swiftin@example.com",
+        contact: "9999999999",
+      },
+      notes: {
+        address: "SwiftIn Corporate Office",
+      },
+      theme: {
+        color: "#61dafb",
+      },
+    };
+
+    const paymentObject = new (window as any).Razorpay(options);
+    paymentObject.open();
+  }
 
   return (
     <>
-      <header className=" fixed w-full  border-b-2 bg-white">
+      <header className=" fixed z-10  w-full border-b-2 bg-white">
         <div
           className="
            mx-auto
@@ -218,7 +358,7 @@ const HotelDetailsPage = () => {
            lg:px-10"
         >
           <nav>
-            <div className=" flex items-center  justify-between px-4 py-5 font-Sen  text-sm">
+            <div className=" flex items-center  justify-between px-4 py-5   text-sm">
               <div
                 className=" rounded-xl bg-black px-3 py-2"
                 onClick={() => {
@@ -263,13 +403,13 @@ const HotelDetailsPage = () => {
                 >
                   {/* <MdOutlineTune className=" cursor-pointer text-[24px] text-white  transition duration-150 hover:scale-110 " /> */}
                   <div
-                    onClick={toggleMainMenu}
+                    onClick={toggleMenu}
                     className="
              cursor-pointer "
                   >
                     <AiFillAppstore className=" transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
 
-                    {mainMenu && (
+                    {menu && (
                       <Menu>
                         <MenuItem
                           onClick={() => {
@@ -349,13 +489,8 @@ const HotelDetailsPage = () => {
                   <h1 className="  text-[30px]  font-semibold  capitalize  ">
                     {propertyData?.listingTitle}
                   </h1>
-
-                  {/* <div className=" flex items-center gap-2  rounded-md  border-2 border-gray-400 px-2 py-[6px]  text-sm  text-gray-600">
-                    <FaHeart className=" " size={15} />
-                    <p className=" font-bold">Wishlist</p>
-                  </div> */}
                 </div>
-                <div className="  flex gap-3 px-10">
+                <div className="   flex gap-3 px-10">
                   <div className=" flex  h-[280px] w-[50%]   rounded-l-xl  ">
                     <img
                       className="  h-full w-full rounded-l-xl"
@@ -377,7 +512,14 @@ const HotelDetailsPage = () => {
                     />
                   </div>
 
-                  <div className=" flex h-[280px] w-[25%]  flex-col  gap-3  ">
+                  <div className=" relative flex h-[280px] w-[25%]  flex-col  gap-3  ">
+                    <div className=" absolute  bottom-4 right-4 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   ">
+                      <TbHeartPlus
+                        className=" pt-[1px] font-bold text-white   "
+                        size={18}
+                      />
+                      <p className=" text-white">Wishlist</p>
+                    </div>
                     <img
                       className=" h-1/2  rounded-tr-xl"
                       src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[2]}`}
@@ -411,7 +553,7 @@ const HotelDetailsPage = () => {
             <div className=" mx-auto w-[60%] max-w-[500px] font-Sen font-semibold ">
               <p className=" text-center text-3xl ">What this place offers</p>
 
-              <div className=" mt-8 flex flex-col gap-8   ">
+              <div className=" mt-8 flex flex-col gap-9   ">
                 <div className=" flex  w-full justify-between lg:mx-auto">
                   <div className=" grid w-[67%] grid-cols-1 ps-6   ">
                     <div className=" flex items-center  gap-4 justify-self-start">
@@ -486,26 +628,35 @@ const HotelDetailsPage = () => {
               </div>
             </div>
 
-            <div className="  mx-auto  flex  w-[40%] justify-center rounded-xl border border-neutral-300  px-[50px] py-10 shadow-2xl">
+            <div className="  mx-auto  flex  w-[35%] justify-center rounded-xl border border-neutral-300  px-[0px] py-6 shadow-2xl">
               <div>
-                <div className=" flex items-center gap-3 font-Inter ">
-                  <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
-                    <FaRupeeSign className=" text-sm  text-white" />
+                <div className=" mt-4 flex items-center justify-between gap-3 px-1 font-Inter ">
+                  <div className=" flex  gap-1">
+                    <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
+                      <FaRupeeSign className=" text-sm  text-white" />
+                    </div>
+
+                    <div className=" flex items-center gap-2">
+                      <p className=" font-semibold ">
+                        {" "}
+                        {propertyData?.rentPerNight}{" "}
+                      </p>
+                      <p className=" text-xs font-semibold  text-neutral-400">
+                        {" "}
+                        night{" "}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className=" flex items-center gap-2">
-                    <p className=" font-semibold ">
-                      {" "}
-                      {propertyData?.rentPerNight}{" "}
-                    </p>
-                    <p className=" text-xs font-semibold  text-neutral-400">
-                      {" "}
-                      night{" "}
-                    </p>
+                  <div
+                    className=" cursor-pointer pr-2 text-center text-xs  font-semibold"
+                    onClick={checkAvailability}
+                  >
+                    <p>Check Availability</p>
                   </div>
                 </div>
 
-                <div className=" mt-7 min-w-[300px] rounded-xl border-2 border-black">
+                <div className=" mt-8 min-w-[300px] rounded-xl border-2 border-black">
                   <div className=" flex  border-b-2 border-black  ">
                     <div className="  w-1/2 border-r-2 border-black px-4 py-3 text-xs ">
                       <p className=" pb-3 text-center font-bold">CHECK IN</p>
@@ -555,22 +706,29 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className="  mt-9 flex justify-center gap-4   font-Sen text-sm font-semibold">
-                  <p>Total Guests Allowed </p>
-                  <p>{guests}</p>
-                </div>
-
-                <div className=" mt-9 flex w-full justify-center font-Inter">
+                <div className=" mt-12 flex w-full justify-center font-Inter">
                   <button
                     className=" w-full rounded-xl bg-black px-4 py-3 font-bold tracking-wide text-white"
-                    onClick={reserve}
+                    onClick={displayRazorpay}
                   >
                     Reserve
                   </button>
                 </div>
 
-                <div className=" flex justify-between border-t pb-4 pt-9 font-Sen  font-bold">
-                  <p>Fee Payable </p>
+                <div className="  my-6 flex items-center justify-between gap-4 rounded-lg px-2   py-3 text-gray-500 ">
+                  <div className=" flex items-center justify-center gap-1  text-xs">
+                    <p className=" font-bold  "> Rent Payable :</p>
+                    <p className=" font-bold">{grandTotal}</p>
+                  </div>
+
+                  <div className="    flex justify-center gap-1   text-xs font-bold">
+                    <p className=" "> Guests Allowed : </p>
+                    <p>{guests}</p>
+                  </div>
+                </div>
+
+                <div className="  flex justify-center  gap-4   border-t-2 pb-4  pt-8 font-Inter     font-bold">
+                  <p>Reservation Fee </p>
                   <p>{FeePayable}</p>
                 </div>
               </div>
