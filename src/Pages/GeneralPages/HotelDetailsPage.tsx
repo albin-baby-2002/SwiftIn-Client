@@ -1,4 +1,13 @@
-import { FaCar, FaHotTub, FaRegSnowflake, FaRupeeSign } from "react-icons/fa";
+import {
+  FaCar,
+  FaHotTub,
+  FaMinus,
+  FaPlug,
+  FaPlus,
+  FaRegSnowflake,
+  FaRupeeSign,
+  FaStar,
+} from "react-icons/fa";
 
 import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
@@ -37,6 +46,10 @@ interface ListingInfo {
   host: string;
   hostImg: string;
   hotelName: string;
+  city: string;
+  district: string;
+  state: string;
+  pinCode: string;
 }
 
 interface SingleListingDataResponse {
@@ -155,7 +168,7 @@ const HotelDetailsPage = () => {
       return (grandTotal * 10) / 100;
     }
   }, [grandTotal]);
-  
+
   // useEffect to get data from the api for displaying listing page
 
   useEffect(() => {
@@ -175,8 +188,7 @@ const HotelDetailsPage = () => {
           console.log(response.data);
         }
       } catch (error) {
-        
-        toast.error('failed to fetch page data');
+        toast.error("failed to fetch page data");
         console.error("Error fetching data:", error);
       }
     };
@@ -187,7 +199,7 @@ const HotelDetailsPage = () => {
       isMounted = false;
     };
   }, [listingID]);
-  
+
   // api request to check if the room is available on specific days
 
   const checkAvailability = async () => {
@@ -253,7 +265,7 @@ const HotelDetailsPage = () => {
       }
     }
   };
-  
+
   // function to load the razorPay script
 
   function loadScript(src: string) {
@@ -271,7 +283,7 @@ const HotelDetailsPage = () => {
   }
 
   // function to display RazorPay and create order / make and validate payment
-  
+
   async function displayRazorpay() {
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js",
@@ -411,19 +423,32 @@ const HotelDetailsPage = () => {
 
                     {menu && (
                       <Menu>
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/manage/property");
-                          }}
-                          label="Listings"
-                        />
-                        <MenuItem onClick={() => {}} label="Reservations" />
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/property/listing");
-                          }}
-                          label="List Your Property"
-                        />
+                        {auth.accessToken && (
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/manage/property");
+                            }}
+                            label="Listings"
+                          />
+                        )}
+
+                        {auth.accessToken && (
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/reservations");
+                            }}
+                            label="Reservations"
+                          />
+                        )}
+
+                        {auth.accessToken && (
+                          <MenuItem
+                            onClick={() => {
+                              navigate("/property/listing");
+                            }}
+                            label="List Your Property"
+                          />
+                        )}
 
                         {auth.accessToken && (
                           <MenuItem
@@ -538,11 +563,19 @@ const HotelDetailsPage = () => {
             <div className=" mx-auto mt-12 flex w-[92%] justify-center font-Inter ">
               <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
                 <div className="  h-10 w-10">
-                  <img
-                    className=" h-full w-full rounded-full"
-                    src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
-                    alt=""
-                  />
+                  {propertyData?.hostImg ? (
+                    <img
+                      className=" h-full w-full rounded-full"
+                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
+                      alt=""
+                    />
+                  ) : (
+                    <img
+                      className=" h-full w-full rounded-full"
+                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                      alt=""
+                    />
+                  )}
                 </div>
                 <p>Hosted by {propertyData?.host}</p>
               </div>
@@ -715,7 +748,7 @@ const HotelDetailsPage = () => {
                   </button>
                 </div>
 
-                <div className="  my-6 flex items-center justify-between gap-4 rounded-lg px-2   py-3 text-gray-500 ">
+                <div className="  font-Roboto my-6 flex items-center justify-between gap-4 rounded-lg   px-2 py-3  text-gray-500">
                   <div className=" flex items-center justify-center gap-1  text-xs">
                     <p className=" font-bold  "> Rent Payable :</p>
                     <p className=" font-bold">{grandTotal}</p>
@@ -743,6 +776,80 @@ const HotelDetailsPage = () => {
 
               <div className=" mt-6 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-2/3">
                 <p>{propertyData?.aboutHotel}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="  flex items-center justify-center  gap-6  px-8 py-14">
+            <div className=" flex h-[200px] w-[50%] justify-center  gap-6   rounded-xl  border-2 py-5 ">
+              <div className="  text-neutral-500 ">
+                <div className=" ps-1">
+                  <p className="  mt-2  font-Sen text-2xl font-bold text-black">
+                    Add Your Review
+                  </p>
+                  <p className=" mt-3  text-sm font-bold">
+                    {" "}
+                    tell us more about this place
+                  </p>
+
+                  <p className=" mt-2 w-[80%] text-sm font-bold">
+                    {" "}
+                    Also give rating
+                  </p>
+                </div>
+
+                <button className=" mt-5 rounded-md bg-black px-4 py-2 text-sm  font-semibold text-white">
+                  Submit Your Review
+                </button>
+              </div>
+
+              <div className="   flex w-[45%] flex-col justify-center gap-2 ">
+                <div className=" flex justify-center gap-2 text-sm"></div>
+
+                <div className="  flex items-center justify-between gap-2 rounded-md   border px-4 py-2 ">
+                  <p className=" font-Sen  font-bold">Rating</p>
+
+                  <div className=" flex  items-center gap-4">
+                    <p className=" rounded-md border-2 px-1 py-1">
+                      <FaMinus size={10} />
+                    </p>
+                    <p className=" font-bold"> 1</p>
+                    <p className=" rounded-md border-2 px-1 py-1">
+                      <FaPlus size={10} />
+                    </p>
+                  </div>
+                </div>
+
+                <textarea className="  h-[130px] w-full  rounded-lg border  "></textarea>
+              </div>
+            </div>
+
+            <div className=" flex h-[200px] w-[50%]  justify-center  gap-6  rounded-xl  border-2 py-5 ">
+              <div className=" w-[45%] ">
+                <img
+                  src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
+                  alt=""
+                />
+              </div>
+
+              <div className="  w-[60%] text-neutral-500  ">
+                <p className=" mt-2 font-Sen text-2xl font-bold text-black">
+                  Address And Location
+                </p>
+
+                <div className=" mt-3 flex flex-col gap-2  text-sm font-bold">
+                  <div className="flex gap-2">
+                    <p>{propertyData?.hotelName}</p>
+                    <p>{propertyData?.city}</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <p>{propertyData?.district}</p>
+                    <p>{propertyData?.state}</p>
+                  </div>
+
+                  <p>{propertyData?.pinCode}</p>
+                </div>
               </div>
             </div>
           </div>

@@ -40,9 +40,18 @@ const UseGoogleLogin = () => {
         let message = `Welcome to SwiftIn ${res.data.user}`;
 
         toast.success(message);
-      } catch (err) {
-        toast.error("Google Login Failed Try Again");
-        console.log(err);
+      } catch (err:any) {
+       console.log(err);
+
+       if (!err?.response) {
+         toast.error("No Server Response");
+       } else if (err.response?.status === 400) {
+         toast.error(err.response.data.message);
+       } else if (err.response?.status === 500) {
+         toast.error("Oops! Something went wrong. Please try again later.");
+       } else {
+         toast.error("Failed to disapprove");
+       }
       }
     },
     onError: (err) => {

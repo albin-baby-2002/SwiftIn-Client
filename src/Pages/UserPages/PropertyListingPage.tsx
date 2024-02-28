@@ -25,8 +25,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FaTrashCan } from "react-icons/fa6";
 import { LIST_PROPERTY_URL } from "../../Api/EndPoints";
 import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-
-
+import Logo from "../../Components/Navbar/SubComponents/Logo";
 
 // types used
 
@@ -46,8 +45,7 @@ type hotelCapactiyFields =
   | "bathroomPerRoom";
 
 const PropertyListingPage = () => {
-  
-    const navigate = useNavigate()  
+  const navigate = useNavigate();
   // steps and fields to validate by trigger
 
   const steps: step[] = [
@@ -186,40 +184,33 @@ const PropertyListingPage = () => {
     "hotelLicenseUrl",
   ]) as [number, number, number, number, string[], string, string[], string];
 
-  
-
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data, "data");
 
     try {
-      await AxiosPrivate.post(LIST_PROPERTY_URL,data);
-      
-      toast.success('Listing successful')
-      
+      await AxiosPrivate.post(LIST_PROPERTY_URL, data);
+
+      toast.success("Listing successful");
+
       toast.success("Wait For Admin to verify to start hosting");
-      
-      setTimeout(()=>{
-        
-        navigate('/')
-      },500)
-      
-      
-      
-      
+
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
     } catch (err: any) {
       console.log(err);
-      
-       if (!err?.response) {
-         toast.error("No Server Response");
-       } else if (err.response?.status === 400) {
-         toast.error(err.response.data.message);
-       } else if (err.response?.status === 401) {
-         toast.error(err.response.data.message);
-       } else if (err.response?.status === 500) {
-         toast.error("Oops! Something went wrong. Please try again later.");
-       }  else {
-         toast.error("Listing Failed");
-       }
+
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Listing Failed");
+      }
     }
   };
 
@@ -360,18 +351,33 @@ const PropertyListingPage = () => {
   const pageOne = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
-          <div className=" pt-8">
+        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+          <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={100} width={100} alt="" />
-                  </div>
-                </Link>
+                <div className=" flex w-[120px] justify-center ">
+                  <Logo />
+                </div>
 
-                <div className=" flex gap-6 font-Inter ">
-                  <button className=" w-14 rounded-md bg-black   py-[6px] font-semibold text-white">
+                <div
+                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                >
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    Reservations
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Wishlists
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Contact Us
+                  </p>
+                </div>
+
+                <div className=" flex gap-2 font-Inter  ">
+                  <button className=" w-14 rounded-md bg-black    py-[6px] font-semibold text-white">
                     Exit
                   </button>
 
@@ -390,7 +396,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[100px]">
+      <main className="  pt-[140px]  ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -440,28 +446,25 @@ const PropertyListingPage = () => {
               />
 
               <div className=" flex   justify-between gap-3">
-             
-                  <Input
-                    id="state"
-                    label="State"
-                    register={register}
-                    errors={errors}
-                    labelBlack
-                    textBase
-                    HalfWidth
-                  />
-               
-           
-                  <Input
-                    id="pinCode"
-                    label="PinCode"
-                    register={register}
-                    errors={errors}
-                    labelBlack
-                    textBase
-                    HalfWidth
-                  />
-                
+                <Input
+                  id="state"
+                  label="State"
+                  register={register}
+                  errors={errors}
+                  labelBlack
+                  textBase
+                  HalfWidth
+                />
+
+                <Input
+                  id="pinCode"
+                  label="PinCode"
+                  register={register}
+                  errors={errors}
+                  labelBlack
+                  textBase
+                  HalfWidth
+                />
               </div>
             </div>
           </div>
@@ -473,17 +476,32 @@ const PropertyListingPage = () => {
   const pageTwo = (
     <>
       <header className=" ">
-        <nav className="  fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
-          <div className=" pt-8">
+        <nav className="  fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+          <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={100} width={100} alt="" />
-                  </div>
-                </Link>
+                <div className=" flex w-[120px] justify-center ">
+                  <Logo />
+                </div>
 
-                <div className=" flex gap-6 font-Inter ">
+                <div
+                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                >
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    Reservations
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Wishlists
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Contact Us
+                  </p>
+                </div>
+
+                <div className=" flex gap-2 font-Inter ">
                   <button
                     className=" w-14 rounded-md bg-black   py-[6px] font-semibold text-white"
                     onClick={prevFunction}
@@ -517,7 +535,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[110px]">
+      <main className="  pt-[140px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -527,11 +545,12 @@ const PropertyListingPage = () => {
 
               <div>
                 <h1 className="   text-[25px]  font-bold">
-                  Total Rooms And Facilities You Have
+                  Total Rooms And Facilities Property Have
                 </h1>
 
                 <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
-                  Give details of the type of room you wish to list now
+                  Give important details of the type of room you wish to list
+                  now
                 </p>
               </div>
             </div>
@@ -660,17 +679,32 @@ const PropertyListingPage = () => {
   const PageThree = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
-          <div className=" pt-8">
+        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+          <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={100} width={100} alt="" />
-                  </div>
-                </Link>
+                <div className=" flex w-[120px] justify-center ">
+                  <Logo />
+                </div>
 
-                <div className=" flex gap-6 font-Inter ">
+                <div
+                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                >
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    Reservations
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Wishlists
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Contact Us
+                  </p>
+                </div>
+
+                <div className=" flex gap-2 font-Inter ">
                   <button
                     className=" w-14 rounded-md bg-black   py-[6px] font-semibold text-white"
                     onClick={prevFunction}
@@ -702,7 +736,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[105px]">
+      <main className="  pt-[140px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -712,11 +746,12 @@ const PropertyListingPage = () => {
 
               <div>
                 <h1 className="   text-[25px]  font-bold">
-                  Choose Basic Amenities you provide ?
+                  Choose Basic Amenities you will provide ?
                 </h1>
 
                 <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
-                  Select facilities you offer to all customers as complimentary
+                  Select facilities and services you offer to all the customers
+                  as complimentary
                 </p>
               </div>
             </div>
@@ -797,19 +832,34 @@ const PropertyListingPage = () => {
   const PageFour = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
-          <div className=" pt-8">
+        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+          <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={100} width={100} alt="" />
-                  </div>
-                </Link>
+                <div className=" flex w-[120px] justify-center ">
+                  <Logo />
+                </div>
 
-                <div className=" flex gap-6 font-Inter ">
+                <div
+                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                >
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    Reservations
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Wishlists
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Contact Us
+                  </p>
+                </div>
+
+                <div className=" flex gap-2 font-Inter ">
                   <button
-                    className=" w-14 rounded-md bg-black   py-[6px] font-semibold text-white"
+                    className=" w-14 rounded-md bg-black   py-[2px] font-semibold text-white"
                     onClick={prevFunction}
                   >
                     prev
@@ -838,7 +888,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[110px]">
+      <main className="  pt-[130px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -857,12 +907,11 @@ const PropertyListingPage = () => {
               </div>
             </div>
           </div>
-
         </div>
 
-        <div className=" mx-auto mt-10 flex max-w-[80%] gap-4">
+        <div className=" mx-auto mt-9 flex max-w-[75%] gap-4">
           <div
-            className={`${mainImage ? "" : " border-4 "}  relative flex  h-[270px] w-[50%]  rounded-l-xl   border-gray-400`}
+            className={`${mainImage ? "" : " border-4 "}  relative flex  h-[260px] w-[50%]  rounded-l-xl   border-gray-400`}
           >
             {mainImage ? (
               <>
@@ -895,7 +944,7 @@ const PropertyListingPage = () => {
             )}
           </div>
 
-          <div className=" gap- flex h-[270px]  w-[25%] flex-col   justify-between   ">
+          <div className=" gap- flex h-[260px]  w-[25%] flex-col   justify-between   ">
             <div
               className={`${otherImages[0] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
             >
@@ -965,7 +1014,7 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" gap- flex h-[270px]  w-[25%] flex-col   justify-between   ">
+          <div className=" gap- flex h-[260px]  w-[25%] flex-col   justify-between   ">
             <div
               className={`${otherImages[2] ? "" : "border-4"} relative  h-[47%]  rounded-tr-lg  border-gray-400 `}
             >
@@ -1042,17 +1091,32 @@ const PropertyListingPage = () => {
   const PageFive = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
-          <div className=" pt-8">
+        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+          <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={100} width={100} alt="" />
-                  </div>
-                </Link>
+                <div className=" flex w-[120px] justify-center ">
+                  <Logo />
+                </div>
 
-                <div className=" flex gap-6 font-Inter ">
+                <div
+                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                >
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    Reservations
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Wishlists
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Contact Us
+                  </p>
+                </div>
+
+                <div className=" flex gap-2 font-Inter ">
                   <button
                     className=" w-14 rounded-md bg-black   py-[6px] font-semibold text-white"
                     onClick={prevFunction}
@@ -1075,7 +1139,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pb-10 pt-[105px]">
+      <main className="  pb-10 pt-[140px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -1182,17 +1246,32 @@ const PropertyListingPage = () => {
   const PageSix = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full bg-white  px-2 text-sm lg:px-6  ">
-          <div className=" pt-8">
+        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+          <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
-                <Link to="/">
-                  <div className=" ">
-                    <img src={swiftin} height={100} width={100} alt="" />
-                  </div>
-                </Link>
+                <div className=" flex w-[138px] justify-center ">
+                  <Logo />
+                </div>
 
-                <div className=" flex gap-6 font-Inter ">
+                <div
+                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                >
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    Reservations
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Wishlists
+                  </p>
+                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                    {" "}
+                    Contact Us
+                  </p>
+                </div>
+
+                <div className=" flex gap-2 font-Inter ">
                   <button
                     className=" w-14 rounded-md bg-black   py-[6px] font-semibold text-white"
                     onClick={prevFunction}
@@ -1201,12 +1280,12 @@ const PropertyListingPage = () => {
                   </button>
 
                   <button
-                    className="     w-32 rounded-md bg-black   py-[6px] font-semibold text-white"
+                    className="     rounded-md bg-black px-2   py-[6px] font-semibold text-white"
                     onClick={handleSubmit(onSubmit, (err, e) => {
                       console.log(err, "handle error", e);
                     })}
                   >
-                    List The Rooms
+                    List Now
                   </button>
                 </div>
               </div>
@@ -1215,7 +1294,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pb-10 pt-[110px]">
+      <main className="  pb-10 pt-[140px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">

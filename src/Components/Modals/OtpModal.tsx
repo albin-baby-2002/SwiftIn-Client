@@ -14,9 +14,13 @@ const OtpModal = () => {
 
   const loginModalState = useLoginModal();
 
+  // local states
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [otp, setOtp] = useState<string[]>(new Array(4).fill(""));
+
+  const [timer, setTimer] = useState(0);
 
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -24,11 +28,24 @@ const OtpModal = () => {
 
   useEffect(() => {
     setOtp(new Array(4).fill(""));
+    setTimer(30);
 
     if (inputRefs.current[0] && otp[0] === "") {
       inputRefs.current[0].focus();
     }
   }, [otpModalState.isOpen]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (timer > 0) {
+      intervalId = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount or when timer reaches 0
+  }, [timer, otpModalState.isOpen]);
 
   // function handle change in value in each field
 
@@ -161,7 +178,7 @@ const OtpModal = () => {
         {otpModalState.email
           ? ` ${otpModalState.email} `
           : "your email address"}
-        please enter the OTP to verify your account
+        enter the OTP to verify your account
       </p>
 
       <div className=" flex  gap-3  py-5">
@@ -187,13 +204,20 @@ const OtpModal = () => {
         ))}
       </div>
 
-      <p
+      <button
+        disabled={timer > 0}
         onClick={() => {
+          setTimer(30);
           resendOtp();
         }}
-        className=" mb-3 mt-4 cursor-pointer font-semibold"
+        className=" mb-3 mt-4 cursor-pointer   text-sm font-bold capitalize"
       >
-        Resend OTP
+        Resend One Time Password
+      </button>
+
+      <p className=" font-Inter text-sm font-semibold text-gray-600 ">
+        00:{timer}
+        {timer == 0 ? "0" : ""}
       </p>
     </div>
   );

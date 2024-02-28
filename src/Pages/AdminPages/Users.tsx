@@ -170,9 +170,9 @@ const Users = () => {
 
         {/* main users table  */}
 
-        <div className=" max-w-screen overflow-x-scroll bg-gray-200 px-2 pb-5 lg:px-10 ">
-          <div className=" mt-14 min-w-[590px] max-w-[1100px] overflow-x-scroll rounded-xl  bg-white  pb-8 lg:mx-auto ">
-            <div className=" px-8  font-Sen text-sm font-bold lg:text-sm">
+        <div className=" max-w-screen  bg-gray-200 px-2 pb-5 pt-14 lg:px-10 ">
+          <div className=" min-w-[590px] max-w-[1100px] overflow-x-scroll rounded-xl bg-white  pb-8  pt-4 lg:mx-auto ">
+            <div className=" px-8  font-Inter text-sm font-bold lg:text-base">
               <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px]  border-b py-8 align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,2fr)_minmax(170px,2fr)_repeat(3,130px)_minmax(170px,1fr)]    ">
                 <p className="  text-center">email</p>
                 <p className="  text-wrap text-center">username</p>

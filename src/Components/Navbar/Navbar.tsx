@@ -4,11 +4,14 @@ import NavMenuIcons from "./SubComponents/NavMenuIcons";
 
 const Navbar = () => {
   return (
-    <nav id="nav" className=" fixed  flow-root  top-0   w-screen bg-transparent ">
+    <nav
+      id="nav"
+      className=" fixed  top-0  flow-root   w-screen bg-transparent "
+    >
       <div
         className=" 
-             
-              py-[18px]
+              py-6
+           
             "
       >
         <Container>
@@ -48,7 +51,7 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="  flex max-w-[120px] justify-end ">
+            <div className="  flex min-w-[100px] justify-end ">
               <NavMenuIcons />
             </div>
           </div>

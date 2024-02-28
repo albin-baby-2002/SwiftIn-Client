@@ -21,6 +21,7 @@ type listingData = z.infer<typeof HotelListingSchema> & {
   approvedForReservation: Boolean;
   hostName: string;
   location: string;
+  buildingName: string;
 };
 
 interface listingsResponse {
@@ -43,8 +44,6 @@ const ListingManagement = () => {
 
   useEffect(() => {
     let isMounted = true;
-    
-  
 
     const fetchData = async () => {
       try {
@@ -162,15 +161,15 @@ const ListingManagement = () => {
 
         {/* main users table  */}
 
-        <div className=" max-w-screen overflow-x-scroll bg-gray-200 px-2 pb-5 lg:px-10 ">
-          <div className=" mt-14 min-w-[590px] max-w-[1100px] overflow-x-scroll rounded-xl  bg-white  pb-8 lg:mx-auto ">
-            <div className=" px-8  font-Sen text-sm font-bold lg:text-sm">
+        <div className=" max-w-screen bg-gray-200 px-2 pb-5 pt-14 lg:px-10 ">
+          <div className=" min-w-[590px]  max-w-[1100px] overflow-x-scroll rounded-xl bg-white  pb-8  pt-4 lg:mx-auto ">
+            <div className=" px-8   font-Inter text-sm font-bold lg:text-base ">
               <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px]  border-b py-8 align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px] lg:grid-cols-[minmax(100px,1fr)_repeat(4,150px)_150px]    ">
-                <p className="  text-wrap text-center">Listing Title</p>
-                <p className="  text-center">Active</p>
-                <p className="  text-center">Location</p>
-                <p className="  text-center">License</p>
-                <p className="  text-wrap text-center">Host</p>
+                <p className="  text-wrap text-center">listing title</p>
+                <p className="  text-center">active</p>
+                <p className="  text-center">location</p>
+                <p className="  text-center">license</p>
+                <p className="  text-wrap text-center">host</p>
                 <p className="  text-center">options</p>
               </div>
             </div>
@@ -178,7 +177,7 @@ const ListingManagement = () => {
             {propertiesList?.map((property, index) => (
               <div key={index} className="   ">
                 <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_120px] border-b  px-8 py-8 align-middle font-Sen text-sm font-semibold md:grid-cols-[minmax(100px,1fr)_minmax(160px,200px)_repeat(3,1fr)_120px]  lg:grid-cols-[minmax(100px,1fr)__repeat(4,150px)_150px]">
-                  <p className=" text-center   ">{property.listingTitle}</p>
+                  <p className=" text-center   ">{property.buildingName}</p>
                   <p className=" text-center    ">
                     {property.isActiveForReservation ? "true" : "false"}
                   </p>
@@ -193,7 +192,7 @@ const ListingManagement = () => {
                       </p>
                     </a>
                   </p>
-                  <div className=" flex items-center justify-center text-center">
+                  <div className=" flex items-center justify-center text-center lowercase">
                     {" "}
                     <p>{property.hostName}</p>
                   </div>

@@ -19,10 +19,10 @@ import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
 import ManageListings from "./Pages/Host Pages/ManageListings";
 import ListingManagement from "./Pages/AdminPages/ListingManagement";
 import SearchPage from "./Pages/GeneralPages/searchPage";
+import Reservations from "./Pages/UserPages/Reservations";
+import ManageReservations from "./Pages/Host Pages/ManageReservations";
 
 function App() {
- 
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
@@ -39,7 +39,10 @@ function App() {
             }
           />
 
-          <Route path="/hotel/details/:listingID" element={<HotelDetailsPage />} />
+          <Route
+            path="/hotel/details/:listingID"
+            element={<HotelDetailsPage />}
+          />
           <Route path="/search" element={<SearchPage />} />
 
           <Route
@@ -53,10 +56,30 @@ function App() {
           />
 
           <Route
+            path="/reservations"
+            element={
+              <PrivateRoute
+                Element={Reservations}
+                allowedRoles={[ROLES_LIST.User]}
+              />
+            }
+          />
+
+          <Route
             path="/manage/property"
             element={
               <PrivateRoute
                 Element={ManageListings}
+                allowedRoles={[ROLES_LIST.User]}
+              />
+            }
+          />
+
+          <Route
+            path="/manage/reservations"
+            element={
+              <PrivateRoute
+                Element={ManageReservations}
                 allowedRoles={[ROLES_LIST.User]}
               />
             }

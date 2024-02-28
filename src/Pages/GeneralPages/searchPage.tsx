@@ -6,7 +6,7 @@ import { IoFilterSharp } from "react-icons/io5";
 import { RxMixerHorizontal } from "react-icons/rx";
 import { HiMiniArrowsUpDown } from "react-icons/hi2";
 import { TiArrowSortedDown, TiArrowUnsorted } from "react-icons/ti";
-import { FaHeart, FaRupeeSign, FaStar } from "react-icons/fa";
+import { FaHeart, FaRupeeSign, FaSearch, FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
@@ -106,7 +106,7 @@ const SearchPage = () => {
            lg:px-10"
           >
             <nav>
-              <div className=" flex items-center  justify-between px-4 py-5 font-Sen  text-sm">
+              <div className=" flex items-center  justify-between px-4 py-5   text-sm">
                 <div
                   className=" rounded-xl bg-black px-3 py-2"
                   onClick={() => {
@@ -121,19 +121,27 @@ const SearchPage = () => {
                   />
                 </div>
 
-                <div className=" border-3 flex w-[35%] justify-between rounded-full border-[2px] border-black bg-white px-2 py-2  text-xs  shadow-lg ">
-                  <input
-                    className=" border-0 border-none  border-black bg-transparent ps-6 outline-none   outline-0  outline-black "
-                    type="text"
-                    placeholder="Destination"
-                    value={search}
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                    }}
-                  />
-                  <button className=" rounded-full bg-black px-3 py-[6px] font-semibold text-white">
-                    Search
-                  </button>
+                <div
+                  className="  hidden items-center justify-between gap-3
+              md:flex 
+            "
+                >
+                  <div
+                    className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+              "
+                  >
+                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                      Reservations
+                    </p>
+                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                      {" "}
+                      Wishlists
+                    </p>
+                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
+                      {" "}
+                      Contact Us
+                    </p>
+                  </div>
                 </div>
 
                 <div>
@@ -151,19 +159,32 @@ const SearchPage = () => {
 
                       {mainMenu && (
                         <Menu>
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/manage/property");
-                            }}
-                            label="Listings"
-                          />
-                          <MenuItem onClick={() => {}} label="Reservations" />
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/property/listing");
-                            }}
-                            label="List Your Property"
-                          />
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/manage/property");
+                              }}
+                              label="Listings"
+                            />
+                          )}
+
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/reservations");
+                              }}
+                              label="Reservations"
+                            />
+                          )}
+
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/property/listing");
+                              }}
+                              label="List Your Property"
+                            />
+                          )}
 
                           {auth.accessToken && (
                             <MenuItem
@@ -228,34 +249,31 @@ const SearchPage = () => {
           
            pt-[100px]   sm:px-6 lg:px-10"
       >
-        <div className=" mx- flex w-full  items-center justify-between  pb-7 pt-3">
-          <div className=" flex  items-center gap-2 rounded-md border-2  px-3 font-Sen text-sm">
-            <div className=" flex items-center gap-1">
-              <p className="   py-[6px] font-bold ">Sort By</p>
-            </div>
+        <div className=" mx- flex w-full  items-center justify-between   pt-3">
+          <div className=" font-Roboto flex  items-center gap-2 rounded-md border-2  px-3 py-2 ">
+            <input
+              type="text"
+              placeholder="destination"
+              className="  outline-none"
+            />
 
-            {/* <p className="  py-[6px]  font-Sen ">Low Prices</p> */}
-
-            <TiArrowUnsorted />
+            <FaSearch />
           </div>
 
-          <p className="  font-Sen  font-semibold  ">
-            <span className=" mr-1 uppercase"> </span> Hotels found 124
+          <p className="  font-Roboto    ">
+            <span className=" mr-1 uppercase"> </span> Hotels found 4
           </p>
         </div>
 
-        <div className=" grid grid-cols-4  gap-8   gap-y-[70px] font-Sen  ">
+        <div className=" mt-8 grid grid-cols-4  gap-6   gap-y-[70px] font-Sen  ">
           {propertiesList?.map((property) => (
             <div
               onClick={() => {
-                
-                
-                
                 navigate(`/hotel/details/${property._id}`);
               }}
-              className=" max-h-[280px]  w-[240px] cursor-pointer rounded-2xl  bg-white   "
+              className=" max-h-[300px]  w-[250px] cursor-pointer rounded-2xl  bg-white   "
             >
-              <div className=" h-[220px] w-full   rounded-2xl ">
+              <div className=" h-[230px] w-full   rounded-2xl ">
                 <img
                   className=" h-full w-full rounded-b-xl rounded-t-2xl"
                   src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
@@ -265,26 +283,24 @@ const SearchPage = () => {
 
               <div className="   rounded-b-2xl    px-3  py-4 text-sm">
                 <div className=" flex items-center justify-between ">
-                  <p className="  text-lg font-semibold ">
+                  <p className="     font-Roboto text-[16px]  ">
                     {property.buildingName}
                   </p>
                   <div className=" flex items-center gap-2">
-                    <p className=" font-semibold">4.5</p>
+                    <p className=" ">4.5</p>
                     <FaStar size={14} />
                   </div>
                 </div>
 
-                <div className=" flex items-center justify-between pt-3 ">
+                <div className="  font-Roboto flex items-center justify-between pt-3 text-gray-700 ">
                   {/* <FaRupeeSign size={14} /> */}
 
                   <div className=" flex gap-1">
-                    <p className="  ps-[1px] font-bold">
-                      Rs {property.rentPerNight}
-                    </p>
-                    <p className=" font-semibold"> night</p>
+                    <p className="  ps-[1px] ">Rs {property.rentPerNight}</p>
+                    <p className=" "> night</p>
                   </div>
 
-                  <p className=" font-semibold">{property.location}</p>
+                  <p className=" ">{property.location}</p>
                 </div>
               </div>
             </div>

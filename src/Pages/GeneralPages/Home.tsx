@@ -5,8 +5,11 @@ import RegisterModal from "../../Components/Modals/RegisterModal";
 import Navbar from "../../Components/Navbar/Navbar";
 import Container from "../../Components/UiComponents/Container";
 import { FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  
+  const navigate = useNavigate()
   return (
     <>
       <header>
@@ -49,8 +52,8 @@ const Home = () => {
                     />
                   </div>
 
-                  <button className="   rounded-lg bg-white  px-3 py-1  text-xs font-semibold outline outline-1  outline-white">
-                    <FaSearch />
+                  <button className="   rounded-lg bg-white  px-3 py-1  text-xs font-semibold outline outline-1  outline-white " onClick={()=>{navigate('/search')}}>
+                    <FaSearch   />
                   </button>
                 </div>
 
@@ -62,9 +65,6 @@ const Home = () => {
           </div>
         </div>
 
-        <RegisterModal />
-        <OtpModal />
-        <LoginModal />
       </main>
     </>
   );

@@ -9,6 +9,8 @@ export default {
         Sen: ["Sen"],
         Inter: ["Inter"],
         Merriweather: ["Merriweather"],
+        Roboto: ["Roboto"],
+        Montserrat: ["Montserrat"],
       },
     },
   },

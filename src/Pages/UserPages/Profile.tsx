@@ -121,8 +121,18 @@ const Profile = () => {
 
           console.log(response.data);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      } catch (err: any) {
+        console.log(err);
+
+        if (!err?.response) {
+          toast.error("No Server Response");
+        } else if (err.response?.status === 400) {
+          toast.error(err.response.data.message);
+        } else if (err.response?.status === 500) {
+          toast.error("Oops! Something went wrong. Please try again later.");
+        } else {
+          toast.error("Failed to access data");
+        }
       }
     };
 
@@ -219,19 +229,32 @@ const Profile = () => {
 
                       {mainMenu && (
                         <Menu>
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/manage/property");
-                            }}
-                            label="Listings"
-                          />
-                          <MenuItem onClick={() => {}} label="Reservations" />
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/property/listing");
-                            }}
-                            label="List Your Property"
-                          />
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/manage/property");
+                              }}
+                              label="Listings"
+                            />
+                          )}
+
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/reservations");
+                              }}
+                              label="Reservations"
+                            />
+                          )}
+
+                          {auth.accessToken && (
+                            <MenuItem
+                              onClick={() => {
+                                navigate("/property/listing");
+                              }}
+                              label="List Your Property"
+                            />
+                          )}
 
                           {auth.accessToken && (
                             <MenuItem

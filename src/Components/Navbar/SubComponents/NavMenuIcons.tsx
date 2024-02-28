@@ -36,10 +36,9 @@ const NavMenuIcons = () => {
 
   return (
     <div
-      className="relative flex w-2/3 flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[18px] py-[6px]
+      className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[12px] py-[6px]
     "
     >
-      
       <div
         onClick={toggleMainMenu}
         className="
@@ -49,19 +48,32 @@ const NavMenuIcons = () => {
 
         {mainMenu && (
           <Menu>
-            <MenuItem
-              onClick={() => {
-                navigate("/manage/property");
-              }}
-              label="Listings"
-            />
-            <MenuItem onClick={() => {}} label="Reservations" />
-            <MenuItem
-              onClick={() => {
-                navigate("/property/listing");
-              }}
-              label="List Your Property"
-            />
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  navigate("/manage/property");
+                }}
+                label="Listings"
+              />
+            )}
+
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  navigate("/reservations");
+                }}
+                label="Reservations"
+              />
+            )}
+
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  navigate("/property/listing");
+                }}
+                label="List Your Property"
+              />
+            )}
 
             {auth.accessToken && (
               <MenuItem

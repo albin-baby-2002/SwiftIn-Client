@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { z } from "zod";
 import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-import { GET_HOST_LISTINGS_URL } from "../../Api/EndPoints";
+import { GET_HOST_LISTINGS_URL, GET_HOST_RESERVATIONS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import EditListingModal from "../../Components/Modals/EditListingModal";
@@ -19,22 +19,17 @@ import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 import { Link, useNavigate } from "react-router-dom";
 
-type hostListingsData = z.infer<typeof HotelListingSchema> & {
+type hostReservationsData = z.infer<typeof HotelListingSchema> & {
   _id: string;
-  isActiveForReservation: Boolean;
-  approvedForReservation: Boolean;
-  hostName: string;
-  location: string;
-  buildingName: string;
-  mainImage: string;
+ 
 };
 
-interface hostListingsResponse {
-  properties: hostListingsData[];
+interface hostReservationsResponse {
+  reservations: hostReservationsData[];
   totalPages: number;
 }
 
-const ManageListings = () => {
+const ManageReservations = () => {
   const [navigation, setNavigation] = useState(true);
   const editListingModalState = useEditListingsModal();
 
@@ -42,46 +37,36 @@ const ManageListings = () => {
 
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
-  const [propertiesList, setPropertiesList] = useState<
-    hostListingsData[] | null
+  const [reservations, setReservations] = useState<
+    hostReservationsData[] | null
   >(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
-  const navigate = useNavigate()
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    
-    
     let isMounted = true;
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<hostListingsResponse>(
-          GET_HOST_LISTINGS_URL,
+        const response = await AxiosPrivate.get<hostReservationsResponse>(
+          GET_HOST_RESERVATIONS_URL,
           {
             params: { search, page },
           },
         );
 
         if (isMounted) {
-          setPropertiesList(response.data.properties);
+          setReservations(response.data.reservations);
 
           setTotalPages(response.data.totalPages);
 
           console.log(response.data);
         }
-      } catch (err:any) {
-        if (!err?.response) {
-          toast.error("No Server Response");
-        } else if (err.response?.status === 400) {
-          toast.error(err.response.data.message);
-        } else if (err.response?.status === 500) {
-          toast.error("Oops! Something went wrong. Please try again later.");
-        } else {
-          toast.error("Failed to access data");
-        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -150,7 +135,9 @@ const ManageListings = () => {
                     src={swiftin}
                     alt=""
                     className=" h-full cursor-pointer"
-                    onClick={()=>{navigate('/')}}
+                    onClick={() => {
+                      navigate("/");
+                    }}
                   />
                 </div>
                 {/* 
@@ -263,9 +250,9 @@ const ManageListings = () => {
                 </div>
               </div>
 
-              <div className=" min-h-[60vh] ">
-                {propertiesList && propertiesList.length > 0 ? (
-                  propertiesList?.map((property, index) => (
+              {/* <div className=" min-h-[60vh] ">
+                {reservations && reservations.length > 0 ? (
+                  reservations?.map((property, index) => (
                     <div className="   border-b-2 px-6 font-Sen  text-sm ">
                       <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
                         <div className=" flex items-center  gap-2 text-left   ">
@@ -333,7 +320,7 @@ const ManageListings = () => {
                     <p>No Listing Data Found</p>
                   </div>
                 )}
-              </div>
+              </div> */}
 
               {/* <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
                 <div className=" font-bold "> page 1 of 10</div>
@@ -404,4 +391,4 @@ const ManageListings = () => {
   );
 };
 
-export default ManageListings;
+export default ManageReservations;
