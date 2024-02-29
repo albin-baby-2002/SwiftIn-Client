@@ -70,7 +70,7 @@ const ManageListings = () => {
 
           setTotalPages(response.data.totalPages);
 
-          console.log(response.data);
+          // console.log(response.data);
         }
       } catch (err:any) {
         if (!err?.response) {

@@ -250,7 +250,7 @@ const SearchPage = () => {
            pt-[100px]   sm:px-6 lg:px-10"
       >
         <div className=" mx- flex w-full  items-center justify-between   pt-3">
-          <div className=" font-Roboto flex  items-center gap-2 rounded-md border-2  px-3 py-2 ">
+          {/* <div className=" font-Roboto flex  items-center gap-2 rounded-md border-2  px-3 py-2 ">
             <input
               type="text"
               placeholder="destination"
@@ -258,10 +258,13 @@ const SearchPage = () => {
             />
 
             <FaSearch />
-          </div>
+          </div> */}
 
           <p className="  font-Roboto    ">
             <span className=" mr-1 uppercase"> </span> Hotels found 4
+          </p>
+          <p className="  font-Roboto    ">
+            <span className=" mr-1 uppercase"> </span> Destination : any
           </p>
         </div>
 

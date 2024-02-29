@@ -689,10 +689,10 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className=" mt-8 min-w-[300px] rounded-xl border-2 border-black">
+                <div className=" mt-8 min-w-[270px] rounded-xl border-2 border-black">
                   <div className=" flex  border-b-2 border-black  ">
-                    <div className="  w-1/2 border-r-2 border-black px-4 py-3 text-xs ">
-                      <p className=" pb-3 text-center font-bold">CHECK IN</p>
+                    <div className="  w-1/2 border-r-2  border-black px-4 py-3 text-xs ">
+                      <p className=" pb-2 text-center font-bold">CHECK IN</p>
                       <input
                         type="date"
                         value={checkInDate}
@@ -701,7 +701,7 @@ const HotelDetailsPage = () => {
                     </div>
 
                     <div className=" w-1/2  px-4 py-3 text-center text-xs">
-                      <p className=" pb-3 font-bold">CHECK OUT</p>
+                      <p className=" pb-2 font-bold">CHECK OUT</p>
                       <input
                         type="date"
                         value={checkOutDate}
@@ -710,24 +710,24 @@ const HotelDetailsPage = () => {
                     </div>
                   </div>
 
-                  <div className=" flex justify-center gap-8 px-6 py-4">
-                    <p className=" font-Sen text-xl  font-semibold">Rooms</p>
+                  <div className=" flex justify-center gap-8 border-b-2 border-black px-6 py-3">
+                    <p className=" font-Inter  text-xl  font-semibold">Rooms</p>
 
                     <div className=" flex  items-center gap-4 ">
                       <div
-                        className="  cursor-pointer   rounded-sm  border border-black px-[2px] py-[2px]  "
+                        className="  cursor-pointer   rounded-sm  px-[2px] py-[2px]  border hover:bg-black/30  "
                         onClick={() => {
                           if (rooms > 1) {
                             setRooms((val) => val - 1);
                           }
                         }}
                       >
-                        <BiMinus className="  " />
+                        <BiMinus className="   " />
                       </div>
 
                       <p className=" text-lg font-semibold">{rooms}</p>
 
-                      <div className=" rounded-sm  border border-black px-[2px] py-[2px]   ">
+                      <div className=" rounded-sm  border   px-[2px] py-[2px] hover:bg-black/30   ">
                         <BiPlus
                           className=" cursor-pointer  "
                           onClick={() => {
@@ -737,38 +737,38 @@ const HotelDetailsPage = () => {
                       </div>
                     </div>
                   </div>
+
+                  <div className=" flex   border-black  ">
+                    <div className=" w-1/2 border-r-2 border-black px-4 py-3 text-center text-xs ">
+                      <p className=" pb-2  font-bold">GUESTS</p>
+                      <p>{guests}</p>
+                    </div>
+
+                    <div className=" w-1/2  px-4 py-3 text-center text-xs">
+                      <p className=" pb-2 font-bold">TOTAL RENT</p>
+                      <p className=" ">{grandTotal}</p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className=" mt-12 flex w-full justify-center font-Inter">
                   <button
-                    className=" w-full rounded-xl bg-black px-4 py-3 font-bold tracking-wide text-white"
+                    className=" w-full rounded-xl bg-black px-4 py-3 font-bold tracking-wide text-white hover:bg-black/85"
                     onClick={displayRazorpay}
                   >
                     Reserve
                   </button>
                 </div>
 
-                <div className="  font-Roboto my-6 flex items-center justify-between gap-4 rounded-lg   px-2 py-3  text-gray-500">
-                  <div className=" flex items-center justify-center gap-1  text-xs">
-                    <p className=" font-bold  "> Rent Payable :</p>
-                    <p className=" font-bold">{grandTotal}</p>
-                  </div>
-
-                  <div className="    flex justify-center gap-1   text-xs font-bold">
-                    <p className=" "> Guests Allowed : </p>
-                    <p>{guests}</p>
-                  </div>
-                </div>
-
-                <div className="  flex justify-center  gap-4   border-t-2 pb-4  pt-8 font-Inter     font-bold">
+                <div className="   flex  justify-center   gap-4 border-t-2  pb-4 pt-8   font-Sen font-semibold  ">
                   <p>Reservation Fee </p>
-                  <p>{FeePayable}</p>
+                  <p>Rs.{FeePayable}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className=" lg:py-16">
+          <div className=" border-y  lg:py-16">
             <div>
               <p className=" text-center text-3xl font-bold">
                 More About This Place
@@ -780,8 +780,8 @@ const HotelDetailsPage = () => {
             </div>
           </div>
 
-          <div className="  flex items-center justify-center  gap-6  px-8 py-14">
-            <div className=" flex h-[200px] w-[50%] justify-center  gap-6   rounded-xl  border-2 py-5 ">
+          <div className="  flex items-center justify-center  gap-8  px-8 py-14">
+            <div className=" flex h-[200px] w-[45%] justify-center  gap-6   rounded-xl  border-2 py-5 ">
               <div className="  text-neutral-500 ">
                 <div className=" ps-1">
                   <p className="  mt-2  font-Sen text-2xl font-bold text-black">
@@ -824,7 +824,7 @@ const HotelDetailsPage = () => {
               </div>
             </div>
 
-            <div className=" flex h-[200px] w-[50%]  justify-center  gap-6  rounded-xl  border-2 py-5 ">
+            <div className=" flex h-[200px] w-[45%]  justify-center  gap-6  rounded-xl  border-2 py-5 ">
               <div className=" w-[45%] ">
                 <img
                   src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
@@ -834,7 +834,7 @@ const HotelDetailsPage = () => {
 
               <div className="  w-[60%] text-neutral-500  ">
                 <p className=" mt-2 font-Sen text-2xl font-bold text-black">
-                  Address And Location
+                  Address & Location
                 </p>
 
                 <div className=" mt-3 flex flex-col gap-2  text-sm font-bold">

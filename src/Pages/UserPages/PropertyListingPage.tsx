@@ -346,7 +346,10 @@ const PropertyListingPage = () => {
         },
       );
     }
-  }, []);
+  }, [mainImage,otherImages]);
+  
+  
+
 
   const pageOne = (
     <>

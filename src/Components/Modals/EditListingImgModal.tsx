@@ -1,23 +1,20 @@
-import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
-
-import { FieldErrors, FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import toast from "react-hot-toast";
-import Input from "../Inputs/Input";
 
 import { useEffect, useRef, useState } from "react";
 import Modal from "./ParentModal/Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EditProfileSchema } from "../../Schemas/editProfileSchema";
+
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { PROFILE_DATA_URL, SINGLE_LISTING_IMAGE_UPDATE_URL, SINGLE_LISTING_URL } from "../../Api/EndPoints";
+import { SINGLE_LISTING_IMAGE_UPDATE_URL } from "../../Api/EndPoints";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import { z } from "zod";
-import Button from "../UiComponents/Button";
-import { MdPhoto } from "react-icons/md";
-import { FcAddressBook, FcPicture } from "react-icons/fc";
-import { HiMiniBuildingLibrary } from "react-icons/hi2";
-import { PiCameraBold } from "react-icons/pi";
-import { RiCamera2Fill } from "react-icons/ri";
+
 import { TbCameraPlus } from "react-icons/tb";
 import { FaTrashCan } from "react-icons/fa6";
 
@@ -97,7 +94,11 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
       } else {
         let values = otherImages;
 
+        console.log(values, "before delete");
+
         values[imageNo - 1] = "";
+
+        console.log(values, "after delete");
 
         setValue("otherImages", values);
       }
@@ -114,6 +115,14 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
         );
 
         if (isMounted) {
+          console.log(mainImage, otherImages, "before useEffect");
+
+          console.log(
+            response.data.listing.mainImage,
+            response.data.listing.otherImages,
+            "intial useEffect",
+          );
+
           reset({
             mainImage: response.data.listing.mainImage,
             otherImages: response.data.listing.otherImages,
@@ -153,11 +162,15 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
           }
 
           if (result.info.public_id) {
+            console.log(otherImages, "after success");
+
             try {
               if (imgSelectedForUploadRef.current === 0) {
                 setValue("mainImage", result.info.public_id);
               } else if (imgSelectedForUploadRef.current < 5) {
                 let values = otherImages;
+
+                console.log(values, "values");
 
                 values[imgSelectedForUploadRef.current - 1] =
                   result.info.public_id;
@@ -173,27 +186,25 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
         },
       );
     }
-  }, []);
+  }, [otherImages,mainImage]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
-        
-        setIsLoading(true);
-        await AxiosPrivate.patch(
+      setIsLoading(true);
+      await AxiosPrivate.patch(
         SINGLE_LISTING_IMAGE_UPDATE_URL + `/${editListingModalState.listingID}`,
-          data,
-        );
+        data,
+      );
 
-        setIsLoading(false);
+      setIsLoading(false);
 
-        toast.success("Listing Images Updated SuccessFully");
+      toast.success("Listing Images Updated SuccessFully");
 
-        editListingModalState.onClose();
+      editListingModalState.onClose();
 
       reFetchData();
     } catch (err: any) {
-        
-        setIsLoading(false)
+      setIsLoading(false);
       console.log(err);
 
       if (!err?.response) {
@@ -207,22 +218,19 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
       }
     }
   };
-  
+
   const onSubmittionInvalid = (err: FieldErrors<FieldValues>) => {
     console.log(err);
-    
-    if(err.otherImages || err.mainImage){
-        
-        toast.error('All Image Fields Are Mandatory')
-    }
-    else{
-        toast.error('Unexpected error : try again ')
+
+    if (err.otherImages || err.mainImage) {
+      toast.error("All Image Fields Are Mandatory");
+    } else {
+      toast.error("Unexpected error : try again ");
     }
   };
 
   const bodyContent = (
     <div className="  ">
-     
       <div className=" mx-auto mt-10 flex max-w-[80%] gap-4">
         <div
           className={`${mainImage ? "" : " border-4 "}  relative flex  h-[230px] w-[50%] rounded-l-xl  border-gray-400   xl:h-[300px]`}
@@ -285,8 +293,11 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
                   className=" cursor-pointer  text-4xl text-gray-400 "
                   onClick={() => {
                     imgSelectedForUploadRef.current = 1;
+                    console.log(otherImages, "before open");
 
                     imageWidgetRef.current.open();
+
+                    console.log(otherImages, "after open");
                   }}
                 />
               </div>
@@ -356,7 +367,11 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
                   onClick={() => {
                     imgSelectedForUploadRef.current = 3;
 
+                    console.log(otherImages, "before open");
+
                     imageWidgetRef.current.open();
+
+                    console.log(otherImages, "after open");
                   }}
                 />
               </div>
@@ -405,7 +420,7 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
     <Modal
       title="Edit Images Modal"
       onClose={editListingModalState.onClose}
-      onSubmit={handleSubmit(onSubmit,onSubmittionInvalid)}
+      onSubmit={handleSubmit(onSubmit, onSubmittionInvalid)}
       isOpen={editListingModalState.imageModalIsOpen}
       submitActionLabel="Change Listing Images"
       body={bodyContent}
