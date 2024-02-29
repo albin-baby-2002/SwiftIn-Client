@@ -335,24 +335,7 @@ const ManageListings = () => {
                 )}
               </div>
 
-              {/* <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
-                <div className=" font-bold "> page 1 of 10</div>
-                <div className="  flex   gap-3 ">
-                  <button
-                    className=" w-20 rounded-md bg-black px-4 py-1 text-center text-white"
-                    onClick={() => {}}
-                  >
-                    Prev
-                  </button>
-
-                  <button
-                    className=" w-20 rounded-md border-2 border-black  px-4 py-1 text-center"
-                    onClick={() => {}}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div> */}
+             
             </div>
           </div>
         </div>

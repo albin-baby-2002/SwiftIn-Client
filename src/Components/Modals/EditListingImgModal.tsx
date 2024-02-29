@@ -133,7 +133,9 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
       }
     };
 
-    fetchData();
+    if (editListingModalState.listingID) {
+      fetchData();
+    }
 
     return () => {
       isMounted = false;

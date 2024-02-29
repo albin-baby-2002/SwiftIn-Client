@@ -171,7 +171,14 @@ const OtpModal = () => {
 
   const bodyContent = (
     <div className=" mt-3  flex flex-col items-center">
-      <img className="py-3" src={logo} alt="" height={80} width={80} />
+      <img
+        className="py-3"
+        src={
+          "https://res.cloudinary.com/dfm8vhuea/image/upload/v1709179408/f1asvgvdlhfvhowhsnjf.png"
+        }
+        alt=""
+        width={80}
+      />
 
       <p className="  w-5/6 py-5 text-center text-sm  font-bold  leading-6 ">
         We have send an OTP to

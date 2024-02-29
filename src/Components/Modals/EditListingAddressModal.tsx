@@ -71,7 +71,7 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
         );
 
         if (isMounted) {
-        //   console.log(response.data, "address");
+          //   console.log(response.data, "address");
 
           reset(response.data);
         }
@@ -80,7 +80,9 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
       }
     };
 
-    fetchData();
+    if (editListingModalState.listingID) {
+      fetchData();
+    }
 
     return () => {
       isMounted = false;
@@ -91,7 +93,8 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
     try {
       setIsLoading(true);
       await AxiosPrivate.patch(
-         SINGLE_LISTING_ADDRESS_UPDATE_URL+ `/${editListingModalState.listingID}`,
+        SINGLE_LISTING_ADDRESS_UPDATE_URL +
+          `/${editListingModalState.listingID}`,
         data,
       );
 
@@ -118,16 +121,25 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
     }
   };
 
-  const bodyContent = <div className="  ">
-    
-    <Input id="addressLine" label="Address Line" register={register} errors={errors} />
-    <Input id="city" label="City" register={register} errors={errors} />
-    <Input id="district" label="District" register={register} errors={errors} />
-    <Input id="state" label="state" register={register} errors={errors} />
-    <Input id="pinCode" label="Pincode" register={register} errors={errors} />
-    
-    
-  </div>;
+  const bodyContent = (
+    <div className="  ">
+      <Input
+        id="addressLine"
+        label="Address Line"
+        register={register}
+        errors={errors}
+      />
+      <Input id="city" label="City" register={register} errors={errors} />
+      <Input
+        id="district"
+        label="District"
+        register={register}
+        errors={errors}
+      />
+      <Input id="state" label="state" register={register} errors={errors} />
+      <Input id="pinCode" label="Pincode" register={register} errors={errors} />
+    </div>
+  );
 
   return (
     <Modal
@@ -138,7 +150,6 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
       submitActionLabel="Change Address"
       body={bodyContent}
       disabled={isLoading}
-      
     />
   );
 };

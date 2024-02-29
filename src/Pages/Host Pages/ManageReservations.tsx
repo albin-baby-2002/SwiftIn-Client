@@ -9,9 +9,8 @@ import { IoPerson } from "react-icons/io5";
 import { CgMenuGridR } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { z } from "zod";
-import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-import { GET_HOST_LISTINGS_URL, GET_HOST_RESERVATIONS_URL } from "../../Api/EndPoints";
+
+import { GET_HOST_RESERVATIONS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import EditListingModal from "../../Components/Modals/EditListingModal";
@@ -19,9 +18,18 @@ import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 import { Link, useNavigate } from "react-router-dom";
 
-type hostReservationsData = z.infer<typeof HotelListingSchema> & {
+type hostReservationsData = {
   _id: string;
- 
+  checkInDate: String;
+  checkOutDate: String;
+  reservationFee: number;
+  rooms: number;
+  paymentStatus: string;
+  reservationStatus: string;
+  hostID: string;
+  image: string;
+  hotelName: string;
+  customerName: string;
 };
 
 interface hostReservationsResponse {
@@ -31,7 +39,6 @@ interface hostReservationsResponse {
 
 const ManageReservations = () => {
   const [navigation, setNavigation] = useState(true);
-  const editListingModalState = useEditListingsModal();
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -77,31 +84,11 @@ const ManageReservations = () => {
     };
   }, [triggerRefetch, search, page]);
 
-  const activateListing = async (listingID: string) => {
+  const cancelReservation = async (reservationID: string) => {
     try {
-      await AxiosPrivate.patch("/user/listings/activate/" + `${listingID}`);
-
-      toast.success(" Listing activated for reservations");
-
-      setTriggerRefetch((val) => !val);
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
-        toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
-        toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
-        toast.error("Oops! Something went wrong. Please try again later.");
-      } else {
-        toast.error("Failed to activate listing");
-      }
-    }
-  };
-
-  const deActivateListing = async (listingID: string) => {
-    try {
-      await AxiosPrivate.patch("/user/listings/deactivate/" + `${listingID}`);
+      await AxiosPrivate.patch(
+        "/user/reservations/received/cancel/" + `${reservationID}`,
+      );
 
       toast.success(" Listing deactivated ");
 
@@ -116,7 +103,7 @@ const ManageReservations = () => {
       } else if (err.response?.status === 500) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Failed to deactivate listing");
+        toast.error("Failed to cancel  reservation");
       }
     }
   };
@@ -239,77 +226,58 @@ const ManageReservations = () => {
           <div className="   ">
             <div className="    ">
               <div className=" border-b-[2px]   px-6 py-5  font-Sen text-sm font-bold  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]   ">
-                  <p className=" text-left  ">Listing AddressLine</p>
-                  <p className="  ">Verified</p>
+                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]   ">
+                  <p className=" text-left  ">Hotel Name</p>
+                  <p className="  ">Status</p>
                   <p className="  ">Rooms</p>
-                  <p className="  ">Type</p>
+                  <p className="  ">Customer</p>
 
-                  <p className="  text-wrap ">Location</p>
+                  <p className="  text-wrap ">check in</p>
+                  <p className="  text-wrap ">check out</p>
                   <p className="  ">Actions</p>
                 </div>
               </div>
 
-              {/* <div className=" min-h-[60vh] ">
+              <div className=" min-h-[60vh] ">
                 {reservations && reservations.length > 0 ? (
-                  reservations?.map((property, index) => (
+                  reservations?.map((reservation) => (
                     <div className="   border-b-2 px-6 font-Sen  text-sm ">
-                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
+                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]  ">
                         <div className=" flex items-center  gap-2 text-left   ">
-                          <div>
-                            <img
-                              src={`https://res.cloudinary.com/dfm8vhuea/image/upload/c_thumb,h_40,w_50/${property.mainImage}`}
-                              alt=""
-                            />
-                          </div>
-
-                          <p>{property.buildingName}</p>
+                          <p>{reservation.hotelName}</p>
                         </div>
                         <p className=" self-center  text-center    ">
                           {" "}
-                          {property.approvedForReservation ? "true" : "false"}
+                          {reservation.reservationStatus}
                         </p>
                         <p className=" self-center  text-center ">
-                          {property.totalRooms}
+                          {reservation.rooms}
+                        </p>
+                        <p className=" self-center  text-center lowercase ">
+                          {reservation.customerName}
                         </p>
                         <p className=" self-center  text-center ">
-                          {property.roomType}
+                          {reservation.checkInDate}
                         </p>
                         <p className=" self-center  text-center ">
-                          {property.location}
+                          {reservation.checkOutDate}
                         </p>
 
                         <div className=" flex items-center  justify-center gap-4  text-xl">
-                          <div className="  w-10  text-xs">
-                            {property.isActiveForReservation ? (
-                              <p
-                                className=" cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white "
-                                onClick={() => {
-                                  deActivateListing(property._id);
-                                }}
-                              >
-                                block
-                              </p>
-                            ) : (
-                              <p
-                                className="  cursor-pointer rounded-md border-2  border-neutral-500  px-[2px]   py-[2px]  hover:bg-green-600 hover:text-white"
-                                onClick={() => {
-                                  activateListing(property._id);
-                                }}
-                              >
-                                open
-                              </p>
-                            )}
-                          </div>
+                          <div className="  flex w-12  justify-center  text-xs">
+                            <p></p>
 
-                          <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px] hover:bg-gray-400">
-                            <BiEditAlt
-                              className=" cursor-pointer text-sm"
+                            <button
+                              disabled={
+                                reservation.reservationStatus !== "success"
+                              }
+                              className={`${!(reservation.reservationStatus === "success") ? "line-through" : " cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white"} `}
                               onClick={() => {
-                                editListingModalState.setData(property._id);
-                                editListingModalState.openDataModal();
+                                cancelReservation(reservation._id);
                               }}
-                            />
+                            >
+                              cancel
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -317,29 +285,10 @@ const ManageReservations = () => {
                   ))
                 ) : (
                   <div className=" flex min-h-[55vh] items-center justify-center font-Inter font-bold">
-                    <p>No Listing Data Found</p>
+                    <p>No reservation Data Found</p>
                   </div>
                 )}
-              </div> */}
-
-              {/* <div className=" flex items-center justify-between pb-6 pt-8  font-Sen ">
-                <div className=" font-bold "> page 1 of 10</div>
-                <div className="  flex   gap-3 ">
-                  <button
-                    className=" w-20 rounded-md bg-black px-4 py-1 text-center text-white"
-                    onClick={() => {}}
-                  >
-                    Prev
-                  </button>
-
-                  <button
-                    className=" w-20 rounded-md border-2 border-black  px-4 py-1 text-center"
-                    onClick={() => {}}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

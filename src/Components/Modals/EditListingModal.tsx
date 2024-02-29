@@ -134,8 +134,11 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
         console.error("Error fetching data:", error);
       }
     };
-
-    fetchData();
+    
+    if(editListingModalState.listingID){
+        
+        fetchData();
+    }
 
     return () => {
       isMounted = false;

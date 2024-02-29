@@ -249,7 +249,7 @@ const SearchPage = () => {
           
            pt-[100px]   sm:px-6 lg:px-10"
       >
-        <div className=" mx- flex w-full  items-center justify-between   pt-3">
+        <div className="  flex w-full items-center  justify-between pt-3   font-[500]">
           {/* <div className=" font-Roboto flex  items-center gap-2 rounded-md border-2  px-3 py-2 ">
             <input
               type="text"
@@ -260,12 +260,8 @@ const SearchPage = () => {
             <FaSearch />
           </div> */}
 
-          <p className="  font-Roboto    ">
-            <span className=" mr-1 uppercase"> </span> Hotels found 4
-          </p>
-          <p className="  font-Roboto    ">
-            <span className=" mr-1 uppercase"> </span> Destination : any
-          </p>
+          <p className="  font-Roboto  text-sm   ">Hotels found 4</p>
+          <p className="  font-Roboto text-sm    ">Destination : Any</p>
         </div>
 
         <div className=" mt-8 grid grid-cols-4  gap-6   gap-y-[70px] font-Sen  ">
@@ -286,7 +282,7 @@ const SearchPage = () => {
 
               <div className="   rounded-b-2xl    px-3  py-4 text-sm">
                 <div className=" flex items-center justify-between ">
-                  <p className="     font-Roboto text-[16px]  ">
+                  <p className="     font-Roboto text-[16px] font-[500]  ">
                     {property.buildingName}
                   </p>
                   <div className=" flex items-center gap-2">
