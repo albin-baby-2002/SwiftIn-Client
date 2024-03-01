@@ -10,7 +10,7 @@ interface ModelProps {
   title?: string;
   body?: React.ReactElement;
   footer?: React.ReactElement;
-  submitActionLabel: string;
+  submitActionLabel?: string;
   wider?: boolean;
 }
 
@@ -84,21 +84,26 @@ const Modal: React.FC<ModelProps> = ({
             <div className="max-h-[95vh]  overflow-y-scroll">
               <div className="px-8 py-4 ">{body}</div>
 
-              <div className="px-8 py-4">
-                {wider ? (
-                  <div className=" mx-auto my-3 w-4/5">
-                    <Button
-                      label={submitActionLabel}
-                      onClick={handleSubmit}
-                      outline
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <Button label={submitActionLabel} onClick={handleSubmit} />
-                  </>
-                )}
-              </div>
+              {submitActionLabel && (
+                <div className="px-8 py-4">
+                  {wider ? (
+                    <div className=" mx-auto my-3 w-4/5">
+                      <Button
+                        label={submitActionLabel}
+                        onClick={handleSubmit}
+                        outline
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <Button
+                        label={submitActionLabel}
+                        onClick={handleSubmit}
+                      />
+                    </>
+                  )}
+                </div>
+              )}
 
               {footer && <div className="px-8 py-2">{footer}</div>}
             </div>

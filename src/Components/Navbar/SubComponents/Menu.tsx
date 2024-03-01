@@ -9,9 +9,10 @@ const Menu: React.FC<MenuProps> = ({ children }) => {
                 absolute 
                 -right-4 
                 top-12 
+                z-30 
                 min-w-[150px] 
                 rounded-md 
-                border-2 
+                 border-2
                 bg-white 
                 shadow-md"
     >

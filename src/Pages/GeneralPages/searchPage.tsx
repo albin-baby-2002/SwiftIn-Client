@@ -25,6 +25,12 @@ import { useNavigate } from "react-router-dom";
 import Menu from "../../Components/Navbar/SubComponents/Menu";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import LogoImg from "/images/logo5.png";
+import useSearchState from "../../Hooks/zustandStore/useSearchState";
+import SearchFilterModal from "../../Components/Modals/SearchFilterModal";
+import useSearchModal from "../../Hooks/zustandStore/useSearchFilterModal";
+import { TbHeartPlus } from "react-icons/tb";
+import toast from "react-hot-toast";
+import { ROLES_LIST } from "../../Config/userRoles";
 
 type property = z.infer<typeof HotelListingSchema> & {
   _id: string;
@@ -36,10 +42,13 @@ type property = z.infer<typeof HotelListingSchema> & {
 interface propertiesResponse {
   properties: property[];
   totalPages: number;
+  totalHotels: number;
 }
 
 const SearchPage = () => {
   const navigate = useNavigate();
+
+  const searchState = useSearchState();
 
   const auth = useAuth();
 
@@ -59,18 +68,32 @@ const SearchPage = () => {
 
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
+  const searchModalState = useSearchModal();
+
   const [propertiesList, setPropertiesList] = useState<property[] | null>(null);
-  const [search, setSearch] = useState("");
+  const [wishlist, setWishlist] = useState<string[] | null>(null);
+
+  const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalHotels, setTotalHotels] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       try {
+        console.log(searchState.destination, searchState.guests);
+
         const response = await AxiosPrivate.get<propertiesResponse>("/search", {
-          params: { search, page },
+          params: {
+            search: searchState.destination,
+            guests: searchState.guests,
+            rooms: searchState.rooms,
+            sortBy: searchState.sortBy,
+            page,
+          },
         });
 
         if (isMounted) {
@@ -81,6 +104,8 @@ const SearchPage = () => {
           setTotalPages(response.data.totalPages);
 
           console.log(response.data);
+
+          setTotalHotels(response.data.totalHotels);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -92,10 +117,108 @@ const SearchPage = () => {
     return () => {
       isMounted = false;
     };
-  }, [triggerRefetch, search, page]);
+  }, [
+    triggerRefetch,
+    searchState.destination,
+    searchState.guests,
+    searchState.rooms,
+    searchState.sortBy,
+    page,
+  ]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        console.log(searchState.destination, searchState.guests);
+
+        const response = await AxiosPrivate.get<{ wishlist: string[] }>(
+          "/user/listing/wishlist",
+        );
+
+        if (isMounted) {
+          setWishlist(response.data.wishlist);
+
+          console.log(response.data.wishlist);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (auth.accessToken) {
+      fetchData();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [auth.accessToken, triggerWishlistRefetch]);
+
+  const addToWishlist = async (listingID: string) => {
+    try {
+      if (!auth.accessToken || !auth.roles.includes(ROLES_LIST.User)) {
+        toast.error("login  to add to wishList");
+
+        return;
+      }
+
+      const response = await AxiosPrivate.patch(
+        "/user/listing/wishlist/add/" + listingID,
+        {},
+      );
+
+      toast.success("Added to wishlist");
+
+      setTriggerWishlistRefetch((val) => !val);
+    } catch (err: any) {
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("failed to add to wishlist");
+      }
+    }
+  };
+
+  const removeFromWishlist = async (listingID: string) => {
+    try {
+      if (!auth.accessToken || !auth.roles.includes(ROLES_LIST.User)) {
+        toast.error("login  to remove from wishList");
+
+        return;
+      }
+
+      const response = await AxiosPrivate.patch(
+        "/user/listing/wishlist/remove/" + listingID,
+      );
+
+      toast.success("removed from wishlist");
+      setTriggerWishlistRefetch((val) => !val);
+    } catch (err: any) {
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("failed to remove from wishlist");
+      }
+    }
+  };
+
   return (
     <>
-      <div className=" fixed w-full bg-white/95">
+      <div className=" fixed z-20 w-full bg-white/95">
         <header className="  border-b-2">
           <div
             className="
@@ -103,23 +226,11 @@ const SearchPage = () => {
            max-w-[1500px]
            px-2
            sm:px-6
-           lg:px-10"
+           lg:px-6"
           >
             <nav>
               <div className=" flex items-center  justify-between px-4 py-5   text-sm">
-                <div
-                  className=" rounded-xl bg-black px-3 py-2"
-                  onClick={() => {
-                    navigate("/");
-                  }}
-                >
-                  <img
-                    className="cursor-pointer  "
-                    src={LogoImg}
-                    alt="Logo"
-                    width={80}
-                  />
-                </div>
+                <Logo />
 
                 <div
                   className="  hidden items-center justify-between gap-3
@@ -146,10 +257,18 @@ const SearchPage = () => {
 
                 <div>
                   <div
-                    className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-3 py-2
+                    className="relative z-20 flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-3 py-2
     "
                   >
-                    <MdOutlineTune className=" cursor-pointer text-[24px] text-white  transition duration-150 hover:scale-110 " />
+                    <MdOutlineTune
+                      className=" cursor-pointer text-[24px] text-white  transition duration-150 hover:scale-110 "
+                      onClick={() => {
+                        if (searchModalState.isOpen) {
+                          return searchModalState.onClose();
+                        }
+                        searchModalState.onOpen();
+                      }}
+                    />
                     <div
                       onClick={toggleMainMenu}
                       className="
@@ -249,28 +368,31 @@ const SearchPage = () => {
           
            pt-[100px]   sm:px-6 lg:px-10"
       >
-        <div className="  flex w-full items-center  justify-between pt-3   font-[500]">
-          {/* <div className=" font-Roboto flex  items-center gap-2 rounded-md border-2  px-3 py-2 ">
+        <div className="  flex w-full items-center  justify-between px-2 pt-3   font-[500]">
+          <p className="  font-Inter  text-sm   ">Hotels Found {totalHotels}</p>
+          <p className="  font-Inter  text-sm   ">
+            Destination :{" "}
+            {searchState.destination ? searchState.destination : "any"}
+          </p>
+          {/* <div className=" font-Roboto  flex  w-36 items-center gap-2 rounded-md  border-2 border-black px-3  py-2 text-xs">
             <input
+            
               type="text"
               placeholder="destination"
-              className="  outline-none"
+              className="  outline-none w-24"
             />
 
             <FaSearch />
           </div> */}
-
-          <p className="  font-Roboto  text-sm   ">Hotels found 4</p>
-          <p className="  font-Roboto text-sm    ">Destination : Any</p>
         </div>
 
-        <div className=" mt-8 grid grid-cols-4  gap-6   gap-y-[70px] font-Sen  ">
+        <div className=" z-0 mt-10 grid grid-cols-4  gap-6   gap-y-[70px] font-Sen  ">
           {propertiesList?.map((property) => (
             <div
               onClick={() => {
                 navigate(`/hotel/details/${property._id}`);
               }}
-              className=" max-h-[300px]  w-[250px] cursor-pointer rounded-2xl  bg-white   "
+              className=" relative z-0  max-h-[300px] w-[250px] cursor-pointer rounded-2xl  bg-white   "
             >
               <div className=" h-[230px] w-full   rounded-2xl ">
                 <img
@@ -278,6 +400,25 @@ const SearchPage = () => {
                   src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
                   alt=""
                 />
+              </div>
+
+              <div
+                className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  if (wishlist?.includes(property._id)) {
+                    removeFromWishlist(property._id);
+                  } else {
+                    addToWishlist(property._id);
+                  }
+                }}
+              >
+                <TbHeartPlus
+                  className={`${wishlist?.includes(property._id) ? "  text-rose-500 " : " text-white"} pt-[1px] font-bold`}
+                  size={18}
+                />
+                {/* <p className=" text-white">Wishlist</p> */}
               </div>
 
               <div className="   rounded-b-2xl    px-3  py-4 text-sm">
@@ -305,6 +446,11 @@ const SearchPage = () => {
             </div>
           ))}
         </div>
+        <SearchFilterModal
+          reFetchData={() => {
+            setTriggerRefetch((val) => !val);
+          }}
+        />
       </main>
     </>
   );

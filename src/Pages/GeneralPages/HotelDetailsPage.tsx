@@ -28,6 +28,8 @@ import { BiMinus, BiPlus } from "react-icons/bi";
 import { useEffect, useMemo, useState } from "react";
 import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
 import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
+import Logo from "../../Components/Navbar/SubComponents/Logo";
+import { ROLES_LIST } from "../../Config/userRoles";
 
 interface ListingInfo {
   _id: string;
@@ -94,6 +96,10 @@ const HotelDetailsPage = () => {
   // data of property shown on the page
 
   const [propertyData, SetPropertyData] = useState<ListingInfo | null>(null);
+
+  const [wishlist, setWishlist] = useState<string[] | null>(null);
+
+  const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
 
   // axios private hook
 
@@ -199,6 +205,94 @@ const HotelDetailsPage = () => {
       isMounted = false;
     };
   }, [listingID]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const response = await AxiosPrivate.get<{ wishlist: string[] }>(
+          "/user/listing/wishlist",
+        );
+
+        if (isMounted) {
+          setWishlist(response.data.wishlist);
+
+          console.log(response.data.wishlist);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (auth.accessToken) {
+      fetchData();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [auth.accessToken, triggerWishlistRefetch]);
+
+  const addToWishlist = async (listingID: string) => {
+    try {
+      if (!auth.accessToken || !auth.roles.includes(ROLES_LIST.User)) {
+        toast.error("login  to add to wishList");
+
+        return;
+      }
+
+      const response = await AxiosPrivate.patch(
+        "/user/listing/wishlist/add/" + listingID,
+        {},
+      );
+
+      toast.success("Added to wishlist");
+
+      setTriggerWishlistRefetch((val) => !val);
+    } catch (err: any) {
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("failed to add to wishlist");
+      }
+    }
+  };
+
+  const removeFromWishlist = async (listingID: string) => {
+    try {
+      if (!auth.accessToken || !auth.roles.includes(ROLES_LIST.User)) {
+        toast.error("login  to remove from wishList");
+
+        return;
+      }
+
+      const response = await AxiosPrivate.patch(
+        "/user/listing/wishlist/remove/" + listingID,
+      );
+
+      toast.success("removed from wishlist");
+      setTriggerWishlistRefetch((val) => !val);
+    } catch (err: any) {
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("failed to remove from wishlist");
+      }
+    }
+  };
 
   // api request to check if the room is available on specific days
 
@@ -371,19 +465,7 @@ const HotelDetailsPage = () => {
         >
           <nav>
             <div className=" flex items-center  justify-between px-4 py-5   text-sm">
-              <div
-                className=" rounded-xl bg-black px-3 py-2"
-                onClick={() => {
-                  navigate("/");
-                }}
-              >
-                <img
-                  className="cursor-pointer  "
-                  src={LogoImg}
-                  alt="Logo"
-                  width={80}
-                />
-              </div>
+              <Logo />
 
               <div
                 className="  hidden items-center justify-between gap-3
@@ -408,7 +490,7 @@ const HotelDetailsPage = () => {
                 </div>
               </div>
 
-              <div className=" flex min-w-[55px]  justify-end">
+              <div className=" flex min-w-[70px]  justify-end">
                 <div
                   className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[8px] py-[6px]
     "
@@ -498,363 +580,383 @@ const HotelDetailsPage = () => {
           </nav>
         </div>
       </header>
-
-      <main className="  pt-[34px]">
-        <div
-          className="
+      {propertyData && (
+        <main className="  pt-[34px]">
+          <div
+            className="
            mx-auto
            max-w-[1300px]
           
            "
-        >
-          <div className=" font-Merriweather   bg-gray-100  pb-14  pt-[55px] ">
-            <div className=" flex  justify-center  gap-5 ">
-              <div className=" flex  w-[92%] flex-col  ">
-                <div className=" flex items-baseline  justify-center px-2 pb-[35px] pt-8">
-                  <h1 className="  text-[30px]  font-semibold  capitalize  ">
-                    {propertyData?.listingTitle}
-                  </h1>
-                </div>
-                <div className="   flex gap-3 px-10">
-                  <div className=" flex  h-[280px] w-[50%]   rounded-l-xl  ">
-                    <img
-                      className="  h-full w-full rounded-l-xl"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
-                      alt=""
-                    />
+          >
+            <div className=" font-Merriweather   bg-gray-100  pb-14  pt-[55px] ">
+              <div className=" flex  justify-center  gap-5 ">
+                <div className=" flex  w-[92%] flex-col  ">
+                  <div className=" flex items-baseline  justify-center px-2 pb-[35px] pt-8">
+                    <h1 className="  text-[30px]  font-semibold  capitalize  ">
+                      {propertyData?.listingTitle}
+                    </h1>
                   </div>
-
-                  <div className=" flex max-h-[280px] w-[25%]  flex-col gap-3   ">
-                    <img
-                      className="  h-1/2   "
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[0]}`}
-                      alt=""
-                    />
-                    <img
-                      className=" h-1/2     "
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[1]}`}
-                      alt=""
-                    />
-                  </div>
-
-                  <div className=" relative flex h-[280px] w-[25%]  flex-col  gap-3  ">
-                    <div className=" absolute  bottom-4 right-4 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   ">
-                      <TbHeartPlus
-                        className=" pt-[1px] font-bold text-white   "
-                        size={18}
-                      />
-                      <p className=" text-white">Wishlist</p>
-                    </div>
-                    <img
-                      className=" h-1/2  rounded-tr-xl"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[2]}`}
-                      alt=""
-                    />
-                    <img
-                      className=" h-1/2   rounded-br-xl"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[3]}`}
-                      alt=""
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className=" mx-auto mt-12 flex w-[92%] justify-center font-Inter ">
-              <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
-                <div className="  h-10 w-10">
-                  {propertyData?.hostImg ? (
-                    <img
-                      className=" h-full w-full rounded-full"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
-                      alt=""
-                    />
-                  ) : (
-                    <img
-                      className=" h-full w-full rounded-full"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
-                      alt=""
-                    />
-                  )}
-                </div>
-                <p>Hosted by {propertyData?.host}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="  my-16 flex items-center">
-            <div className=" mx-auto w-[60%] max-w-[500px] font-Sen font-semibold ">
-              <p className=" text-center text-3xl ">What this place offers</p>
-
-              <div className=" mt-8 flex flex-col gap-9   ">
-                <div className=" flex  w-full justify-between lg:mx-auto">
-                  <div className=" grid w-[67%] grid-cols-1 ps-6   ">
-                    <div className=" flex items-center  gap-4 justify-self-start">
-                      <TiWiFi className=" text-3xl" />
-                      <p
-                        className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
-                      >
-                        Free wifi
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className=" grid w-[33%] grid-cols-1">
-                    <div className=" flex items-center  gap-4 justify-self-start">
-                      <MdOutlinePool className=" text-3xl" />
-                      <p
-                        className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
-                      >
-                        Common Pool
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className=" flex  w-full justify-between lg:mx-auto">
-                  <div className=" grid w-[67%]  grid-cols-1 ps-6   ">
-                    <div className=" flex items-center  gap-4 justify-self-start">
-                      <FaRegSnowflake className=" text-3xl" />
-                      <p
-                        className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
-                      >
-                        Air Conditioning
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className=" grid w-[33%] grid-cols-1">
-                    <div className=" flex items-center  gap-4 justify-self-start">
-                      <FaCar className=" text-3xl" />
-                      <p
-                        className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
-                      >
-                        Car Parking
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className=" flex  w-full justify-between lg:mx-auto">
-                  <div className="  w-[67%]grid grid-cols-1 ps-6   ">
-                    <div className=" flex items-center  gap-4 justify-self-start">
-                      <RiTvLine className=" text-3xl" />
-                      <p
-                        className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
-                      >
-                        Cable Tv
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className=" grid w-[33%] grid-cols-1">
-                    <div className=" flex items-center  gap-4 justify-self-start">
-                      <FaHotTub className=" text-3xl" />
-                      <p
-                        className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
-                      >
-                        Hot Tub
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="  mx-auto  flex  w-[35%] justify-center rounded-xl border border-neutral-300  px-[0px] py-6 shadow-2xl">
-              <div>
-                <div className=" mt-4 flex items-center justify-between gap-3 px-1 font-Inter ">
-                  <div className=" flex  gap-1">
-                    <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
-                      <FaRupeeSign className=" text-sm  text-white" />
-                    </div>
-
-                    <div className=" flex items-center gap-2">
-                      <p className=" font-semibold ">
-                        {" "}
-                        {propertyData?.rentPerNight}{" "}
-                      </p>
-                      <p className=" text-xs font-semibold  text-neutral-400">
-                        {" "}
-                        night{" "}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    className=" cursor-pointer pr-2 text-center text-xs  font-semibold"
-                    onClick={checkAvailability}
-                  >
-                    <p>Check Availability</p>
-                  </div>
-                </div>
-
-                <div className=" mt-8 min-w-[270px] rounded-xl border-2 border-black">
-                  <div className=" flex  border-b-2 border-black  ">
-                    <div className="  w-1/2 border-r-2  border-black px-4 py-3 text-xs ">
-                      <p className=" pb-2 text-center font-bold">CHECK IN</p>
-                      <input
-                        type="date"
-                        value={checkInDate}
-                        onChange={(e) => setCheckInDate(e.target.value)}
+                  <div className="   flex gap-3 px-10">
+                    <div className=" flex  h-[280px] w-[50%]   rounded-l-xl  ">
+                      <img
+                        className="  h-full w-full rounded-l-xl"
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
+                        alt=""
                       />
                     </div>
 
-                    <div className=" w-1/2  px-4 py-3 text-center text-xs">
-                      <p className=" pb-2 font-bold">CHECK OUT</p>
-                      <input
-                        type="date"
-                        value={checkOutDate}
-                        onChange={(e) => setCheckOutnDate(e.target.value)}
+                    <div className=" flex max-h-[280px] w-[25%]  flex-col gap-3   ">
+                      <img
+                        className="  h-1/2   "
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[0]}`}
+                        alt=""
+                      />
+                      <img
+                        className=" h-1/2     "
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[1]}`}
+                        alt=""
                       />
                     </div>
-                  </div>
 
-                  <div className=" flex justify-center gap-8 border-b-2 border-black px-6 py-3">
-                    <p className=" font-Inter  text-xl  font-semibold">Rooms</p>
-
-                    <div className=" flex  items-center gap-4 ">
+                    <div className=" relative flex h-[280px] w-[25%]  flex-col  gap-3  ">
                       <div
-                        className="  cursor-pointer   rounded-sm  px-[2px] py-[2px]  border hover:bg-black/30  "
-                        onClick={() => {
-                          if (rooms > 1) {
-                            setRooms((val) => val - 1);
+                        className=" absolute  bottom-4 right-4 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   "
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (propertyData) {
+                            if (wishlist?.includes(propertyData?._id)) {
+                              removeFromWishlist(propertyData?._id);
+                            } else {
+                              addToWishlist(propertyData?._id);
+                            }
                           }
                         }}
                       >
-                        <BiMinus className="   " />
+                        <TbHeartPlus
+                          className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} pt-[1px] font-bold`}
+                          size={18}
+                        />
+                        <p
+                          className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} `}
+                        >
+                          Wishlist
+                        </p>
+                      </div>
+                      <img
+                        className=" h-1/2  rounded-tr-xl"
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[2]}`}
+                        alt=""
+                      />
+                      <img
+                        className=" h-1/2   rounded-br-xl"
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[3]}`}
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className=" mx-auto mt-12 flex w-[92%] justify-center font-Inter ">
+                <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
+                  <div className="  h-10 w-10">
+                    {propertyData?.hostImg ? (
+                      <img
+                        className=" h-full w-full rounded-full"
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
+                        alt=""
+                      />
+                    ) : (
+                      <img
+                        className=" h-full w-full rounded-full"
+                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                  <p>Hosted by {propertyData?.host}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="  my-16 flex items-center">
+              <div className=" mx-auto w-[60%] max-w-[500px] font-Sen font-semibold ">
+                <p className=" text-center text-3xl ">What this place offers</p>
+
+                <div className=" mt-8 flex flex-col gap-9   ">
+                  <div className=" flex  w-full justify-between lg:mx-auto">
+                    <div className=" grid w-[67%] grid-cols-1 ps-6   ">
+                      <div className=" flex items-center  gap-4 justify-self-start">
+                        <TiWiFi className=" text-3xl" />
+                        <p
+                          className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
+                        >
+                          Free wifi
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className=" grid w-[33%] grid-cols-1">
+                      <div className=" flex items-center  gap-4 justify-self-start">
+                        <MdOutlinePool className=" text-3xl" />
+                        <p
+                          className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
+                        >
+                          Common Pool
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className=" flex  w-full justify-between lg:mx-auto">
+                    <div className=" grid w-[67%]  grid-cols-1 ps-6   ">
+                      <div className=" flex items-center  gap-4 justify-self-start">
+                        <FaRegSnowflake className=" text-3xl" />
+                        <p
+                          className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
+                        >
+                          Air Conditioning
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className=" grid w-[33%] grid-cols-1">
+                      <div className=" flex items-center  gap-4 justify-self-start">
+                        <FaCar className=" text-3xl" />
+                        <p
+                          className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
+                        >
+                          Car Parking
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className=" flex  w-full justify-between lg:mx-auto">
+                    <div className="  w-[67%]grid grid-cols-1 ps-6   ">
+                      <div className=" flex items-center  gap-4 justify-self-start">
+                        <RiTvLine className=" text-3xl" />
+                        <p
+                          className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
+                        >
+                          Cable Tv
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className=" grid w-[33%] grid-cols-1">
+                      <div className=" flex items-center  gap-4 justify-self-start">
+                        <FaHotTub className=" text-3xl" />
+                        <p
+                          className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
+                        >
+                          Hot Tub
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="  mx-auto  flex  w-[35%] justify-center rounded-xl border border-neutral-300  px-[0px] py-6 shadow-2xl">
+                <div>
+                  <div className=" mt-4 flex items-center justify-between gap-3 px-1 font-Inter ">
+                    <div className=" flex  gap-1">
+                      <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
+                        <FaRupeeSign className=" text-sm  text-white" />
                       </div>
 
-                      <p className=" text-lg font-semibold">{rooms}</p>
+                      <div className=" flex items-center gap-2">
+                        <p className=" font-semibold ">
+                          {" "}
+                          {propertyData?.rentPerNight}{" "}
+                        </p>
+                        <p className=" text-xs font-semibold  text-neutral-400">
+                          {" "}
+                          night{" "}
+                        </p>
+                      </div>
+                    </div>
 
-                      <div className=" rounded-sm  border   px-[2px] py-[2px] hover:bg-black/30   ">
-                        <BiPlus
-                          className=" cursor-pointer  "
-                          onClick={() => {
-                            setRooms((val) => val + 1);
-                          }}
+                    <div
+                      className=" cursor-pointer pr-2 text-center text-xs  font-semibold"
+                      onClick={checkAvailability}
+                    >
+                      <p>Check Availability</p>
+                    </div>
+                  </div>
+
+                  <div className=" mt-8 min-w-[270px] rounded-xl border-2 border-black">
+                    <div className=" flex  border-b-2 border-black  ">
+                      <div className="  w-1/2 border-r-2  border-black px-4 py-3 text-xs ">
+                        <p className=" pb-2 text-center font-bold">CHECK IN</p>
+                        <input
+                          type="date"
+                          value={checkInDate}
+                          onChange={(e) => setCheckInDate(e.target.value)}
+                        />
+                      </div>
+
+                      <div className=" w-1/2  px-4 py-3 text-center text-xs">
+                        <p className=" pb-2 font-bold">CHECK OUT</p>
+                        <input
+                          type="date"
+                          value={checkOutDate}
+                          onChange={(e) => setCheckOutnDate(e.target.value)}
                         />
                       </div>
                     </div>
+
+                    <div className=" flex justify-center gap-8 border-b-2 border-black px-6 py-3">
+                      <p className=" font-Inter  text-xl  font-semibold">
+                        Rooms
+                      </p>
+
+                      <div className=" flex  items-center gap-4 ">
+                        <div
+                          className="  cursor-pointer   rounded-sm  border px-[2px]  py-[2px] hover:bg-black/30  "
+                          onClick={() => {
+                            if (rooms > 1) {
+                              setRooms((val) => val - 1);
+                            }
+                          }}
+                        >
+                          <BiMinus className="   " />
+                        </div>
+
+                        <p className=" text-lg font-semibold">{rooms}</p>
+
+                        <div className=" rounded-sm  border   px-[2px] py-[2px] hover:bg-black/30   ">
+                          <BiPlus
+                            className=" cursor-pointer  "
+                            onClick={() => {
+                              setRooms((val) => val + 1);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className=" flex   border-black  ">
+                      <div className=" w-1/2 border-r-2 border-black px-4 py-3 text-center text-xs ">
+                        <p className=" pb-2  font-bold">GUESTS</p>
+                        <p>{guests}</p>
+                      </div>
+
+                      <div className=" w-1/2  px-4 py-3 text-center text-xs">
+                        <p className=" pb-2 font-bold">TOTAL RENT</p>
+                        <p className=" ">{grandTotal}</p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className=" flex   border-black  ">
-                    <div className=" w-1/2 border-r-2 border-black px-4 py-3 text-center text-xs ">
-                      <p className=" pb-2  font-bold">GUESTS</p>
-                      <p>{guests}</p>
-                    </div>
+                  <div className=" mt-12 flex w-full justify-center font-Inter">
+                    <button
+                      className=" w-full rounded-xl bg-black px-4 py-3 font-bold tracking-wide text-white hover:bg-black/85"
+                      onClick={displayRazorpay}
+                    >
+                      Reserve
+                    </button>
+                  </div>
 
-                    <div className=" w-1/2  px-4 py-3 text-center text-xs">
-                      <p className=" pb-2 font-bold">TOTAL RENT</p>
-                      <p className=" ">{grandTotal}</p>
-                    </div>
+                  <div className="   flex  justify-center   gap-4 border-t-2  pb-4 pt-8   font-Sen font-semibold  ">
+                    <p>Reservation Fee </p>
+                    <p>Rs.{FeePayable}</p>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div className=" mt-12 flex w-full justify-center font-Inter">
-                  <button
-                    className=" w-full rounded-xl bg-black px-4 py-3 font-bold tracking-wide text-white hover:bg-black/85"
-                    onClick={displayRazorpay}
-                  >
-                    Reserve
+            <div className=" border-y  lg:py-16">
+              <div>
+                <p className=" text-center text-3xl font-bold">
+                  More About This Place
+                </p>
+
+                <div className=" mt-6 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-2/3">
+                  <p>{propertyData?.aboutHotel}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="  flex items-center justify-center  gap-8  px-8 py-14">
+              <div className=" flex h-[200px] w-[45%] justify-center  gap-6   rounded-xl  border-2 py-5 ">
+                <div className="  text-neutral-500 ">
+                  <div className=" ps-1">
+                    <p className="  mt-2  font-Sen text-2xl font-bold text-black">
+                      Add Your Review
+                    </p>
+                    <p className=" mt-3  text-sm font-bold">
+                      {" "}
+                      tell us more about this place
+                    </p>
+
+                    <p className=" mt-2 w-[80%] text-sm font-bold">
+                      {" "}
+                      Also give rating
+                    </p>
+                  </div>
+
+                  <button className=" mt-5 rounded-md bg-black px-4 py-2 text-sm  font-semibold text-white">
+                    Submit Your Review
                   </button>
                 </div>
 
-                <div className="   flex  justify-center   gap-4 border-t-2  pb-4 pt-8   font-Sen font-semibold  ">
-                  <p>Reservation Fee </p>
-                  <p>Rs.{FeePayable}</p>
+                <div className="   flex w-[45%] flex-col justify-center gap-2 ">
+                  <div className=" flex justify-center gap-2 text-sm"></div>
+
+                  <div className="  flex items-center justify-between gap-2 rounded-md   border px-4 py-2 ">
+                    <p className=" font-Sen  font-bold">Rating</p>
+
+                    <div className=" flex  items-center gap-4">
+                      <p className=" rounded-md border-2 px-1 py-1">
+                        <FaMinus size={10} />
+                      </p>
+                      <p className=" font-bold"> 1</p>
+                      <p className=" rounded-md border-2 px-1 py-1">
+                        <FaPlus size={10} />
+                      </p>
+                    </div>
+                  </div>
+
+                  <textarea className="  h-[130px] w-full  rounded-lg border  "></textarea>
+                </div>
+              </div>
+
+              <div className=" flex h-[200px] w-[45%]  justify-center  gap-6  rounded-xl  border-2 py-5 ">
+                <div className=" w-[45%] ">
+                  <img
+                    src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
+                    alt=""
+                  />
+                </div>
+
+                <div className="  w-[60%] text-neutral-500  ">
+                  <p className=" mt-2 font-Sen text-2xl font-bold text-black">
+                    Address & Location
+                  </p>
+
+                  <div className=" mt-3 flex flex-col gap-2  text-sm font-bold">
+                    <div className="flex gap-2">
+                      <p>{propertyData?.hotelName}</p>
+                      <p>{propertyData?.city}</p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <p>{propertyData?.district}</p>
+                      <p>{propertyData?.state}</p>
+                    </div>
+
+                    <p>{propertyData?.pinCode}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className=" border-y  lg:py-16">
-            <div>
-              <p className=" text-center text-3xl font-bold">
-                More About This Place
-              </p>
-
-              <div className=" mt-6 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-2/3">
-                <p>{propertyData?.aboutHotel}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="  flex items-center justify-center  gap-8  px-8 py-14">
-            <div className=" flex h-[200px] w-[45%] justify-center  gap-6   rounded-xl  border-2 py-5 ">
-              <div className="  text-neutral-500 ">
-                <div className=" ps-1">
-                  <p className="  mt-2  font-Sen text-2xl font-bold text-black">
-                    Add Your Review
-                  </p>
-                  <p className=" mt-3  text-sm font-bold">
-                    {" "}
-                    tell us more about this place
-                  </p>
-
-                  <p className=" mt-2 w-[80%] text-sm font-bold">
-                    {" "}
-                    Also give rating
-                  </p>
-                </div>
-
-                <button className=" mt-5 rounded-md bg-black px-4 py-2 text-sm  font-semibold text-white">
-                  Submit Your Review
-                </button>
-              </div>
-
-              <div className="   flex w-[45%] flex-col justify-center gap-2 ">
-                <div className=" flex justify-center gap-2 text-sm"></div>
-
-                <div className="  flex items-center justify-between gap-2 rounded-md   border px-4 py-2 ">
-                  <p className=" font-Sen  font-bold">Rating</p>
-
-                  <div className=" flex  items-center gap-4">
-                    <p className=" rounded-md border-2 px-1 py-1">
-                      <FaMinus size={10} />
-                    </p>
-                    <p className=" font-bold"> 1</p>
-                    <p className=" rounded-md border-2 px-1 py-1">
-                      <FaPlus size={10} />
-                    </p>
-                  </div>
-                </div>
-
-                <textarea className="  h-[130px] w-full  rounded-lg border  "></textarea>
-              </div>
-            </div>
-
-            <div className=" flex h-[200px] w-[45%]  justify-center  gap-6  rounded-xl  border-2 py-5 ">
-              <div className=" w-[45%] ">
-                <img
-                  src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
-                  alt=""
-                />
-              </div>
-
-              <div className="  w-[60%] text-neutral-500  ">
-                <p className=" mt-2 font-Sen text-2xl font-bold text-black">
-                  Address & Location
-                </p>
-
-                <div className=" mt-3 flex flex-col gap-2  text-sm font-bold">
-                  <div className="flex gap-2">
-                    <p>{propertyData?.hotelName}</p>
-                    <p>{propertyData?.city}</p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <p>{propertyData?.district}</p>
-                    <p>{propertyData?.state}</p>
-                  </div>
-
-                  <p>{propertyData?.pinCode}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
+      )}
     </>
   );
 };

@@ -90,7 +90,7 @@ const ManageReservations = () => {
         "/user/reservations/received/cancel/" + `${reservationID}`,
       );
 
-      toast.success(" Listing deactivated ");
+      toast.success(" reservation cancelled ");
 
       setTriggerRefetch((val) => !val);
     } catch (err: any) {
