@@ -4,7 +4,8 @@ interface AuthStore {
   accessToken: string;
   roles: number[];
   username: string;
-  setAuth: (accessToken: string, roles: number[], username: string) => void;
+  image:string;
+  setAuth: (accessToken: string, roles: number[], username: string,image:string) => void;
   onLogout: () => void;
 }
 
@@ -12,11 +13,12 @@ const useAuth = create<AuthStore>((set) => ({
   accessToken: "",
   roles: [],
   username: "",
-  setAuth: (accessToken, roles, username) => {
-    set({ accessToken, roles, username });
+  image:"",
+  setAuth: (accessToken, roles, username,image) => {
+    set({ accessToken, roles, username,image });
   },
   onLogout: () => {
-    set({ accessToken: "", roles: [], username: "" });
+    set({ accessToken: "", roles: [], username: "" ,image:""});
   },
 }));
 

@@ -18,6 +18,7 @@ interface AuthResponse {
   accessToken: string;
   roles: number[];
   username: string;
+  image:string;
 }
 
 const AdminLogin = () => {
@@ -48,6 +49,7 @@ const AdminLogin = () => {
         response.data.accessToken,
         response.data.roles,
         response.data.username,
+        response.data.image
       );
 
       toast.success("login successful");

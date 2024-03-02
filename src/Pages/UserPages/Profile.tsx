@@ -68,6 +68,7 @@ const Profile = () => {
           uploadPreset: "lmyyofoj",
           clientAllowedFormats: ["jpg", "jpeg", "png", "webP"],
           maxFiles: 1,
+          cropping:true
         },
         async function (error: any, result: any) {
           if (error) {
@@ -162,7 +163,7 @@ const Profile = () => {
   return (
     <>
       <header>
-        <nav className=" fixed z-10 w-screen border-b-2 bg-white  ">
+        <nav  className=" fixed z-10 w-screen border-b-2 bg-white  ">
           <div
             className=" 
              
