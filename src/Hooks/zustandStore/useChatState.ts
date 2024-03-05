@@ -14,7 +14,7 @@ interface TuserData {
   image: string;
 }
 
-interface TchatData {
+export  interface TchatData {
   _id: string;
   chatName: string;
   isGroupChat: boolean;

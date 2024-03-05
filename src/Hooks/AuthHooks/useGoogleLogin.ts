@@ -11,6 +11,7 @@ interface googleAuthResponse {
   roles: number[];
   user: string;
   image:string;
+  userID:string;
 }
 
 const UseGoogleLogin = () => {
@@ -30,7 +31,7 @@ const UseGoogleLogin = () => {
           { withCredentials: true },
         );
 
-        auth.setAuth(res.data.accessToken, res.data.roles, res.data.user,res.data.image);
+        auth.setAuth(res.data.accessToken, res.data.roles, res.data.user,res.data.image,res.data.userID);
 
         if (registerModalState.isOpen) {
           registerModalState.onClose();

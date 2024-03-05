@@ -13,9 +13,12 @@ import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 import { FaX } from "react-icons/fa6";
 import { IoMdClose, IoMdSend } from "react-icons/io";
 import toast from "react-hot-toast";
-import useChatState from "../../Hooks/zustandStore/useChatState";
+import useChatState, { TchatData } from "../../Hooks/zustandStore/useChatState";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
-
+import io, { Socket } from "socket.io-client";
+import { BASE_URL } from "../../Api/Axios";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+import Console from "../AdminPages/Console";
 interface TUserData {
   _id: string;
   username: string;
@@ -49,6 +52,9 @@ export interface Chat {
   __v: number;
   latestMessage: string;
 }
+
+let socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+  selectChatCompare: TchatData | null;
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -84,6 +90,60 @@ const Chat = () => {
 
   const [triggerChatReFetch, setTriggerChatReFetch] = useState(false);
 
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  const [typing, setTyping] = useState(false);
+
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    socket = io(BASE_URL);
+
+    socket.on("connection", () => {
+      setSocketConnected(true);
+
+      console.log("connected to socket");
+    });
+
+    socket.on("disconnect", () => {
+      setSocketConnected(false);
+      console.log("Disconnected from server");
+    });
+
+    socket.emit("setup", auth.userID);
+  }, [auth.userID]);
+
+  useEffect(() => {
+    const handleTyping = (data: { room: string }) => {
+      console.log(data, "typing");
+
+      console.log(chatState.selectedChat?._id);
+
+      if (data.room === chatState.selectedChat?._id) {
+        setIsTyping(true);
+      }
+    };
+
+    const handleStopTyping = (data: { room: string }) => {
+      console.log(data, "stoptyping");
+      if (data.room === chatState.selectedChat?._id) {
+        setIsTyping(false);
+      }
+    };
+
+    socket.on("typing now", handleTyping);
+    socket.on("stop typing", handleStopTyping);
+
+    return () => {
+      socket.off("typing now", handleTyping);
+      socket.off("stop typing", handleStopTyping);
+    };
+  }, [chatState.selectedChat]);
+
+  useEffect(() => {
+    console.log(chatState.selectedChat?._id, "changed chat");
+  }, [chatState.selectedChat]);
+
   useEffect(() => {
     if (searchDrawerOpen) {
       setDrawerChildOpen(true);
@@ -101,8 +161,6 @@ const Chat = () => {
   };
 
   const messageBox = useRef<HTMLDivElement>(null);
-
-  const [triggerScroll, setTriggerScroll] = useState(false);
 
   useEffect(() => {
     handleSearch();
@@ -148,6 +206,9 @@ const Chat = () => {
       }
 
       chatState.setSelectedChat(response.data.conversation);
+      console.log(response.data.conversation._id);
+      setTyping(false);
+      setIsTyping(false);
       handleDrawerClose();
 
       console.log(chatState.chats, "in ");
@@ -229,6 +290,12 @@ const Chat = () => {
         if (isMounted) {
           setMessages(response.data);
 
+          console.log("joined", chatState.selectedChat?._id);
+
+          socket.emit("join chat", chatState.selectedChat?._id);
+
+          selectChatCompare = chatState.selectedChat;
+
           console.log("conversation", response.data);
         }
       } catch (err: any) {
@@ -259,6 +326,7 @@ const Chat = () => {
     if (e.key === "Enter" && newMessage) {
       try {
         setNewMessage("");
+        socket.emit("stop typing", chatState.selectedChat?._id);
 
         const response = await AxiosPrivate.post("/messages/send", {
           content: newMessage,
@@ -268,6 +336,8 @@ const Chat = () => {
         setTriggerChatReFetch((val) => !val);
 
         console.log(response.data);
+
+        socket.emit("new message", response.data);
 
         setMessages([...messages, response.data]);
 
@@ -292,6 +362,22 @@ const Chat = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (!socketConnected) {
+      socket.emit("setup", auth.userID);
+    }
+
+    socket.on("message recieved", (newMessage) => {
+      console.log("message recieved");
+
+      if (!selectChatCompare || selectChatCompare._id !== newMessage.chat._id) {
+        // give notification
+      } else {
+        setMessages([...messages, newMessage]);
+      }
+    });
+  });
 
   const checkIsTheLastMessage = (index: number) => {
     if (messages) {
@@ -586,6 +672,8 @@ const Chat = () => {
                   </div>
                 </div>
 
+                {isTyping ? <div>loading</div> : ""}
+
                 <div className=" flex items-center rounded-b-md bg-gray-200 pb-4">
                   <div className=" mx-2 flex w-full    items-center justify-between rounded-md border bg-white   px-4 py-3 text-sm">
                     <input
@@ -594,6 +682,36 @@ const Chat = () => {
                       value={newMessage}
                       onChange={(e) => {
                         setNewMessage(e.target.value);
+
+                        // typing indication
+
+                        if (!socketConnected) return;
+
+                        if (!typing) {
+                          setTyping(true);
+
+                          socket.emit("typing", chatState.selectedChat?._id);
+
+                          console.log("typing");
+                        }
+
+                        let lastTyping = new Date().getTime();
+
+                        let timerLength = 3000;
+
+                        setTimeout(() => {
+                          let nowTime = new Date().getTime();
+
+                          let timeDiff = nowTime - lastTyping;
+
+                          if (timeDiff >= timerLength ) {
+                            socket.emit(
+                              "stop typing",
+                              chatState.selectedChat?._id,
+                            );
+                            setTyping(false);
+                          }
+                        }, timerLength);
                       }}
                       placeholder="Enter the message"
                       className=" w-[90%] outline-none"

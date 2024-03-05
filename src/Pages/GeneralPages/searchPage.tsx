@@ -31,6 +31,7 @@ import useSearchModal from "../../Hooks/zustandStore/useSearchFilterModal";
 import { TbHeartPlus } from "react-icons/tb";
 import toast from "react-hot-toast";
 import { ROLES_LIST } from "../../Config/userRoles";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 type property = z.infer<typeof HotelListingSchema> & {
   _id: string;
@@ -432,7 +433,7 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                <div className="  font-Roboto flex items-center justify-between pt-3 text-gray-700 ">
+                <div className="  flex items-center justify-between pt-3 font-Roboto text-gray-700 ">
                   {/* <FaRupeeSign size={14} /> */}
 
                   <div className=" flex gap-1">
@@ -445,6 +446,32 @@ const SearchPage = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="   mx-auto mt-7   flex  w-full items-center justify-between    2xl:mt-12  ">
+          <div className="flex items-center gap-4 text-sm 2xl:text-lg">
+            <p>Total Pages : {totalPages}</p>
+          </div>
+
+          <div className=" flex items-center gap-4 text-sm 2xl:text-lg ">
+            <button
+              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
+              onClick={() => setPage((page) => page - 1)}
+              disabled={page <= 1}
+            >
+              <IoIosArrowBack />
+            </button>
+
+            <p>Page {page}</p>
+
+            <button
+              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
+              disabled={page >= totalPages}
+              onClick={() => setPage((page) => page + 1)}
+            >
+              <IoIosArrowForward />
+            </button>
+          </div>
         </div>
         <SearchFilterModal
           reFetchData={() => {

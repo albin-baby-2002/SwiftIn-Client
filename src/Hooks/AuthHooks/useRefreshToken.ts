@@ -17,7 +17,8 @@ const UseRefreshToken = () => {
         response.data.accessToken,
         response.data.roles,
         response.data.user,
-        response.data.image
+        response.data.image,
+        response.data.userID
       );
 
       // Return the new access token

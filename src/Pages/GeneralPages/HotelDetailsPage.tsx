@@ -30,6 +30,7 @@ import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
 import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import { ROLES_LIST } from "../../Config/userRoles";
+import { FaMessage } from "react-icons/fa6";
 
 interface ListingInfo {
   _id: string;
@@ -589,7 +590,7 @@ const HotelDetailsPage = () => {
           
            "
           >
-            <div className=" font-Merriweather   bg-gray-100  pb-14  pt-[55px] ">
+            <div className=" bg-gray-100   pb-14  pt-[55px]  font-Merriweather ">
               <div className=" flex  justify-center  gap-5 ">
                 <div className=" flex  w-[92%] flex-col  ">
                   <div className=" flex items-baseline  justify-center px-2 pb-[35px] pt-8">
@@ -676,7 +677,11 @@ const HotelDetailsPage = () => {
                       />
                     )}
                   </div>
-                  <p>Hosted by {propertyData?.host}</p>
+
+                  <div className=" flex flex-col">
+                    <p>Hosted by {propertyData?.host}</p>
+                    <p className=" text-xs">Message the Host Now</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -869,7 +874,7 @@ const HotelDetailsPage = () => {
               </div>
             </div>
 
-            <div className=" border-y  lg:py-16">
+            <div className="   lg:py-16">
               <div>
                 <p className=" text-center text-3xl font-bold">
                   More About This Place
