@@ -8,7 +8,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ onClick, label }) => {
     <div
       onClick={onClick}
       className=" 
-                text-sm  
+                text-xs 
                 font-semibold 
                 px-3
                 py-3

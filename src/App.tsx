@@ -70,7 +70,9 @@ function App() {
             path="/chat"
             element={
               <PrivateRoute
-                Element={Chat}
+                Element={
+                  
+                  Chat}
                 allowedRoles={[ROLES_LIST.User]}
               />
             }

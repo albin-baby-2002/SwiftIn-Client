@@ -7,7 +7,7 @@ const Menu: React.FC<MenuProps> = ({ children }) => {
     <div
       className=" 
                 absolute 
-                -right-4 
+                -right-3 
                 top-12 
                 z-30 
                 min-w-[150px] 

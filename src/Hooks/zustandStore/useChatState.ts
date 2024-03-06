@@ -1,42 +1,32 @@
 import { create } from "zustand";
+import { Tchat, Tmessage } from "../../Types/chatTypes";
 
 interface TChatState {
-  chats: TchatData[];
-  selectedChat: TchatData | null;
-  setChats: (chats: TchatData[]) => void;
-  setSelectedChat: (chat: TchatData) => void;
-}
-
-interface TuserData {
-  _id: string;
-  username: string;
-  email: string;
-  image: string;
-}
-
-export  interface TchatData {
-  _id: string;
-  chatName: string;
-  isGroupChat: boolean;
-  users: TuserData[];
-  latestMessage:Tmessage
-}
-
-interface Tmessage {
-  sender: string;
-  content:string;
-  chat:string;
+  chats: Tchat[];
+  notifications: Tmessage[];
+  selectedChat: Tchat | null;
+  setChats: (chats: Tchat[]) => void;
+  setSelectedChat: (chat: Tchat) => void;
+  setNotifications: (messages: Tmessage[]) => void;
+  clearSelectedChat:()=> void;
 }
 
 const useChatState = create<TChatState>((set) => ({
   chats: [],
   selectedChat: null,
+  notifications: [],
   setChats: (chats) => {
     set({ chats });
   },
   setSelectedChat: (chat) => {
     set({ selectedChat: chat });
   },
+  setNotifications: (messages) => {
+    set({ notifications: messages });
+  },
+  clearSelectedChat:()=>{
+    set({selectedChat:null})
+  }
 }));
 
 export default useChatState;
