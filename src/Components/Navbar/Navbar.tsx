@@ -10,6 +10,7 @@ const Navbar = () => {
     >
       <div
         className=" 
+              px-3
               py-6
            
             "
@@ -30,7 +31,7 @@ const Navbar = () => {
 
             <div
               className="  hidden items-center justify-between gap-3
-              md:flex 
+              sm:flex 
             "
             >
               <div

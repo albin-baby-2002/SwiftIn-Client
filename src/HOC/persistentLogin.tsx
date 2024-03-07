@@ -6,7 +6,8 @@ import { Toaster } from "react-hot-toast";
 import RegisterModal from "../Components/Modals/RegisterModal";
 import OtpModal from "../Components/Modals/OtpModal";
 import LoginModal from "../Components/Modals/LoginModal";
-import PageLoader from "../Components/Loaders/pageLoader";
+import PageLoader from "../Components/Loaders/PageLoader";
+
 
 const PersistentLogin = () => {
   const [isLoading, setIsLoading] = useState(true);

@@ -1,19 +1,10 @@
-import Container from "../../Components/UiComponents/Container";
-import { Link } from "react-router-dom";
-import swiftin from "../../Assets/logo3.png";
-import { MdTune } from "react-icons/md";
-import { IoFilterSharp } from "react-icons/io5";
-import { RxMixerHorizontal } from "react-icons/rx";
-import { HiMiniArrowsUpDown } from "react-icons/hi2";
-import { TiArrowSortedDown, TiArrowUnsorted } from "react-icons/ti";
-import { FaHeart, FaRupeeSign, FaSearch, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
 import { z } from "zod";
 
 import { AiFillAppstore } from "react-icons/ai";
-import { FaUser } from "react-icons/fa";
 import { MdOutlineTune } from "react-icons/md";
 import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 
@@ -24,7 +15,6 @@ import useLogout from "../../Hooks/AuthHooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import Menu from "../../Components/Navbar/SubComponents/Menu";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
-import LogoImg from "/images/logo5.png";
 import useSearchState from "../../Hooks/zustandStore/useSearchState";
 import SearchFilterModal from "../../Components/Modals/SearchFilterModal";
 import useSearchModal from "../../Hooks/zustandStore/useSearchFilterModal";
@@ -32,6 +22,7 @@ import { TbHeartPlus } from "react-icons/tb";
 import toast from "react-hot-toast";
 import { ROLES_LIST } from "../../Config/userRoles";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import ProductSkeleton from "../../Components/Skeletons/ProductSkeleton";
 
 type property = z.infer<typeof HotelListingSchema> & {
   _id: string;
@@ -61,6 +52,8 @@ const SearchPage = () => {
 
   const [mainMenu, setMainMenu] = useState(false);
 
+  const [loading, setIsLoading] = useState(false);
+
   const toggleMainMenu = () => {
     setMainMenu((value) => !value);
   };
@@ -85,6 +78,7 @@ const SearchPage = () => {
 
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         console.log(searchState.destination, searchState.guests);
 
         const response = await AxiosPrivate.get<propertiesResponse>("/search", {
@@ -96,6 +90,8 @@ const SearchPage = () => {
             page,
           },
         });
+
+        setIsLoading(false);
 
         if (isMounted) {
           setPropertiesList(response.data.properties);
@@ -109,6 +105,7 @@ const SearchPage = () => {
           setTotalHotels(response.data.totalHotels);
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("Error fetching data:", error);
       }
     };
@@ -356,99 +353,81 @@ const SearchPage = () => {
         </header>
       </div>
 
-      <main
-        className="
-        
-         mx-auto flex
-        
-        max-w-[1500px]
-           
-           flex-col
-           justify-center
-           px-2
-          
-           pt-[100px]   sm:px-6 lg:px-10"
-      >
-        <div className="  flex w-full items-center  justify-between px-2 pt-3   font-[500]">
+      <main className=" mx-auto flex max-w-[1500px] flex-col justify-center px-2 pt-[100px] sm:px-6  ">
+        <div className=" mx-auto  hidden  w-full max-w-[80%] items-center   justify-between px-2  pt-3 font-[500] sm:max-w-none   ">
           <p className="  font-Inter  text-sm   ">Hotels Found {totalHotels}</p>
           <p className="  font-Inter  text-sm   ">
             Destination :{" "}
             {searchState.destination ? searchState.destination : "any"}
           </p>
-          {/* <div className=" font-Roboto  flex  w-36 items-center gap-2 rounded-md  border-2 border-black px-3  py-2 text-xs">
-            <input
-            
-              type="text"
-              placeholder="destination"
-              className="  outline-none w-24"
-            />
-
-            <FaSearch />
-          </div> */}
         </div>
 
-        <div className=" z-0 mt-10 grid grid-cols-4  gap-6   gap-y-[70px] font-Sen  ">
-          {propertiesList?.map((property) => (
-            <div
-              onClick={() => {
-                navigate(`/hotel/details/${property._id}`);
-              }}
-              className=" relative z-0  max-h-[300px] w-[250px] cursor-pointer rounded-2xl  bg-white   "
-            >
-              <div className=" h-[230px] w-full   rounded-2xl ">
-                <img
-                  className=" h-full w-full rounded-b-xl rounded-t-2xl"
-                  src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
-                  alt=""
-                />
-              </div>
-
+        <div className="  z-0 mt-8 grid grid-cols-1  justify-items-center  gap-4 gap-y-[40px]  font-Sen  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 ">
+          {loading ? (
+            <ProductSkeleton count={30} />
+          ) : (
+            propertiesList?.map((property) => (
               <div
-                className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  if (wishlist?.includes(property._id)) {
-                    removeFromWishlist(property._id);
-                  } else {
-                    addToWishlist(property._id);
-                  }
+                onClick={() => {
+                  navigate(`/hotel/details/${property._id}`);
                 }}
+                className=" relative z-0   max-w-[90%] cursor-pointer  justify-self-center rounded-2xl  bg-white  sm:max-w-none "
               >
-                <TbHeartPlus
-                  className={`${wishlist?.includes(property._id) ? "  text-rose-500 " : " text-white"} pt-[1px] font-bold`}
-                  size={18}
-                />
-                {/* <p className=" text-white">Wishlist</p> */}
-              </div>
-
-              <div className="   rounded-b-2xl    px-3  py-4 text-sm">
-                <div className=" flex items-center justify-between ">
-                  <p className="     font-Roboto text-[16px] font-[500]  ">
-                    {property.buildingName}
-                  </p>
-                  <div className=" flex items-center gap-2">
-                    <p className=" ">4.5</p>
-                    <FaStar size={14} />
-                  </div>
+                <div className="     w-full rounded-2xl sm:h-[240px]  ">
+                  <img
+                    className=" h-full w-full rounded-b-xl rounded-t-2xl"
+                    src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
+                    alt=""
+                  />
                 </div>
 
-                <div className="  flex items-center justify-between pt-3 font-Roboto text-gray-700 ">
-                  {/* <FaRupeeSign size={14} /> */}
+                <div
+                  className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
+                  onClick={(e) => {
+                    e.stopPropagation();
 
-                  <div className=" flex gap-1">
-                    <p className="  ps-[1px] ">Rs {property.rentPerNight}</p>
-                    <p className=" "> night</p>
+                    if (wishlist?.includes(property._id)) {
+                      removeFromWishlist(property._id);
+                    } else {
+                      addToWishlist(property._id);
+                    }
+                  }}
+                >
+                  <TbHeartPlus
+                    className={`${wishlist?.includes(property._id) ? "  text-rose-500 " : " text-white"} pt-[1px] font-bold`}
+                    size={18}
+                  />
+                  {/* <p className=" text-white">Wishlist</p> */}
+                </div>
+
+                <div className="   rounded-b-2xl    px-3  py-4 text-sm">
+                  <div className=" flex items-center justify-between ">
+                    <p className="     font-Roboto text-[16px] font-[500]  ">
+                      {property.buildingName}
+                    </p>
+                    <div className=" flex items-center gap-2">
+                      <p className=" ">4.5</p>
+                      <FaStar size={14} />
+                    </div>
                   </div>
 
-                  <p className=" ">{property.location}</p>
+                  <div className="  flex items-center justify-between pt-3 font-Roboto text-gray-700 ">
+                    {/* <FaRupeeSign size={14} /> */}
+
+                    <div className=" flex gap-1">
+                      <p className="  ps-[1px] ">Rs {property.rentPerNight}</p>
+                      <p className=" "> night</p>
+                    </div>
+
+                    <p className=" ">{property.location}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
-        <div className="   mx-auto mt-7   flex  w-full items-center justify-between    2xl:mt-12  ">
+        <div className="  mx-auto  flex w-3/4 items-center  justify-between  py-7 md:w-full    2xl:mt-12  ">
           <div className="flex items-center gap-4 text-sm 2xl:text-lg">
             <p>Total Pages : {totalPages}</p>
           </div>

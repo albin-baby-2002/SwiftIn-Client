@@ -1,15 +1,11 @@
-import { IoLocationOutline, IoPeopleSharp } from "react-icons/io5";
-import LoginModal from "../../Components/Modals/LoginModal";
-import OtpModal from "../../Components/Modals/OtpModal";
-import RegisterModal from "../../Components/Modals/RegisterModal";
 import Navbar from "../../Components/Navbar/Navbar";
-import Container from "../../Components/UiComponents/Container";
+
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { FaLocationDot, FaMapLocationDot } from "react-icons/fa6";
+import { FaMapLocationDot } from "react-icons/fa6";
 import useSearchState from "../../Hooks/zustandStore/useSearchState";
 import { useEffect, useState } from "react";
-import { MdBedroomParent, MdGroups3 } from "react-icons/md";
+import { MdBedroomParent } from "react-icons/md";
 import { IoIosPeople } from "react-icons/io";
 
 const Home = () => {
@@ -34,9 +30,9 @@ const Home = () => {
 
       <main>
         <div className="mx-auto max-w-[1500px]">
-          <div className="   bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1708764087/hkwzciljjmdjbv2l4aps.jpg')]  bg-cover md:h-screen">
-            <div className="   mt-[px] pb-12 pt-[130px] text-center   md:pb-0  ">
-              <div className=" mx-4  flex  flex-col items-center  justify-center gap-2 rounded-md  bg-white/80 px-3 py-12 md:mx-auto md:max-w-[700px] lg:max-w-[800px] lg:px-0 ">
+          <div className="   flex  h-screen items-center justify-center bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1708764087/hkwzciljjmdjbv2l4aps.jpg')]  bg-cover">
+            <div className="   mt-[px] pb-12 pt-[110px] text-center   md:pb-0   ">
+              <div className=" mx-6 flex  flex-col  items-center justify-center  gap-2 rounded-md bg-white/80  px-3 py-12 sm:mx-8 md:mx-auto md:max-w-[700px] lg:max-w-[800px] lg:px-0 ">
                 <div className=" text-[28px]    font-bold leading-[1.4]  lg:text-3xl  ">
                   <p className="  text ">
                     Stay In The Best Place For Your Winter Travel{" "}
@@ -49,7 +45,7 @@ const Home = () => {
                   10% of the Hotel Fee{" "}
                 </p>
 
-                <div className="   mt-6   flex       justify-between gap-7 rounded-xl bg-black px-3 py-3 align-middle">
+                <div className="    mt-6   flex   justify-between     gap-7 rounded-xl bg-black px-3 py-3 align-middle text-xs sm:text-base ">
                   <div className=" flex  items-center gap-2 ps-2">
                     <FaMapLocationDot className=" text-white" size={20} />
                     <input
@@ -85,7 +81,7 @@ const Home = () => {
                     </p>
                   </div>
 
-                  <div className=" flex  items-center gap-2">
+                  <div className=" hidden items-center  gap-2 sm:flex">
                     <MdBedroomParent className=" text-white" size={20} />
                     <p className=" font-semibold text-white">Room</p>
                     <input

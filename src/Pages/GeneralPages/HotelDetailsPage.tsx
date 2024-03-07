@@ -31,6 +31,7 @@ import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import { ROLES_LIST } from "../../Config/userRoles";
 import { FaMessage } from "react-icons/fa6";
+import useHandleSelectedChat from "../../Hooks/ChatHooks/useHandleSelectedChat";
 
 interface ListingInfo {
   _id: string;
@@ -46,6 +47,7 @@ interface ListingInfo {
   rentPerNight: number;
   mainImage: string;
   otherImages: string[];
+  hostID:string;
   host: string;
   hostImg: string;
   hotelName: string;
@@ -89,6 +91,8 @@ const HotelDetailsPage = () => {
   // logout hook
 
   const logout = useLogout();
+
+  const handleSelectedChat = useHandleSelectedChat();
 
   // getting hotel listingID from params
 
@@ -329,36 +333,20 @@ const HotelDetailsPage = () => {
     }
   };
 
-  const reserve = async () => {
-    try {
-      let data = { checkInDate, checkOutDate, rooms, listingID };
+  const handleMessageHost =async (hostID: string) => {
+    if (!auth.accessToken) {
+      toast.error("login to message host");
 
-      await AxiosPrivate.post(
-        "/user/listing/reserve",
-        data as AxiosRequestConfig<{
-          checkInDate: string;
-          checKOutDate: string;
-          rooms: number;
-          listingID: string;
-        }>,
-      );
-
-      toast.success("reservation successful");
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
-        toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
-        toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
-        toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
-        toast.error("Oops! Something went wrong. Please try again later.");
-      } else {
-        toast.error("Listing Failed");
-      }
+      return;
     }
+
+    
+    if(hostID){
+         await handleSelectedChat(hostID);
+
+          navigate("/chat");
+    }
+
   };
 
   // function to load the razorPay script
@@ -389,17 +377,37 @@ const HotelDetailsPage = () => {
       return;
     }
 
+    if (!auth.accessToken) {
+      toast.error("login to make a reservation");
+
+      return;
+    }
+
     // creating a new order
 
     let data = { checkInDate, checkOutDate, rooms, listingID };
 
-    const result = await AxiosPrivate.post(
-      "/user/listing/reserve/createOrder",
-      data,
-    );
+    let result;
+    try {
+      result = await AxiosPrivate.post(
+        "/user/listing/reserve/createOrder",
+        data,
+      );
+    } catch (err: any) {
+      if (!err?.response) {
+        toast.error("No Server Response");
+      } else if (err.response?.status === 400) {
+        toast.error(err.response.data.message);
+      } else if (err.response?.status === 401 || err.response?.status === 403) {
+        toast.error("Failed Authorization:Login to reserve");
+      } else if (err.response?.status === 500) {
+        toast.error("Oops! Something went wrong. Please try again later.");
+      } else {
+        toast.error("Failed to reserve ");
+      }
+    }
 
     if (!result) {
-      alert("Server error. Are you online?");
       return;
     }
 
@@ -429,12 +437,33 @@ const HotelDetailsPage = () => {
           razorpaySignature: response.razorpay_signature,
         };
 
-        const result = await AxiosPrivate.post(
-          "/user/listing/reserve/success",
-          data,
-        );
+        let result;
 
-        alert(result.data.message);
+        try {
+          result = await AxiosPrivate.post(
+            "/user/listing/reserve/success",
+            data,
+          );
+        } catch (err: any) {
+          if (!err?.response) {
+            toast.error("No Server Response");
+          } else if (err.response?.status === 400) {
+            toast.error(err.response.data.message);
+          } else if (
+            err.response?.status === 401 ||
+            err.response?.status === 403
+          ) {
+            toast.error("Failed Authorization:Login");
+          } else if (err.response?.status === 500) {
+            toast.error("Oops! Something went wrong. Please try again later.");
+          }
+
+          toast.error(
+            "Payement success but failed to verify payment contact support",
+          );
+        }
+
+        alert(result?.data.message);
       },
       prefill: {
         name: "swiftIn LLC",
@@ -680,7 +709,7 @@ const HotelDetailsPage = () => {
 
                   <div className=" flex flex-col">
                     <p>Hosted by {propertyData?.host}</p>
-                    <p className=" text-xs">Message the Host Now</p>
+                    <p onClick={()=>{handleMessageHost(propertyData.hostID)}} className=" text-xs cursor-pointer">Message the Host Now</p>
                   </div>
                 </div>
               </div>

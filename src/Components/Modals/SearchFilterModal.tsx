@@ -17,10 +17,7 @@ interface TSearchFilterModalProps {
   reFetchData: () => void;
 }
 
-const SearchFilterModal: React.FC<TSearchFilterModalProps> = ({
-  reFetchData,
-}) => {
-  const [isLoading, setIsLoading] = useState(false);
+const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
 
   const searchModalState = useSearchModal();
   const searchState = useSearchState();
@@ -203,7 +200,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = ({
       }}
       isOpen={searchModalState.isOpen}
       body={bodyContent}
-      disabled={isLoading}
+     
     />
   );
 };

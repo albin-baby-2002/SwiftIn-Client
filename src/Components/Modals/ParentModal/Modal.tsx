@@ -60,17 +60,17 @@ const Modal: React.FC<ModelProps> = ({
             fixed inset-0 z-20 flex items-center justify-center bg-black/25  "
     >
       <div
-        className={`${wider ? " lg:w-3/4" : "md:w-2/3 lg:w-2/5  xl:w-2/5"} mx-auto  my-6 h-full w-full  md:h-auto  `}
+        className={`${wider ? " md:w-2/3 lg:w-3/4" : " sm:w-3/4 md:w-2/3 lg:w-2/5  xl:w-2/5"} mx-auto  my-6 h-full w-full  sm:h-auto  `}
       >
         <div
           className={` 
-        translate duration-300 
+        translate h-full duration-300 sm:h-auto
         ${showModal ? "translate-y-0" : "translate-y-full"}
         ${showModal ? "opacity-100" : "opacity-0"}  `}
         >
           <div
             className="
-                translate relative flex h-full max-h-[95vh] w-full flex-col rounded-lg border-0  bg-white pb-4 shadow-lg md:h-auto  lg:h-auto
+                translate relative flex h-full w-full flex-col rounded-lg border-0 bg-white  pb-4 shadow-lg sm:h-auto sm:max-h-[95vh]  
             "
           >
             <div className=" flex items-center justify-center rounded-t border-b-[1px] px-4 py-4  ">

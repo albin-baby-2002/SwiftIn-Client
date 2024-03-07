@@ -20,19 +20,21 @@ import DataLoader from "../../Components/Loaders/DataLoader";
 import UseRefreshToken from "../../Hooks/AuthHooks/useRefreshToken";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
-
 let retrysMade = 0;
-
 let maxRetry = 2;
 
 const Chat = () => {
-  const chatState = useChatState();
-
   const AxiosPrivate = useAxiosPrivate();
+
+  // global states
+
+  const chatState = useChatState();
 
   const auth = useAuth();
 
   const chatSearchDrawerState = useChatSearchDrawer();
+
+  // local states
 
   const [messages, setMessages] = useState<Tmessage[] | []>([]);
 
@@ -51,8 +53,6 @@ const Chat = () => {
   const [loadingMessages, setLoadingMessages] = useState(false);
 
   const refreshToken = UseRefreshToken();
-
-  // showing drawer child if drawer open
 
   // reference to message box and scroll to bottom of it
 
@@ -112,7 +112,7 @@ const Chat = () => {
       socket.disconnect();
       console.log("disconnected");
     };
-  }, [ auth.accessToken]);
+  }, [auth.accessToken]);
 
   // useEffect to add listner for typing based on selected chat
 
@@ -135,8 +135,37 @@ const Chat = () => {
     return () => {
       socket.off("typing now", handleTyping);
       socket.off("stop typing", handleStopTyping);
+      setIsTyping(false);
     };
-  }, [chatState.selectedChat,auth.accessToken]);
+  }, [chatState.selectedChat, socket]);
+
+  // listner to handle message recieved
+
+  useEffect(() => {
+    const handleMessageRecieved = (newMessage: Tmessage) => {
+      console.log("message recieved");
+
+      if (
+        !chatState.selectedChat ||
+        chatState.selectedChat._id !== newMessage.chat._id
+      ) {
+        if (!chatState.notifications.includes(newMessage)) {
+          console.log(chatState.notifications, "notif");
+
+          chatState.setNotifications([newMessage, ...chatState.notifications]);
+
+          setTriggerChatReFetch((val) => !val);
+        }
+      } else {
+        setMessages([...messages, newMessage]);
+      }
+    };
+    socket.on("message recieved", handleMessageRecieved);
+
+    return () => {
+      socket.off("message recieved", handleMessageRecieved);
+    };
+  }, [chatState.selectedChat, messages, chatState.notifications, socket]);
 
   // get all conversations made by user
 
@@ -213,12 +242,17 @@ const Chat = () => {
     return () => {
       isMounted = false;
     };
-  }, [chatState.selectedChat]);
+  }, [chatState.selectedChat, socket]);
 
   // send message function and make the socket emit
 
-  const sendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && newMessage) {
+  const sendMessage = async (e?: React.KeyboardEvent<HTMLInputElement>,buttonClick?:boolean) => {
+    if (e&& e.key === "Enter" && newMessage|| buttonClick) {
+      
+      if(!socketConnected){
+        toast.error('you are not connected ')
+      }
+      
       try {
         setNewMessage("");
         socket.emit("stop typing", chatState.selectedChat?._id);
@@ -241,39 +275,40 @@ const Chat = () => {
         } else if (err.response?.status === 500) {
           toast.error("Oops! Something went wrong. Please try again later.");
         } else {
-          toast.error("Failed to get search results");
+          toast.error("Failed to send message");
         }
       }
     }
   };
 
-  useEffect(() => {
-    const handleMessageRecieved = (newMessage: Tmessage) => {
-      
-      console.log('message recieved')
-      
-      if (
-        !chatState.selectedChat ||
-        chatState.selectedChat._id !== newMessage.chat._id
-      ) {
-        if (!chatState.notifications.includes(newMessage)) {
-          
-          console.log(chatState.notifications,'notif');
-          
-          chatState.setNotifications([newMessage, ...chatState.notifications]);
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
 
-          setTriggerChatReFetch((val) => !val);
-        }
-      } else {
-        setMessages([...messages, newMessage]);
+    // typing indication
+
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+
+      socket.emit("typing", chatState.selectedChat?._id);
+    }
+
+    let lastTyping = new Date().getTime();
+
+    let timerLength = 3000;
+
+    setTimeout(() => {
+      let nowTime = new Date().getTime();
+
+      let timeDiff = nowTime - lastTyping;
+
+      if (timeDiff >= timerLength) {
+        socket.emit("stop typing", chatState.selectedChat?._id);
+        setTyping(false);
       }
-    };
-    socket.on("message recieved", handleMessageRecieved);
-
-    return () => {
-      socket.off("message recieved", handleMessageRecieved);
-    };
-  }, [auth.accessToken, chatState.selectedChat, messages,chatState.notifications]);
+    }, timerLength);
+  };
 
   const checkIsTheLastMessage = (index: number) => {
     if (messages) {
@@ -459,44 +494,11 @@ const Chat = () => {
                             type="text"
                             onKeyDown={sendMessage}
                             value={newMessage}
-                            onChange={(e) => {
-                              setNewMessage(e.target.value);
-
-                              // typing indication
-
-                              if (!socketConnected) return;
-
-                              if (!typing) {
-                                setTyping(true);
-
-                                socket.emit(
-                                  "typing",
-                                  chatState.selectedChat?._id,
-                                );
-                              }
-
-                              let lastTyping = new Date().getTime();
-
-                              let timerLength = 3000;
-
-                              setTimeout(() => {
-                                let nowTime = new Date().getTime();
-
-                                let timeDiff = nowTime - lastTyping;
-
-                                if (timeDiff >= timerLength) {
-                                  socket.emit(
-                                    "stop typing",
-                                    chatState.selectedChat?._id,
-                                  );
-                                  setTyping(false);
-                                }
-                              }, timerLength);
-                            }}
+                            onChange={handleTyping}
                             placeholder="Enter the message"
                             className=" w-[90%] outline-none"
                           />
-                          <div className=" cursor-pointer">
+                          <div className=" cursor-pointer" onClick={()=>{sendMessage(undefined,true)}}>
                             <IoMdSend />
                           </div>
                         </div>

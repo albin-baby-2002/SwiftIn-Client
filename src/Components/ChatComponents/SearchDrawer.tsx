@@ -7,6 +7,8 @@ import useChatState from "../../Hooks/zustandStore/useChatState";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import useChatSearchDrawer from "../../Hooks/zustandStore/useChatSearchDrawer";
 import ChatSkeleton from "../Skeletons/ChatSkeleton";
+import useHandleSelectedChat from "../../Hooks/ChatHooks/useHandleSelectedChat";
+import DataLoader from "../Loaders/DataLoader";
 
 interface TSearchDrawerProps {
   open: boolean;
@@ -27,6 +29,9 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
   // local state to close and open drawer to apply transition
   const [drawerChildOpen, setDrawerChildOpen] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [processingSelectedChat, setProcessingSelectedChat] = useState(false);
+
+  const handleSelectedChat = useHandleSelectedChat();
 
   // useEffect to make the child open when the drawer state is open
 
@@ -73,34 +78,14 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
   };
   // handle selectedChat
 
-  const handleSelectedChat = async (recipientID: string) => {
-    try {
-      const response = await AxiosPrivate.post("/chat/conversation", {
-        recipientID,
-      });
+  const handleSelectedUser = async (recipientID: string) => {
+    setProcessingSelectedChat(true);
+    
+    await handleSelectedChat(recipientID);
 
-      if (
-        !chatState.chats.find(
-          (chat) => chat._id === response.data.conversation._id,
-        )
-      ) {
-        chatState.setChats([response.data.conversation, ...chatState.chats]);
-      }
+    setProcessingSelectedChat(false);
 
-      chatState.setSelectedChat(response.data.conversation);
-
-      handleDrawerClose();
-    } catch (err: any) {
-      if (!err?.response) {
-        toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
-        toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
-        toast.error("Oops! Something went wrong. Please try again later.");
-      } else {
-        toast.error("Failed to get info of selected person");
-      }
-    }
+    handleDrawerClose();
   };
 
   return (
@@ -143,47 +128,53 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
           </div>
 
           <div className=" mt-6 flex max-h-[65vh] flex-col   gap-6  overflow-y-scroll  px-5 xl:mt-8 xl:gap-8">
-            {loadingSearch ? (
-              <div className=" flex flex-col gap-4">
-                <ChatSkeleton count={5} />
+            {processingSelectedChat ? (
+              <div>
+                <DataLoader />
               </div>
             ) : (
-              
               <>
-              
-              
-              
-                { searchResult?.map((user) => (
-                  <div
-                    className=" flex cursor-pointer  items-center gap-4  rounded-lg border-2 border-black px-4 py-2  text-xs hover:bg-black hover:text-white xl:text-lg "
-                    onClick={() => {
-                      handleSelectedChat(user._id);
-                    }}
-                  >
-                    <div>
-                      {user.image ? (
-                        <div className=" h-8 w-8 cursor-pointer rounded-full  xl:h-12 xl:w-12">
-                          <img
-                            className=" h-full w-full rounded-full px-[2px] py-[2px]"
-                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${user.image}`}
-                            alt=""
-                          />
-                        </div>
-                      ) : (
-                        <div className=" flex h-7 w-7 items-center justify-center  rounded-full border-2  border-slate-700 bg-black ">
-                          {<FaUser size={14} className=" text-white" />}
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <p className=" font-bold lowercase ">{user.username}</p>
-                      <p className=" mt-1 text-[10px] font-semibold xl:text-base">
-                        {user.email}
-                      </p>
-                    </div>
+                {loadingSearch ? (
+                  <div className=" flex flex-col gap-4">
+                    <ChatSkeleton count={5} />
                   </div>
-                ))}
+                ) : (
+                  <>
+                    {searchResult?.map((user) => (
+                      <div
+                        className=" flex cursor-pointer  items-center gap-4  rounded-lg border-2 border-black px-4 py-2  text-xs hover:bg-black hover:text-white xl:text-lg "
+                        onClick={() => {
+                          handleSelectedUser(user._id);
+                        }}
+                      >
+                        <div>
+                          {user.image ? (
+                            <div className=" h-8 w-8 cursor-pointer rounded-full  xl:h-12 xl:w-12">
+                              <img
+                                className=" h-full w-full rounded-full px-[2px] py-[2px]"
+                                src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${user.image}`}
+                                alt=""
+                              />
+                            </div>
+                          ) : (
+                            <div className=" flex h-7 w-7 items-center justify-center  rounded-full border-2  border-slate-700 bg-black ">
+                              {<FaUser size={14} className=" text-white" />}
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <p className=" font-bold lowercase ">
+                            {user.username}
+                          </p>
+                          <p className=" mt-1 text-[10px] font-semibold xl:text-base">
+                            {user.email}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
               </>
             )}
           </div>
