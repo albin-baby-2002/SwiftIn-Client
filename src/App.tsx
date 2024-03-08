@@ -22,6 +22,7 @@ import SearchPage from "./Pages/GeneralPages/searchPage";
 import Reservations from "./Pages/UserPages/Reservations";
 import ManageReservations from "./Pages/Host Pages/ManageReservations";
 import Chat from "./Pages/UserPages/Chat";
+import Wishlist from "./Pages/UserPages/Wishlist";
 
 function App() {
   const router = createBrowserRouter(
@@ -67,14 +68,19 @@ function App() {
           />
 
           <Route
-            path="/chat"
+            path="/wishlist"
             element={
               <PrivateRoute
-                Element={
-                  
-                  Chat}
+                Element={Wishlist}
                 allowedRoles={[ROLES_LIST.User]}
               />
+            }
+          />
+
+          <Route
+            path="/chat"
+            element={
+              <PrivateRoute Element={Chat} allowedRoles={[ROLES_LIST.User]} />
             }
           />
 

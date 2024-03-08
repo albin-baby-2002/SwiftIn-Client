@@ -2,13 +2,13 @@ import { useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { AiFillAppstore } from "react-icons/ai";
-import useAuth from "../../Hooks/zustandStore/useAuth";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
-import useChatState from "../../Hooks/zustandStore/useChatState";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
+import useAuth from "../../../Hooks/zustandStore/useAuth";
+import useLogout from "../../../Hooks/AuthHooks/useLogout";
+import Menu from "../../Navbar/SubComponents/Menu";
+import useChatState from "../../../Hooks/zustandStore/useChatState";
+import useLoginModal from "../../../Hooks/zustandStore/useLoginModal";
+import MenuItem from "../../Navbar/SubComponents/MenuItem";
+import useRegisterModal from "../../../Hooks/zustandStore/useRegisterModal";
 
 const ChatHeader = () => {
   const navigate = useNavigate();

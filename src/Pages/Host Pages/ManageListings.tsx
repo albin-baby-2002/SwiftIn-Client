@@ -18,21 +18,9 @@ import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 import { Link, useNavigate } from "react-router-dom";
+import { hostListingsData, hostListingsResponse } from "../../Types/hostPagesTypes";
 
-type hostListingsData = z.infer<typeof HotelListingSchema> & {
-  _id: string;
-  isActiveForReservation: Boolean;
-  approvedForReservation: Boolean;
-  hostName: string;
-  location: string;
-  buildingName: string;
-  mainImage: string;
-};
 
-interface hostListingsResponse {
-  properties: hostListingsData[];
-  totalPages: number;
-}
 
 const ManageListings = () => {
   const [navigation, setNavigation] = useState(true);

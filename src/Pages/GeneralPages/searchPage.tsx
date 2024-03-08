@@ -23,19 +23,9 @@ import toast from "react-hot-toast";
 import { ROLES_LIST } from "../../Config/userRoles";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import ProductSkeleton from "../../Components/Skeletons/ProductSkeleton";
+import { TwishlistData, propertiesResponse, property } from "../../Types/propertyTypes";
 
-type property = z.infer<typeof HotelListingSchema> & {
-  _id: string;
-  hostName: string;
-  location: string;
-  buildingName: string;
-};
 
-interface propertiesResponse {
-  properties: property[];
-  totalPages: number;
-  totalHotels: number;
-}
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -65,7 +55,7 @@ const SearchPage = () => {
   const searchModalState = useSearchModal();
 
   const [propertiesList, setPropertiesList] = useState<property[] | null>(null);
-  const [wishlist, setWishlist] = useState<string[] | null>(null);
+  const [wishlist, setWishlist] = useState<TwishlistData[] | null>(null);
 
   const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
 
@@ -131,14 +121,14 @@ const SearchPage = () => {
       try {
         console.log(searchState.destination, searchState.guests);
 
-        const response = await AxiosPrivate.get<{ wishlist: string[] }>(
+        const response = await AxiosPrivate.get<{ wishLists: TwishlistData[] }>(
           "/user/listing/wishlist",
         );
 
         if (isMounted) {
-          setWishlist(response.data.wishlist);
+          setWishlist(response.data.wishLists);
 
-          console.log(response.data.wishlist);
+          console.log(response.data.wishLists);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -385,8 +375,17 @@ const SearchPage = () => {
                   className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
                   onClick={(e) => {
                     e.stopPropagation();
+                    
+                    console.log(wishlist,'wis' )
+                    
+                 
+                    
 
-                    if (wishlist?.includes(property._id)) {
+                    if (
+                      wishlist?.find((val) => {
+                       return val._id === property._id;
+                      })
+                    ) {
                       removeFromWishlist(property._id);
                     } else {
                       addToWishlist(property._id);
@@ -394,7 +393,13 @@ const SearchPage = () => {
                   }}
                 >
                   <TbHeartPlus
-                    className={`${wishlist?.includes(property._id) ? "  text-rose-500 " : " text-white"} pt-[1px] font-bold`}
+                    className={`${
+                      wishlist?.find((val) => {
+                       return  val._id === property._id;
+                      })
+                        ? "  text-rose-500 "
+                        : " text-white"
+                    } pt-[1px] font-bold`}
                     size={18}
                   />
                   {/* <p className=" text-white">Wishlist</p> */}

@@ -17,25 +17,9 @@ import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 import { Link, useNavigate } from "react-router-dom";
+import { hostReservationsData, hostReservationsResponse } from "../../Types/hostPagesTypes";
 
-type hostReservationsData = {
-  _id: string;
-  checkInDate: String;
-  checkOutDate: String;
-  reservationFee: number;
-  rooms: number;
-  paymentStatus: string;
-  reservationStatus: string;
-  hostID: string;
-  image: string;
-  hotelName: string;
-  customerName: string;
-};
 
-interface hostReservationsResponse {
-  reservations: hostReservationsData[];
-  totalPages: number;
-}
 
 const ManageReservations = () => {
   const [navigation, setNavigation] = useState(true);

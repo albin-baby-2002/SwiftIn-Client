@@ -1,9 +1,6 @@
 import {
   FaCar,
   FaHotTub,
-  FaMinus,
-  FaPlug,
-  FaPlus,
   FaRegSnowflake,
   FaRupeeSign,
   FaStar,
@@ -17,7 +14,6 @@ import useLogout from "../../Hooks/AuthHooks/useLogout";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import { AiFillAppstore } from "react-icons/ai";
 import { RiTvLine } from "react-icons/ri";
-import LogoImg from "/images/logo5.png";
 
 import toast from "react-hot-toast";
 import { TiWiFi } from "react-icons/ti";
@@ -30,36 +26,13 @@ import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
 import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import { ROLES_LIST } from "../../Config/userRoles";
-import { FaMessage } from "react-icons/fa6";
 import useHandleSelectedChat from "../../Hooks/ChatHooks/useHandleSelectedChat";
-
-interface ListingInfo {
-  _id: string;
-  userID: string;
-  totalRooms: number;
-  amenities: string[];
-  maxGuestsPerRoom: number;
-  listingTitle: string;
-  bedsPerRoom: number;
-  bathroomPerRoom: number;
-  roomType: string;
-  aboutHotel: string;
-  rentPerNight: number;
-  mainImage: string;
-  otherImages: string[];
-  hostID:string;
-  host: string;
-  hostImg: string;
-  hotelName: string;
-  city: string;
-  district: string;
-  state: string;
-  pinCode: string;
-}
-
-interface SingleListingDataResponse {
-  listing: ListingInfo;
-}
+import {
+  ListingInfo,
+  SingleListingDataResponse,
+  TreviewObject,
+} from "../../Types/propertyTypes";
+import AddReview from "../../Components/UserComponents/AddReview/AddReview";
 
 const amenitiesTypes = {
   WIFI: "freeWifi",
@@ -103,6 +76,8 @@ const HotelDetailsPage = () => {
   const [propertyData, SetPropertyData] = useState<ListingInfo | null>(null);
 
   const [wishlist, setWishlist] = useState<string[] | null>(null);
+
+  const [reviews, SetReviews] = useState<TreviewObject[] | null>(null);
 
   const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
 
@@ -194,6 +169,7 @@ const HotelDetailsPage = () => {
         if (isMounted) {
           console.log(response.data);
           SetPropertyData(response.data.listing);
+          SetReviews(response.data.reviewData);
           setGuests(response.data.listing.maxGuestsPerRoom);
 
           console.log(response.data);
@@ -333,20 +309,18 @@ const HotelDetailsPage = () => {
     }
   };
 
-  const handleMessageHost =async (hostID: string) => {
+  const handleMessageHost = async (hostID: string) => {
     if (!auth.accessToken) {
       toast.error("login to message host");
 
       return;
     }
 
-    
-    if(hostID){
-         await handleSelectedChat(hostID);
+    if (hostID) {
+      await handleSelectedChat(hostID);
 
-          navigate("/chat");
+      navigate("/chat");
     }
-
   };
 
   // function to load the razorPay script
@@ -484,7 +458,7 @@ const HotelDetailsPage = () => {
 
   return (
     <>
-      <header className=" fixed z-10  w-full border-b-2 bg-white">
+      <header className=" fixed z-10     w-full border-b-2 bg-white">
         <div
           className="
            mx-auto
@@ -611,32 +585,33 @@ const HotelDetailsPage = () => {
         </div>
       </header>
       {propertyData && (
-        <main className="  pt-[34px]">
+        <main className="  ">
           <div
             className="
            mx-auto
-           max-w-[1300px]
+           max-w-[1500px]
           
            "
           >
-            <div className=" bg-gray-100   pb-14  pt-[55px]  font-Merriweather ">
-              <div className=" flex  justify-center  gap-5 ">
-                <div className=" flex  w-[92%] flex-col  ">
-                  <div className=" flex items-baseline  justify-center px-2 pb-[35px] pt-8">
-                    <h1 className="  text-[30px]  font-semibold  capitalize  ">
+            <div className=" h-screen  bg-gray-100   pb-6    font-Merriweather ">
+              <div className=" flex  h-full justify-center  gap-5 ">
+                <div className="  grid h-full w-[95%] grid-rows-[minmax(160px,180px)_minmax(1fr,340px)] lg:w-[90%] lg:grid-rows-[180px_minmax(1fr,345px)]  ">
+                  <div className=" flex items-center  justify-center px-2 pt-[70px] md:pb-[30px] md:pt-[110px]">
+                    <h1 className="   text-center  text-xl font-semibold capitalize md:text-2xl  lg:text-[27px]  ">
                       {propertyData?.listingTitle}
                     </h1>
                   </div>
-                  <div className="   flex gap-3 px-10">
-                    <div className=" flex  h-[280px] w-[50%]   rounded-l-xl  ">
+
+                  <div className=" flex max-h-[280px] gap-3 px-10   md:max-h-[330px] xl:max-h-[360px]">
+                    <div className=" flex    w-[50%]   rounded-l-xl  ">
                       <img
-                        className="  h-full w-full rounded-l-xl"
+                        className="     w-full rounded-l-xl"
                         src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
                         alt=""
                       />
                     </div>
 
-                    <div className=" flex max-h-[280px] w-[25%]  flex-col gap-3   ">
+                    <div className=" flex  w-[25%]  flex-col gap-3   ">
                       <img
                         className="  h-1/2   "
                         src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[0]}`}
@@ -649,7 +624,7 @@ const HotelDetailsPage = () => {
                       />
                     </div>
 
-                    <div className=" relative flex h-[280px] w-[25%]  flex-col  gap-3  ">
+                    <div className=" relative flex  w-[25%]  flex-col  gap-3  ">
                       <div
                         className=" absolute  bottom-4 right-4 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   "
                         onClick={(e) => {
@@ -688,29 +663,36 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className=" mx-auto mt-12 flex w-[92%] justify-center font-Inter ">
-                <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
-                  <div className="  h-10 w-10">
-                    {propertyData?.hostImg ? (
-                      <img
-                        className=" h-full w-full rounded-full"
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
-                        alt=""
-                      />
-                    ) : (
-                      <img
-                        className=" h-full w-full rounded-full"
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
-                        alt=""
-                      />
-                    )}
-                  </div>
+            <div className=" mx-auto flex justify-center bg-gray-100  py-12 font-Inter ">
+              <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
+                <div className="  h-10 w-10">
+                  {propertyData?.hostImg ? (
+                    <img
+                      className=" h-full w-full rounded-full"
+                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
+                      alt=""
+                    />
+                  ) : (
+                    <img
+                      className=" h-full w-full rounded-full"
+                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                      alt=""
+                    />
+                  )}
+                </div>
 
-                  <div className=" flex flex-col">
-                    <p>Hosted by {propertyData?.host}</p>
-                    <p onClick={()=>{handleMessageHost(propertyData.hostID)}} className=" text-xs cursor-pointer">Message the Host Now</p>
-                  </div>
+                <div className=" flex flex-col">
+                  <p>Hosted by {propertyData?.host}</p>
+                  <p
+                    onClick={() => {
+                      handleMessageHost(propertyData.hostID);
+                    }}
+                    className=" cursor-pointer text-xs"
+                  >
+                    Message the Host Now
+                  </p>
                 </div>
               </div>
             </div>
@@ -815,7 +797,7 @@ const HotelDetailsPage = () => {
                     </div>
 
                     <div
-                      className=" cursor-pointer pr-2 text-center text-xs  font-semibold"
+                      className=" cursor-pointer rounded-md    px-2  py-1 text-center text-xs font-semibold  hover:shadow-lg"
                       onClick={checkAvailability}
                     >
                       <p>Check Availability</p>
@@ -903,63 +885,22 @@ const HotelDetailsPage = () => {
               </div>
             </div>
 
-            <div className="   lg:py-16">
+            <div className="   pb-16 lg:pt-8">
               <div>
                 <p className=" text-center text-3xl font-bold">
                   More About This Place
                 </p>
 
-                <div className=" mt-6 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-2/3">
+                <div className=" mt-6 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-3/4">
                   <p>{propertyData?.aboutHotel}</p>
                 </div>
               </div>
             </div>
 
-            <div className="  flex items-center justify-center  gap-8  px-8 py-14">
-              <div className=" flex h-[200px] w-[45%] justify-center  gap-6   rounded-xl  border-2 py-5 ">
-                <div className="  text-neutral-500 ">
-                  <div className=" ps-1">
-                    <p className="  mt-2  font-Sen text-2xl font-bold text-black">
-                      Add Your Review
-                    </p>
-                    <p className=" mt-3  text-sm font-bold">
-                      {" "}
-                      tell us more about this place
-                    </p>
+            <div className="  flex items-center justify-center  gap-8  border-y-2 py-16">
+              {listingID && <AddReview listingID={listingID} />}
 
-                    <p className=" mt-2 w-[80%] text-sm font-bold">
-                      {" "}
-                      Also give rating
-                    </p>
-                  </div>
-
-                  <button className=" mt-5 rounded-md bg-black px-4 py-2 text-sm  font-semibold text-white">
-                    Submit Your Review
-                  </button>
-                </div>
-
-                <div className="   flex w-[45%] flex-col justify-center gap-2 ">
-                  <div className=" flex justify-center gap-2 text-sm"></div>
-
-                  <div className="  flex items-center justify-between gap-2 rounded-md   border px-4 py-2 ">
-                    <p className=" font-Sen  font-bold">Rating</p>
-
-                    <div className=" flex  items-center gap-4">
-                      <p className=" rounded-md border-2 px-1 py-1">
-                        <FaMinus size={10} />
-                      </p>
-                      <p className=" font-bold"> 1</p>
-                      <p className=" rounded-md border-2 px-1 py-1">
-                        <FaPlus size={10} />
-                      </p>
-                    </div>
-                  </div>
-
-                  <textarea className="  h-[130px] w-full  rounded-lg border  "></textarea>
-                </div>
-              </div>
-
-              <div className=" flex h-[200px] w-[45%]  justify-center  gap-6  rounded-xl  border-2 py-5 ">
+              <div className=" flex  w-[45%]  justify-center  gap-6  rounded-xl   py-5 ">
                 <div className=" w-[45%] ">
                   <img
                     src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
@@ -968,11 +909,11 @@ const HotelDetailsPage = () => {
                 </div>
 
                 <div className="  w-[60%] text-neutral-500  ">
-                  <p className=" mt-2 font-Sen text-2xl font-bold text-black">
+                  <p className=" mt-2  text-[28px] font-bold text-black">
                     Address & Location
                   </p>
 
-                  <div className=" mt-3 flex flex-col gap-2  text-sm font-bold">
+                  <div className=" mt-3 flex flex-col gap-2    font-bold">
                     <div className="flex gap-2">
                       <p>{propertyData?.hotelName}</p>
                       <p>{propertyData?.city}</p>
@@ -986,6 +927,48 @@ const HotelDetailsPage = () => {
                     <p>{propertyData?.pinCode}</p>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="  py-14 lg:px-14">
+              <p className=" text-center font-Sen text-4xl font-bold">
+                Customer Reviews
+              </p>
+
+              <div className=" mt-16 grid lg:grid-cols-3">
+                {reviews?.map((review) => (
+                  <div className=" flex  h-48 flex-col justify-between rounded-md border-2 px-6 py-6 ">
+                    <div className=" flex items-center  gap-4  font-Sen font-semibold">
+                      <div className="  h-8 w-8">
+                        {review?.image ? (
+                          <img
+                            className=" h-full w-full rounded-full"
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${review?.image}`}
+                            alt=""
+                          />
+                        ) : (
+                          <img
+                            className=" h-full w-full rounded-full"
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                            alt=""
+                          />
+                        )}
+                      </div>
+                      <p>{review.username}</p>
+                    </div>
+
+                    <div className=" mt-3 text-sm font-semibold">
+                      <p>{review.reviewMessage}</p>
+                    </div>
+
+                    <div className=" mt-1  flex  items-center justify-end gap-2">
+                      <p>{review.rating}</p>
+                      <p>
+                        <FaStar />
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

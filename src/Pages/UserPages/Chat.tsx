@@ -12,9 +12,9 @@ import io, { Socket } from "socket.io-client";
 import { BASE_URL } from "../../Api/Axios";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { Tmessage, TuserData } from "../../Types/chatTypes";
-import SearchDrawer from "../../Components/ChatComponents/SearchDrawer";
+import SearchDrawer from "../../Components/UserComponents/ChatComponents/SearchDrawer";
 import useChatSearchDrawer from "../../Hooks/zustandStore/useChatSearchDrawer";
-import ChatHeader from "../../Components/ChatComponents/ChatHeader";
+import ChatHeader from "../../Components/UserComponents/ChatComponents/ChatHeader";
 import ChatSkeleton from "../../Components/Skeletons/ChatSkeleton";
 import DataLoader from "../../Components/Loaders/DataLoader";
 import UseRefreshToken from "../../Hooks/AuthHooks/useRefreshToken";
@@ -246,13 +246,15 @@ const Chat = () => {
 
   // send message function and make the socket emit
 
-  const sendMessage = async (e?: React.KeyboardEvent<HTMLInputElement>,buttonClick?:boolean) => {
-    if (e&& e.key === "Enter" && newMessage|| buttonClick) {
-      
-      if(!socketConnected){
-        toast.error('you are not connected ')
+  const sendMessage = async (
+    e?: React.KeyboardEvent<HTMLInputElement>,
+    buttonClick?: boolean,
+  ) => {
+    if ((e && e.key === "Enter" && newMessage) || buttonClick) {
+      if (!socketConnected) {
+        toast.error("you are not connected ");
       }
-      
+
       try {
         setNewMessage("");
         socket.emit("stop typing", chatState.selectedChat?._id);
@@ -498,7 +500,12 @@ const Chat = () => {
                             placeholder="Enter the message"
                             className=" w-[90%] outline-none"
                           />
-                          <div className=" cursor-pointer" onClick={()=>{sendMessage(undefined,true)}}>
+                          <div
+                            className=" cursor-pointer"
+                            onClick={() => {
+                              sendMessage(undefined, true);
+                            }}
+                          >
                             <IoMdSend />
                           </div>
                         </div>

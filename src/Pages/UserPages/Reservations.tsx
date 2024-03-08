@@ -1,72 +1,17 @@
-import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
-import { useNavigate } from "react-router-dom";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
-import useAuth from "../../Hooks/zustandStore/useAuth";
-import { AiFillAppstore } from "react-icons/ai";
-
-import LogoImg from "/images/logo5.png";
-
 import { useEffect, useState } from "react";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import Container from "../../Components/UiComponents/Container";
 import { MdOutlineBedroomParent } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
 import toast from "react-hot-toast";
-
-interface bookingInfo {
-  _id: string;
-  checkInDate: string;
-  checkOutDate: string;
-  rooms: number;
-  maxGuests: number;
-  image: string;
-  addressData: {
-    addressLine: string;
-    city: string;
-    state: string;
-    district: string;
-    pinCode: string;
-  };
-}
-
-interface bookingsDataResponse {
-  bookings: bookingInfo[];
-}
+import Logo from "../../Components/Navbar/SubComponents/Logo";
+import { bookingInfo, bookingsDataResponse } from "../../Types/bookingTypes";
+import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
 
 const Reservations = () => {
-  // state of nav menu
-  const [menu, setMenu] = useState(false);
-
-  // function to toggle the nav menu
-
-  const toggleMenu = () => {
-    setMenu((value) => !value);
-  };
-
-  // state of login and register modal
-
-  const registerModal = useRegisterModal();
-
-  const loginModal = useLoginModal();
-
-  // logout hook
-
-  const logout = useLogout();
-
   // axios private hook
 
   const AxiosPrivate = useAxiosPrivate();
-
-  // auth state
-
-  const auth = useAuth();
-
-  // navigate from react router dom
-
-  const navigate = useNavigate();
 
   // bookings
 
@@ -126,19 +71,7 @@ const Reservations = () => {
         >
           <nav>
             <div className=" flex items-center  justify-between px-4 py-5   text-sm">
-              <div
-                className=" rounded-xl bg-black px-3 py-2"
-                onClick={() => {
-                  navigate("/");
-                }}
-              >
-                <img
-                  className="cursor-pointer  "
-                  src={LogoImg}
-                  alt="Logo"
-                  width={80}
-                />
-              </div>
+              <Logo />
 
               <div
                 className="  hidden items-center justify-between gap-3
@@ -163,100 +96,20 @@ const Reservations = () => {
                 </div>
               </div>
 
-              <div className=" flex min-w-[55px]  justify-end">
-                <div
-                  className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[8px] py-[6px]
-    "
-                >
-                  {/* <MdOutlineTune className=" cursor-pointer text-[24px] text-white  transition duration-150 hover:scale-110 " /> */}
-                  <div
-                    onClick={toggleMenu}
-                    className="
-             cursor-pointer "
-                  >
-                    <AiFillAppstore className=" transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
-
-                    {menu && (
-                      <Menu>
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/manage/property");
-                            }}
-                            label="Listings"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/reservations");
-                            }}
-                            label="Reservations"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/property/listing");
-                            }}
-                            label="List Your Property"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              logout();
-                            }}
-                            label="Logout"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/profile");
-                            }}
-                            label="Profile"
-                          />
-                        )}
-
-                        {!auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              registerModal.onOpen();
-                            }}
-                            label="SignUp"
-                          />
-                        )}
-
-                        {!auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              loginModal.onOpen();
-                            }}
-                            label="Login"
-                          />
-                        )}
-                      </Menu>
-                    )}
-                  </div>
+              <div className=" flex min-w-[85px]  justify-end">
+                <div className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[8px] py-[6px] ">
+                  <MainMenu />
                 </div>
-                {/* <div className=" flex  items-center gap-2 rounded-md  bg-black px-3 py-2 font-Sen text-white">
-                    <p>Filter</p>
-                    <RxMixerHorizontal size={20} />
-                  </div> */}
+               
               </div>
             </div>
           </nav>
         </div>
       </header>
 
-      <main className=" min-h-screen bg-gray-100 pt-[120px]">
+      <main className=" min-h-screen bg-gray-100 pt-[130px]">
         <Container>
-          <h1 className="  pb-10 font-Sen text-4xl  font-semibold">
+          <h1 className=" pb-10 text-center  font-Sen text-3xl font-semibold  sm:text-4xl  md:text-left">
             {" "}
             Your Reservations
           </h1>

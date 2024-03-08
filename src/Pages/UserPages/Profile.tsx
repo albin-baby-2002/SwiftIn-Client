@@ -24,27 +24,8 @@ import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import { AiFillAppstore } from "react-icons/ai";
 import Menu from "../../Components/Navbar/SubComponents/Menu";
 import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
+import { ProfileResponse, TProfileInfo } from "../../Types/profileType";
 
-interface TProfileInfo {
-  _id: string;
-  username: string;
-  email: string;
-  phone: string;
-  wallet: number;
-  aboutYou: string;
-  address: string;
-  addressLine: string;
-  locality: string;
-  city: string;
-  district: string;
-  state: string;
-  country: string;
-  pinCode: string;
-  image: string;
-}
-interface ProfileResponse {
-  userData: TProfileInfo;
-}
 
 const Profile = () => {
   const [profileInfo, setProfileInfo] = useState<TProfileInfo | null>(null);

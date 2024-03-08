@@ -32,15 +32,17 @@ const Home = () => {
         <div className="mx-auto max-w-[1500px]">
           <div className="   flex  h-screen items-center justify-center bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1708764087/hkwzciljjmdjbv2l4aps.jpg')]  bg-cover">
             <div className="   mt-[px] pb-12 pt-[110px] text-center   md:pb-0   ">
-              <div className=" mx-6 flex  flex-col  items-center justify-center  gap-2 rounded-md bg-white/80  px-3 py-12 sm:mx-8 md:mx-auto md:max-w-[700px] lg:max-w-[800px] lg:px-0 ">
-                <div className=" text-[28px]    font-bold leading-[1.4]  lg:text-3xl  ">
+              <div className=" xl:py-18 mx-6  flex  flex-col items-center  justify-center gap-2 rounded-md  bg-white/80 px-3 py-12 sm:mx-8 md:mx-auto md:max-w-[700px] lg:max-w-[800px] lg:px-6 xl:max-w-none  ">
+                <div className=" text-[28px]    font-bold leading-[1.4]  lg:text-3xl xl:text-4xl  ">
                   <p className="  text ">
                     Stay In The Best Place For Your Winter Travel{" "}
                   </p>
-                  <p className=" mt-2 hidden md:block">For The Best Price</p>
+                  <p className=" mt-2 hidden md:block xl:mt-8">
+                    For The Best Price
+                  </p>
                 </div>
 
-                <p className=" mx-auto  mt-3  w-[70%]   font-bold leading-relaxed text-neutral-500 md:mx-0 md:mr-6 lg:mt-6  lg:w-[60%]  lg:text-base  ">
+                <p className=" mx-auto  mt-3  w-[70%]   font-bold leading-relaxed text-neutral-500 md:mx-0 md:mr-6 lg:mt-6  lg:w-[60%] lg:text-base  xl:text-xl  ">
                   Reserve Your Dream Hotel Now Any Where in India By Paying Just
                   10% of the Hotel Fee{" "}
                 </p>

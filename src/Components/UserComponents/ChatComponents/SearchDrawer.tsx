@@ -2,13 +2,13 @@ import toast from "react-hot-toast";
 import { FaUser } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { TuserData } from "../../Types/chatTypes";
-import useChatState from "../../Hooks/zustandStore/useChatState";
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import useChatSearchDrawer from "../../Hooks/zustandStore/useChatSearchDrawer";
-import ChatSkeleton from "../Skeletons/ChatSkeleton";
-import useHandleSelectedChat from "../../Hooks/ChatHooks/useHandleSelectedChat";
-import DataLoader from "../Loaders/DataLoader";
+import { TuserData } from "../../../Types/chatTypes";
+import useChatState from "../../../Hooks/zustandStore/useChatState";
+import useAxiosPrivate from "../../../Hooks/AxiosPrivate/useAxiosPrivate";
+import useChatSearchDrawer from "../../../Hooks/zustandStore/useChatSearchDrawer";
+import ChatSkeleton from "../../Skeletons/ChatSkeleton";
+import useHandleSelectedChat from "../../../Hooks/ChatHooks/useHandleSelectedChat";
+import DataLoader from "../../Loaders/DataLoader";
 
 interface TSearchDrawerProps {
   open: boolean;
@@ -80,7 +80,7 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
 
   const handleSelectedUser = async (recipientID: string) => {
     setProcessingSelectedChat(true);
-    
+
     await handleSelectedChat(recipientID);
 
     setProcessingSelectedChat(false);

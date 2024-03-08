@@ -11,12 +11,21 @@ const Logo = () => {
       }}
     >
       <img
-        className="cursor-pointer   "
+        className="hidden cursor-pointer sm:block   "
         src={
           "https://res.cloudinary.com/dfm8vhuea/image/upload/b_rgb:000000/qhxi2b8uu3wgvvnnyrng.jpg"
         }
         alt="Logo"
         width={85}
+      />
+
+      <img
+        className="cursor-pointer sm:hidden   "
+        src={
+          "https://res.cloudinary.com/dfm8vhuea/image/upload/b_rgb:000000/qhxi2b8uu3wgvvnnyrng.jpg"
+        }
+        alt="Logo"
+        width={65}
       />
     </div>
   );
