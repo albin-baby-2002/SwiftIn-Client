@@ -12,7 +12,7 @@ import { ROLES_LIST } from "./Config/userRoles";
 import useLogout from "./Hooks/AuthHooks/useLogout";
 import Dashboard from "./Pages/AdminPages/Console";
 import Console from "./Pages/AdminPages/Console";
-import Users from "./Pages/AdminPages/Users";
+import Users from "./Pages/AdminPages/UsersManagement";
 import Profile from "./Pages/UserPages/Profile";
 import HotelDetailsPage from "./Pages/GeneralPages/HotelDetailsPage";
 import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";

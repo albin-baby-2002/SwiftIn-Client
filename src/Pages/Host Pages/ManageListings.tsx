@@ -195,7 +195,7 @@ const ManageListings = () => {
                     <p>Profile</p>
                   </div>
 
-                  <div className=" flex items-center gap-4">
+                  <div className=" flex items-center  gap-4">
                     <FaPowerOff />
                     <p>Logout</p>
                   </div>

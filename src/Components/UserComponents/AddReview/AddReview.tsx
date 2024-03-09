@@ -55,15 +55,18 @@ const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
   };
 
   return (
-    <div className=" flex  w-[45%] justify-center  gap-6   rounded-xl   py-5 ">
+    <div className=" flex h-[240px] w-[46%]  items-center justify-center gap-6  rounded-xl  border-2  px-3   py-5 ">
       <div className="  text-neutral-500 ">
         <div className=" ps-1">
-          <p className="  mt-2  font-Sen text-[28px] font-bold text-black">
+          <p className="  mt-2  font-Sen text-[24px] font-bold text-black">
             Add Your Review
           </p>
-          <p className=" mt-3   font-bold"> tell us about your experience</p>
+          <p className=" mt-3  text-sm   font-bold">
+            {" "}
+            tell us about your experience
+          </p>
 
-          <p className=" mt-2 w-[80%]  font-bold"> Also give rating</p>
+          <p className=" mt-2 w-[80%] text-sm   font-bold"> Also give rating</p>
         </div>
 
         <button
@@ -74,10 +77,10 @@ const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
         </button>
       </div>
 
-      <div className="   flex w-[45%] flex-col justify-center gap-2 ">
+      <div className="   flex  flex-col justify-center gap-2 ">
         <div className=" flex justify-center gap-2 text-sm"></div>
 
-        <div className=" mt-2  flex items-center justify-between gap-2 rounded-md   border px-4 py-2 ">
+        <div className="   flex items-center justify-between gap-2 rounded-md   border px-4 py-2 ">
           <p className=" font-Sen  font-bold">Rating</p>
 
           <div className=" flex  items-center gap-4">
@@ -98,7 +101,7 @@ const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
         </div>
 
         <textarea
-          className="   mt-3 h-full  w-full rounded-lg border px-2 py-2 font-Sen text-sm font-semibold  outline-none focus:border-black "
+          className="   mt-3 h-[100px]  w-full rounded-lg border px-2 py-2 font-Sen text-sm font-semibold  outline-none focus:border-black "
           value={review}
           onChange={(e) => {
             setReview(e.target.value);

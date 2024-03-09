@@ -885,22 +885,10 @@ const HotelDetailsPage = () => {
               </div>
             </div>
 
-            <div className="   pb-16 lg:pt-8">
-              <div>
-                <p className=" text-center text-3xl font-bold">
-                  More About This Place
-                </p>
-
-                <div className=" mt-6 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-3/4">
-                  <p>{propertyData?.aboutHotel}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="  flex items-center justify-center  gap-8  border-y-2 py-16">
+            <div className="  flex items-center justify-center  gap-8   py-16">
               {listingID && <AddReview listingID={listingID} />}
 
-              <div className=" flex  w-[45%]  justify-center  gap-6  rounded-xl   py-5 ">
+              <div className=" flex h-[240px]  w-[46%] items-center  justify-center gap-6  rounded-xl  border-2   py-5 ">
                 <div className=" w-[45%] ">
                   <img
                     src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
@@ -909,11 +897,11 @@ const HotelDetailsPage = () => {
                 </div>
 
                 <div className="  w-[60%] text-neutral-500  ">
-                  <p className=" mt-2  text-[28px] font-bold text-black">
+                  <p className=" mt-2  text-[24px] font-bold text-black">
                     Address & Location
                   </p>
 
-                  <div className=" mt-3 flex flex-col gap-2    font-bold">
+                  <div className=" mt-3 flex flex-col gap-2  text-sm   font-bold">
                     <div className="flex gap-2">
                       <p>{propertyData?.hotelName}</p>
                       <p>{propertyData?.city}</p>
@@ -930,47 +918,63 @@ const HotelDetailsPage = () => {
               </div>
             </div>
 
-            <div className="  py-14 lg:px-14">
-              <p className=" text-center font-Sen text-4xl font-bold">
-                Customer Reviews
-              </p>
+            <div className=" flex   pb-16 lg:pt-8">
+              <div>
+                <p className=" text-center text-3xl font-bold">
+                  More About This Place
+                </p>
 
-              <div className=" mt-16 grid lg:grid-cols-3">
-                {reviews?.map((review) => (
-                  <div className=" flex  h-48 flex-col justify-between rounded-md border-2 px-6 py-6 ">
-                    <div className=" flex items-center  gap-4  font-Sen font-semibold">
-                      <div className="  h-8 w-8">
-                        {review?.image ? (
-                          <img
-                            className=" h-full w-full rounded-full"
-                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${review?.image}`}
-                            alt=""
-                          />
-                        ) : (
-                          <img
-                            className=" h-full w-full rounded-full"
-                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
-                            alt=""
-                          />
-                        )}
-                      </div>
-                      <p>{review.username}</p>
-                    </div>
-
-                    <div className=" mt-3 text-sm font-semibold">
-                      <p>{review.reviewMessage}</p>
-                    </div>
-
-                    <div className=" mt-1  flex  items-center justify-end gap-2">
-                      <p>{review.rating}</p>
-                      <p>
-                        <FaStar />
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                <div className=" mt-14 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-3/4">
+                  <p>{propertyData?.aboutHotel}</p>
+                </div>
               </div>
             </div>
+
+            {reviews ? (
+              <div className="  pb-14 lg:px-14">
+                <p className=" text-center font-Sen text-4xl font-bold">
+                  Customer Reviews
+                </p>
+
+                <div className=" mt-14 grid gap-6 gap-y-8 lg:grid-cols-3">
+                  {reviews?.map((review) => (
+                    <div className=" flex  h-48 flex-col justify-between rounded-md border-2 px-6 py-6 ">
+                      <div className=" flex items-center  gap-4  font-Sen font-semibold">
+                        <div className="  h-8 w-8">
+                          {review?.image ? (
+                            <img
+                              className=" h-full w-full rounded-full"
+                              src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${review?.image}`}
+                              alt=""
+                            />
+                          ) : (
+                            <img
+                              className=" h-full w-full rounded-full"
+                              src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                              alt=""
+                            />
+                          )}
+                        </div>
+                        <p>{review.username}</p>
+                      </div>
+
+                      <div className=" mt-3 text-sm font-semibold">
+                        <p>{review.reviewMessage}</p>
+                      </div>
+
+                      <div className=" mt-1  flex  items-center justify-end gap-2">
+                        <p>{review.rating}</p>
+                        <p>
+                          <FaStar />
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </main>
       )}

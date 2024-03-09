@@ -4,42 +4,41 @@ import { FaChevronRight, FaEdit, FaSearch } from "react-icons/fa";
 import Container from "../../Components/UiComponents/Container";
 import Navbar from "../../Components/Admin/Navbar/Navbar";
 
-import { useEffect, useState } from "react";
-
-import EditUserModal from "../../Components/Admin/Modals/EditUserModal";
-import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-import { z } from "zod";
-import { GET_LISTINGS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useEffect, useState } from "react";
+import useAddUserModal from "../../Hooks/zustandStore/useAddUserModal";
+import useEditUserModal from "../../Hooks/zustandStore/useEditUserModal";
+import EditUserModal from "../../Components/Admin/Modals/EditUserModal";
 import { CgMenuGridR } from "react-icons/cg";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import DataLoader from "../../Components/Loaders/DataLoader";
+import { BiEditAlt } from "react-icons/bi";
 
-type listingData = z.infer<typeof HotelListingSchema> & {
+interface user {
   _id: string;
-  isActiveForReservation: Boolean;
-  approvedForReservation: Boolean;
-  hostName: string;
-  location: string;
-  buildingName: string;
-};
+  username: string;
+  email: string;
+  joinedDate: string;
+  verified: boolean;
+  blocked: boolean;
+}
 
-interface listingsResponse {
-  properties: listingData[];
+interface GetUsersResponse {
+  users: user[];
   totalPages: number;
 }
 
-const ListingManagement = () => {
+const Users = () => {
   const AxiosPrivate = useAxiosPrivate();
 
-  const [triggerRefetch, setTriggerRefetch] = useState(true);
+  const addUserModal = useAddUserModal();
 
-  const [navBar, setNavBar] = useState(true);
-  const [propertiesList, setPropertiesList] = useState<listingData[] | null>(
-    null,
-  );
+  const editUserModalState = useEditUserModal();
+
+  const [triggerRefetch, setTriggerRefetch] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [navBar, setNavBar] = useState(true);
+  const [usersList, setUsersList] = useState<user[] | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -50,16 +49,18 @@ const ListingManagement = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await AxiosPrivate.get<listingsResponse>(
-          GET_LISTINGS_URL,
+
+        const response = await AxiosPrivate.get<GetUsersResponse>(
+          "/admin/users",
           {
             params: { search, page },
           },
         );
+
         setLoading(false);
 
         if (isMounted) {
-          setPropertiesList(response.data.properties);
+          setUsersList(response.data.users);
 
           setTotalPages(response.data.totalPages);
 
@@ -78,11 +79,11 @@ const ListingManagement = () => {
     };
   }, [triggerRefetch, search, page]);
 
-  const approveListing = async (listingID: string) => {
+  const blockUser = async (userID: string) => {
     try {
-      await AxiosPrivate.patch("/admin/listings/approve/" + `${listingID}`);
+      await AxiosPrivate.patch("/admin/user/block/" + `${userID}`);
 
-      toast.success(" Property approved for reservations");
+      toast.success(" User blocked successfully");
 
       setTriggerRefetch((val) => !val);
     } catch (err: any) {
@@ -92,19 +93,21 @@ const ListingManagement = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === 400) {
         toast.error(err.response.data.message);
+      } else if (err.response?.status === 409) {
+        toast.error("Email Already Registered");
       } else if (err.response?.status === 500) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Failed to approve listing");
+        toast.error("Failed to create new User");
       }
     }
   };
 
-  const disApproveListing = async (listingID: string) => {
+  const unBlockUser = async (userID: string) => {
     try {
-      await AxiosPrivate.patch("/admin/listings/disapprove/" + `${listingID}`);
+      await AxiosPrivate.patch("/admin/user/unblock/" + `${userID}`);
 
-      toast.success(" listing  reservations stopped ");
+      toast.success(" User unblocked successfully");
 
       setTriggerRefetch((val) => !val);
     } catch (err: any) {
@@ -114,10 +117,12 @@ const ListingManagement = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === 400) {
         toast.error(err.response.data.message);
+      } else if (err.response?.status === 409) {
+        toast.error("Email Already Registered");
       } else if (err.response?.status === 500) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Failed to disapprove");
+        toast.error("Failed to create new User");
       }
     }
   };
@@ -153,7 +158,7 @@ const ListingManagement = () => {
               >
                 <CgMenuGridR size={20} />
                 <p className="  font-Sen   font-bold sm:block">
-                  Listings Management
+                  User Management
                 </p>
               </div>
               <div className=" flex   justify-end  gap-4 text-xs ">
@@ -169,6 +174,11 @@ const ListingManagement = () => {
                     type="text"
                     placeholder="Search   "
                   />
+                </div>
+                <div className=" flex items-center   gap-2 rounded-md   bg-black px-4  py-2 font-Sen font-semibold  text-white  ">
+                  <p className="  cursor-pointer" onClick={addUserModal.onOpen}>
+                    Add User
+                  </p>
                 </div>
               </div>
             </div>
@@ -188,62 +198,65 @@ const ListingManagement = () => {
                    grid-cols-[minmax(100px,1fr)_minmax(50px,1fr)_repeat(3,minmax(60px,1fr))_60px]
                   md:grid-cols-[minmax(130px,3fr)_minmax(80px,3fr)_repeat(3,minmax(80px,2fr))_100px]    "
                     >
-                      <p className="  text-wrap text-center">listing title</p>
-                      <p className="  text-center">active</p>
-                      <p className="  text-center">location</p>
-                      <p className="  text-center">license</p>
-                      <p className="  text-wrap text-center">host</p>
+                      <p className="  text-left">email</p>
+                      <p className="   text-center">username</p>
+                      <p className="  text-center">verified</p>
+                      <p className="  text-center">blocked</p>
+                      <p className="  text-center">createdAt</p>
                       <p className="  text-center">options</p>
                     </div>
                   </div>
-
-                  {propertiesList?.map((property, index) => (
-                    <div
-                      key={index}
-                      className=" border-b px-6  py-2 font-Sen text-xs  "
-                    >
-                      <div className=" grid grid-cols-[minmax(100px,1fr)_minmax(50px,1fr)_repeat(3,minmax(60px,1fr))_60px] py-3   md:grid-cols-[minmax(130px,3fr)_minmax(80px,3fr)_repeat(3,minmax(80px,2fr))_100px]">
-                        <p className="  flex items-center justify-center    ">
-                          {property.buildingName}
+                  {usersList?.map((user, index) => (
+                    <div key={index} className="  px-6 font-Sen  text-xs ">
+                      <div
+                        className=" grid grid-cols-[minmax(100px,1fr)_minmax(50px,1fr)_repeat(3,minmax(60px,1fr))_60px] py-3   md:grid-cols-[minmax(130px,3fr)_minmax(80px,3fr)_repeat(3,minmax(80px,2fr))_100px]
+                        
+                   "
+                      >
+                        <p className=" flex items-center  text-left ">
+                          {user.email}
                         </p>
-                        <p className="  flex items-center justify-center     ">
-                          {property.isActiveForReservation ? "true" : "false"}
+                        <p className=" flex  items-center  justify-center   lowercase ">
+                          {user.username}
                         </p>
-                        <p className="  flex items-center justify-center  ">
-                          {property.location}
+                        <p className=" flex items-center  justify-center ">
+                          {user.verified ? "true" : "false"}
                         </p>
-                        <p className="  flex items-center justify-center  ">
-                          <a
-                            href={`https://res.cloudinary.com/dfm8vhuea/raw/upload/${property.hotelLicenseUrl}`}
-                          >
-                            {" "}
-                            <p className=" cursor-pointer py-1   ">View File</p>
-                          </a>
+                        <p className=" flex items-center  justify-center ">
+                          {user.blocked ? "true" : "false"}
                         </p>
-                        <div className=" flex items-center  justify-center  lowercase">
-                          {" "}
-                          <p>{property.hostName}</p>
-                        </div>
-                        <div className=" flex items-center  justify-center gap-4  text-xl">
-                          {property.approvedForReservation ? (
+                        <p className=" flex items-center  justify-center ">
+                          {user.joinedDate}
+                        </p>
+                        <div className=" flex items-center  justify-center gap-4  ">
+                          {user.blocked ? (
                             <p
                               onClick={() => {
-                                disApproveListing(property._id);
+                                unBlockUser(user._id);
                               }}
-                              className=" cursor-pointer rounded-lg bg-black px-2 py-1 text-xs text-white"
+                              className="   cursor-pointer rounded-lg  border-2 border-neutral-500 px-[4px] py-[3px]  text-center text-[10px]   hover:bg-green-300 "
                             >
-                              veto
+                              open
                             </p>
                           ) : (
                             <p
                               onClick={() => {
-                                approveListing(property._id);
+                                blockUser(user._id);
                               }}
-                              className=" cursor-pointer rounded-lg bg-black px-2 py-1 text-xs text-white"
+                              className="  cursor-pointer rounded-lg  border-2 border-neutral-500  px-[4px]  py-[3px] text-center text-[10px] font-semibold hover:bg-red-400 hover:text-white "
                             >
-                              Approve
+                              block
                             </p>
                           )}
+
+                          <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px] hover:bg-gray-400">
+                            <BiEditAlt
+                              className=" cursor-pointer text-sm"
+                              onClick={() => {
+                                editUserModalState.onOpen(user._id);
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -277,9 +290,22 @@ const ListingManagement = () => {
             </div>
           </div>
         </div>
+        <AddUserModal
+          reFetchData={() => {
+            setTriggerRefetch((val) => !val);
+          }}
+        />
+
+        <EditUserModal
+          reFetchData={() => {
+            setTriggerRefetch((val) => !val);
+          }}
+        />
       </main>
     </div>
+
+   
   );
 };
 
-export default ListingManagement;
+export default Users;

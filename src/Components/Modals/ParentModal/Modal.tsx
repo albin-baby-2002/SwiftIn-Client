@@ -57,7 +57,7 @@ const Modal: React.FC<ModelProps> = ({
   return (
     <div
       className=" 
-            fixed inset-0 z-20 flex items-center justify-center bg-black/25  "
+            fixed inset-0 z-30 flex items-center justify-center bg-black/25  "
     >
       <div
         className={`${wider ? " md:w-2/3 lg:w-3/4" : " sm:w-3/4 md:w-2/3 lg:w-2/5  xl:w-2/5"} mx-auto  my-6 h-full w-full  sm:h-auto  `}
