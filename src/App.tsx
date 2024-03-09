@@ -23,6 +23,7 @@ import Reservations from "./Pages/UserPages/Reservations";
 import ManageReservations from "./Pages/Host Pages/ManageReservations";
 import Chat from "./Pages/UserPages/Chat";
 import Wishlist from "./Pages/UserPages/Wishlist";
+import ReservationsManagement from "./Pages/AdminPages/ReservationsManagement";
 
 function App() {
   const router = createBrowserRouter(
@@ -116,6 +117,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/admin/reservations"
+            element={
+              <PrivateRoute
+                Element={ReservationsManagement}
+                allowedRoles={[ROLES_LIST.Admin]}
+              />
+            }
+          />
           <Route
             path="/admin/users"
             element={
