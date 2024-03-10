@@ -14,6 +14,7 @@ import useLogout from "../../Hooks/AuthHooks/useLogout";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import { AiFillAppstore } from "react-icons/ai";
 import { RiTvLine } from "react-icons/ri";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 import toast from "react-hot-toast";
 import { TiWiFi } from "react-icons/ti";
@@ -33,6 +34,16 @@ import {
   TreviewObject,
 } from "../../Types/propertyTypes";
 import AddReview from "../../Components/UserComponents/AddReview/AddReview";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
+import "../../style.css";
+
+// import required modules
+import { Pagination } from "swiper/modules";
+import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
+import DataLoader from "../../Components/Loaders/DataLoader";
 
 const amenitiesTypes = {
   WIFI: "freeWifi",
@@ -99,6 +110,8 @@ const HotelDetailsPage = () => {
 
   const [guests, setGuests] = useState(1);
 
+  const [loading, setLoading] = useState(false);
+
   // set total guests based on change in no of rooms
 
   useEffect(() => {
@@ -162,9 +175,13 @@ const HotelDetailsPage = () => {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
+
         const response = await AxiosPrivate.get<SingleListingDataResponse>(
           "/listing/details/" + `${listingID}`,
         );
+
+        setLoading(false);
 
         if (isMounted) {
           console.log(response.data);
@@ -175,6 +192,7 @@ const HotelDetailsPage = () => {
           console.log(response.data);
         }
       } catch (error) {
+        setLoading(false);
         toast.error("failed to fetch page data");
         console.error("Error fetching data:", error);
       }
@@ -499,484 +517,479 @@ const HotelDetailsPage = () => {
                   className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[8px] py-[6px]
     "
                 >
-                  {/* <MdOutlineTune className=" cursor-pointer text-[24px] text-white  transition duration-150 hover:scale-110 " /> */}
-                  <div
-                    onClick={toggleMenu}
-                    className="
-             cursor-pointer "
-                  >
-                    <AiFillAppstore className=" transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
-
-                    {menu && (
-                      <Menu>
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/manage/property");
-                            }}
-                            label="Listings"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/reservations");
-                            }}
-                            label="Reservations"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/property/listing");
-                            }}
-                            label="List Your Property"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              logout();
-                            }}
-                            label="Logout"
-                          />
-                        )}
-
-                        {auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              navigate("/profile");
-                            }}
-                            label="Profile"
-                          />
-                        )}
-
-                        {!auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              registerModal.onOpen();
-                            }}
-                            label="SignUp"
-                          />
-                        )}
-
-                        {!auth.accessToken && (
-                          <MenuItem
-                            onClick={() => {
-                              loginModal.onOpen();
-                            }}
-                            label="Login"
-                          />
-                        )}
-                      </Menu>
-                    )}
-                  </div>
+                  <MainMenu />
                 </div>
-                {/* <div className=" flex  items-center gap-2 rounded-md  bg-black px-3 py-2 font-Sen text-white">
-                    <p>Filter</p>
-                    <RxMixerHorizontal size={20} />
-                  </div> */}
               </div>
             </div>
           </nav>
         </div>
       </header>
-      {propertyData && (
-        <main className="  ">
-          <div
-            className="
-           mx-auto
-           max-w-[1500px]
-          
-           "
-          >
-            <div className=" h-screen  bg-gray-100   pb-6    font-Merriweather ">
-              <div className=" flex  h-full justify-center  gap-5 ">
-                <div className="  grid h-full w-[95%] grid-rows-[minmax(160px,180px)_minmax(1fr,340px)] lg:w-[90%] lg:grid-rows-[180px_minmax(1fr,345px)]  ">
-                  <div className=" flex items-center  justify-center px-2 pt-[70px] md:pb-[30px] md:pt-[110px]">
-                    <h1 className="   text-center  text-xl font-semibold capitalize md:text-2xl  lg:text-[27px]  ">
-                      {propertyData?.listingTitle}
-                    </h1>
-                  </div>
-
-                  <div className=" flex max-h-[280px] gap-3 px-10   md:max-h-[330px] xl:max-h-[360px]">
-                    <div className=" flex    w-[50%]   rounded-l-xl  ">
-                      <img
-                        className="     w-full rounded-l-xl"
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
-                        alt=""
-                      />
-                    </div>
-
-                    <div className=" flex  w-[25%]  flex-col gap-3   ">
-                      <img
-                        className="  h-1/2   "
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[0]}`}
-                        alt=""
-                      />
-                      <img
-                        className=" h-1/2     "
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[1]}`}
-                        alt=""
-                      />
-                    </div>
-
-                    <div className=" relative flex  w-[25%]  flex-col  gap-3  ">
-                      <div
-                        className=" absolute  bottom-4 right-4 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   "
-                        onClick={(e) => {
-                          e.stopPropagation();
-
-                          if (propertyData) {
-                            if (wishlist?.includes(propertyData?._id)) {
-                              removeFromWishlist(propertyData?._id);
-                            } else {
-                              addToWishlist(propertyData?._id);
-                            }
-                          }
-                        }}
-                      >
-                        <TbHeartPlus
-                          className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} pt-[1px] font-bold`}
-                          size={18}
-                        />
-                        <p
-                          className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} `}
-                        >
-                          Wishlist
-                        </p>
-                      </div>
-                      <img
-                        className=" h-1/2  rounded-tr-xl"
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[2]}`}
-                        alt=""
-                      />
-                      <img
-                        className=" h-1/2   rounded-br-xl"
-                        src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[3]}`}
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className=" mx-auto flex justify-center bg-gray-100  py-12 font-Inter ">
-              <div className=" mr-6 flex  items-center gap-4  text-lg font-semibold">
-                <div className="  h-10 w-10">
-                  {propertyData?.hostImg ? (
-                    <img
-                      className=" h-full w-full rounded-full"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
-                      alt=""
-                    />
-                  ) : (
-                    <img
-                      className=" h-full w-full rounded-full"
-                      src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
-                      alt=""
-                    />
-                  )}
-                </div>
-
-                <div className=" flex flex-col">
-                  <p>Hosted by {propertyData?.host}</p>
-                  <p
-                    onClick={() => {
-                      handleMessageHost(propertyData.hostID);
-                    }}
-                    className=" cursor-pointer text-xs"
-                  >
-                    Message the Host Now
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="  my-16 flex items-center">
-              <div className=" mx-auto w-[60%] max-w-[500px] font-Sen font-semibold ">
-                <p className=" text-center text-3xl ">What this place offers</p>
-
-                <div className=" mt-8 flex flex-col gap-9   ">
-                  <div className=" flex  w-full justify-between lg:mx-auto">
-                    <div className=" grid w-[67%] grid-cols-1 ps-6   ">
-                      <div className=" flex items-center  gap-4 justify-self-start">
-                        <TiWiFi className=" text-3xl" />
-                        <p
-                          className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
-                        >
-                          Free wifi
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className=" grid w-[33%] grid-cols-1">
-                      <div className=" flex items-center  gap-4 justify-self-start">
-                        <MdOutlinePool className=" text-3xl" />
-                        <p
-                          className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
-                        >
-                          Common Pool
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className=" flex  w-full justify-between lg:mx-auto">
-                    <div className=" grid w-[67%]  grid-cols-1 ps-6   ">
-                      <div className=" flex items-center  gap-4 justify-self-start">
-                        <FaRegSnowflake className=" text-3xl" />
-                        <p
-                          className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
-                        >
-                          Air Conditioning
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className=" grid w-[33%] grid-cols-1">
-                      <div className=" flex items-center  gap-4 justify-self-start">
-                        <FaCar className=" text-3xl" />
-                        <p
-                          className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
-                        >
-                          Car Parking
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className=" flex  w-full justify-between lg:mx-auto">
-                    <div className="  w-[67%]grid grid-cols-1 ps-6   ">
-                      <div className=" flex items-center  gap-4 justify-self-start">
-                        <RiTvLine className=" text-3xl" />
-                        <p
-                          className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
-                        >
-                          Cable Tv
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className=" grid w-[33%] grid-cols-1">
-                      <div className=" flex items-center  gap-4 justify-self-start">
-                        <FaHotTub className=" text-3xl" />
-                        <p
-                          className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
-                        >
-                          Hot Tub
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="  mx-auto  flex  w-[35%] justify-center rounded-xl border border-neutral-300  px-[0px] py-6 shadow-2xl">
-                <div>
-                  <div className=" mt-4 flex items-center justify-between gap-3 px-1 font-Inter ">
-                    <div className=" flex  gap-1">
-                      <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
-                        <FaRupeeSign className=" text-sm  text-white" />
-                      </div>
-
-                      <div className=" flex items-center gap-2">
-                        <p className=" font-semibold ">
-                          {" "}
-                          {propertyData?.rentPerNight}{" "}
-                        </p>
-                        <p className=" text-xs font-semibold  text-neutral-400">
-                          {" "}
-                          night{" "}
-                        </p>
-                      </div>
-                    </div>
-
+      {loading ? (
+        <div className=" pt-[20px]">
+          <DataLoader />
+        </div>
+      ) : (
+        <>
+          {propertyData && (
+            <main>
+              <div className=" mx-auto max-w-[1500px]">
+                <div className=" max-h-screen  bg-gray-100  font-Merriweather  lg:pb-6    xl:bg-white ">
+                  <div className=" flex  h-full justify-center  gap-5 ">
                     <div
-                      className=" cursor-pointer rounded-md    px-2  py-1 text-center text-xs font-semibold  hover:shadow-lg"
-                      onClick={checkAvailability}
+                      className="   
+                      grid h-full w-[90%] 
+                      grid-rows-[200px_minmax(300px,1fr)]
+                      sm:w-[95%] 
+                      sm:grid-rows-[160px_minmax(1fr,340px)] 
+                      lg:w-[85%] 
+                      lg:grid-rows-[190px_minmax(340px,1fr)]   
+                      xl:grid-rows-[180px_minmax(1fr,340px)] "
                     >
-                      <p>Check Availability</p>
-                    </div>
-                  </div>
-
-                  <div className=" mt-8 min-w-[270px] rounded-xl border-2 border-black">
-                    <div className=" flex  border-b-2 border-black  ">
-                      <div className="  w-1/2 border-r-2  border-black px-4 py-3 text-xs ">
-                        <p className=" pb-2 text-center font-bold">CHECK IN</p>
-                        <input
-                          type="date"
-                          value={checkInDate}
-                          onChange={(e) => setCheckInDate(e.target.value)}
-                        />
+                      <div className=" flex  items-center  justify-center px-2 pt-[70px] md:pb-[10px] md:pt-[100px]">
+                        <h1 className="   text-center  text-xl font-semibold capitalize md:text-2xl xl:text-3xl   ">
+                          {propertyData?.listingTitle}
+                        </h1>
                       </div>
 
-                      <div className=" w-1/2  px-4 py-3 text-center text-xs">
-                        <p className=" pb-2 font-bold">CHECK OUT</p>
-                        <input
-                          type="date"
-                          value={checkOutDate}
-                          onChange={(e) => setCheckOutnDate(e.target.value)}
-                        />
-                      </div>
-                    </div>
+                      {/* swiper */}
 
-                    <div className=" flex justify-center gap-8 border-b-2 border-black px-6 py-3">
-                      <p className=" font-Inter  text-xl  font-semibold">
-                        Rooms
-                      </p>
+                      <Swiper
+                        pagination={true}
+                        modules={[Pagination]}
+                        className="mySwiper relative sm:hidden"
+                      >
+                        <SwiperSlide>
+                          {" "}
+                          <img
+                            className="      w-full rounded-xl"
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
+                            alt=""
+                          />
+                        </SwiperSlide>
 
-                      <div className=" flex  items-center gap-4 ">
+                        {propertyData.otherImages.map((img, i) => (
+                          <SwiperSlide key={i}>
+                            <img
+                              className="     w-full rounded-xl"
+                              src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${img}`}
+                              alt=""
+                            />
+                          </SwiperSlide>
+                        ))}
+
                         <div
-                          className="  cursor-pointer   rounded-sm  border px-[2px]  py-[2px] hover:bg-black/30  "
-                          onClick={() => {
-                            if (rooms > 1) {
-                              setRooms((val) => val - 1);
+                          className=" absolute bottom-4  right-4 z-30 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   "
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            if (propertyData) {
+                              if (wishlist?.includes(propertyData?._id)) {
+                                removeFromWishlist(propertyData?._id);
+                              } else {
+                                addToWishlist(propertyData?._id);
+                              }
                             }
                           }}
                         >
-                          <BiMinus className="   " />
+                          <TbHeartPlus
+                            className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} pt-[1px] font-bold`}
+                            size={18}
+                          />
+                          <p
+                            className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} `}
+                          >
+                            Wishlist
+                          </p>
+                        </div>
+                      </Swiper>
+
+                      <div className=" hidden max-h-[280px] gap-2 px-10 sm:flex md:gap-3    lg:max-h-[320px] xl:max-h-[400px]">
+                        <div className=" flex    w-[60%]   rounded-l-xl  ">
+                          <img
+                            className="  w-full    rounded-l-xl  object-cover"
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
+                            alt=""
+                          />
                         </div>
 
-                        <p className=" text-lg font-semibold">{rooms}</p>
+                        <div className=" flex  w-[25%]  flex-col gap-2 md:gap-3    ">
+                          <img
+                            className="  h-1/2  object-cover  "
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[0]}`}
+                            alt=""
+                          />
+                          <img
+                            className=" h-1/2 object-cover    "
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[1]}`}
+                            alt=""
+                          />
+                        </div>
 
-                        <div className=" rounded-sm  border   px-[2px] py-[2px] hover:bg-black/30   ">
-                          <BiPlus
-                            className=" cursor-pointer  "
-                            onClick={() => {
-                              setRooms((val) => val + 1);
+                        <div className=" relative flex  w-[25%]  flex-col gap-2 md:gap-3  ">
+                          <div
+                            className=" absolute  bottom-4 right-4 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-2  py-[6px]  text-[10px] font-bold   "
+                            onClick={(e) => {
+                              e.stopPropagation();
+
+                              if (propertyData) {
+                                if (wishlist?.includes(propertyData?._id)) {
+                                  removeFromWishlist(propertyData?._id);
+                                } else {
+                                  addToWishlist(propertyData?._id);
+                                }
+                              }
                             }}
+                          >
+                            <TbHeartPlus
+                              className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} pt-[1px] font-bold`}
+                              size={18}
+                            />
+                            <p
+                              className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} `}
+                            >
+                              Wishlist
+                            </p>
+                          </div>
+                          <img
+                            className=" h-1/2  rounded-tr-xl object-cover"
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[2]}`}
+                            alt=""
+                          />
+                          <img
+                            className=" h-1/2  rounded-br-xl  object-cover"
+                            src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.otherImages[3]}`}
+                            alt=""
                           />
                         </div>
                       </div>
                     </div>
-
-                    <div className=" flex   border-black  ">
-                      <div className=" w-1/2 border-r-2 border-black px-4 py-3 text-center text-xs ">
-                        <p className=" pb-2  font-bold">GUESTS</p>
-                        <p>{guests}</p>
-                      </div>
-
-                      <div className=" w-1/2  px-4 py-3 text-center text-xs">
-                        <p className=" pb-2 font-bold">TOTAL RENT</p>
-                        <p className=" ">{grandTotal}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className=" mt-12 flex w-full justify-center font-Inter">
-                    <button
-                      className=" w-full rounded-xl bg-black px-4 py-3 font-bold tracking-wide text-white hover:bg-black/85"
-                      onClick={displayRazorpay}
-                    >
-                      Reserve
-                    </button>
-                  </div>
-
-                  <div className="   flex  justify-center   gap-4 border-t-2  pb-4 pt-8   font-Sen font-semibold  ">
-                    <p>Reservation Fee </p>
-                    <p>Rs.{FeePayable}</p>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="  flex items-center justify-center  gap-8   py-16">
-              {listingID && <AddReview listingID={listingID} />}
-
-              <div className=" flex h-[240px]  w-[46%] items-center  justify-center gap-6  rounded-xl  border-2   py-5 ">
-                <div className=" w-[45%] ">
-                  <img
-                    src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
-                    alt=""
-                  />
-                </div>
-
-                <div className="  w-[60%] text-neutral-500  ">
-                  <p className=" mt-2  text-[24px] font-bold text-black">
-                    Address & Location
-                  </p>
-
-                  <div className=" mt-3 flex flex-col gap-2  text-sm   font-bold">
-                    <div className="flex gap-2">
-                      <p>{propertyData?.hotelName}</p>
-                      <p>{propertyData?.city}</p>
+                <div className=" mx-auto flex justify-center bg-gray-100  py-8 font-Inter  sm:py-8  md:py-12 xl:bg-white ">
+                  <div className=" mr-6 flex  items-center gap-4  text-sm font-semibold sm:text-lg">
+                    <div className="  h-10 w-10">
+                      {propertyData?.hostImg ? (
+                        <img
+                          className=" h-full w-full rounded-full"
+                          src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.hostImg}`}
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          className=" h-full w-full rounded-full"
+                          src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                          alt=""
+                        />
+                      )}
                     </div>
 
-                    <div className="flex gap-2">
-                      <p>{propertyData?.district}</p>
-                      <p>{propertyData?.state}</p>
+                    <div className=" flex flex-col">
+                      <p>Hosted by {propertyData?.host}</p>
+                      <p
+                        onClick={() => {
+                          handleMessageHost(propertyData.hostID);
+                        }}
+                        className=" cursor-pointer text-xs"
+                      >
+                        Message the Host Now
+                      </p>
                     </div>
-
-                    <p>{propertyData?.pinCode}</p>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div className=" flex   pb-16 lg:pt-8">
-              <div>
-                <p className=" text-center text-3xl font-bold">
-                  More About This Place
-                </p>
+                <div className="  my-16  flex flex-col  items-center md:flex-row">
+                  <div className=" mx-auto mb-14  w-[80%] font-Sen font-semibold sm:w-[70%] md:mb-0 md:w-[55%] md:max-w-[390px] lg:max-w-[500px]  ">
+                    <p className=" text-center text-3xl md:text-2xl lg:text-3xl ">
+                      What this place offers
+                    </p>
 
-                <div className=" mt-14 text-center text-lg font-semibold text-neutral-500 lg:mx-auto lg:w-3/4">
-                  <p>{propertyData?.aboutHotel}</p>
-                </div>
-              </div>
-            </div>
-
-            {reviews ? (
-              <div className="  pb-14 lg:px-14">
-                <p className=" text-center font-Sen text-4xl font-bold">
-                  Customer Reviews
-                </p>
-
-                <div className=" mt-14 grid gap-6 gap-y-8 lg:grid-cols-3">
-                  {reviews?.map((review) => (
-                    <div className=" flex  h-48 flex-col justify-between rounded-md border-2 px-6 py-6 ">
-                      <div className=" flex items-center  gap-4  font-Sen font-semibold">
-                        <div className="  h-8 w-8">
-                          {review?.image ? (
-                            <img
-                              className=" h-full w-full rounded-full"
-                              src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${review?.image}`}
-                              alt=""
-                            />
-                          ) : (
-                            <img
-                              className=" h-full w-full rounded-full"
-                              src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
-                              alt=""
-                            />
-                          )}
+                    <div className=" mt-8 flex flex-col gap-9  md:text-sm lg:text-base  ">
+                      <div className=" flex  w-full justify-between lg:mx-auto">
+                        <div className=" grid  w-[67%] grid-cols-1 md:w-[50%] lg:w-[67%] lg:ps-6   ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <TiWiFi className=" text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Free wifi
+                            </p>
+                          </div>
                         </div>
-                        <p>{review.username}</p>
+
+                        <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <MdOutlinePool className=" text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Common Pool
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className=" mt-3 text-sm font-semibold">
-                        <p>{review.reviewMessage}</p>
+                      <div className=" flex  w-full justify-between lg:mx-auto">
+                        <div className=" grid w-[67%] grid-cols-1 md:w-[50%]  lg:w-[67%] lg:ps-6   ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <FaRegSnowflake className=" text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Air Conditioning
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <FaCar className=" text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Car Parking
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className=" mt-1  flex  items-center justify-end gap-2">
-                        <p>{review.rating}</p>
-                        <p>
-                          <FaStar />
-                        </p>
+                      <div className=" flex  w-full justify-between lg:mx-auto">
+                        <div className=" grid w-[67%] grid-cols-1 md:w-[50%] lg:w-[67%] lg:ps-6   ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <RiTvLine className=" text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Cable Tv
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <FaHotTub className=" text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Hot Tub
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  </div>
+
+                  <div className=" mt-6 w-[80%] md:mt-0 md:w-[45%]">
+                    <div className="   mx-auto   flex  max-w-[420px]  justify-center rounded-xl border border-neutral-300  py-6 shadow-2xl md:max-w-[325px]  lg:max-w-[400px] ">
+                      <div>
+                        <div className=" mt-1 flex items-center justify-between gap-3 px-1 font-Inter lg:mt-4 ">
+                          <div className=" flex  gap-1">
+                            <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
+                              <FaRupeeSign className=" text-xs text-white  lg:text-sm" />
+                            </div>
+
+                            <div className=" flex items-center gap-2">
+                              <p className=" text-sm  font-semibold">
+                                {" "}
+                                {propertyData?.rentPerNight}{" "}
+                              </p>
+                              <p className=" text-[10px] font-semibold text-neutral-400  lg:text-xs">
+                                {" "}
+                                night{" "}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div
+                            className=" cursor-pointer rounded-md    px-2  py-1 text-center  text-[10px] font-semibold hover:shadow-lg  lg:text-xs"
+                            onClick={checkAvailability}
+                          >
+                            <p>Check Availability</p>
+                          </div>
+                        </div>
+
+                        <div className=" mt-8 min-w-[270px] rounded-xl border-2 border-black text-[10px] lg:text-xs ">
+                          <div className=" flex  border-b-2 border-black  ">
+                            <div className="  flex w-1/2 flex-col items-center justify-between border-r-2  border-black py-2  lg:px-4 lg:py-3 ">
+                              <p className=" pb-2 text-center font-bold">
+                                CHECK IN
+                              </p>
+                              <input
+                                type="date"
+                                value={checkInDate}
+                                onChange={(e) => setCheckInDate(e.target.value)}
+                              />
+                            </div>
+
+                            <div className=" flex  w-1/2 flex-col items-center justify-between py-2 text-center  lg:px-4 lg:py-3">
+                              <p className=" pb-2 font-bold">CHECK OUT</p>
+                              <input
+                                type="date"
+                                value={checkOutDate}
+                                onChange={(e) =>
+                                  setCheckOutnDate(e.target.value)
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div className=" flex items-center justify-center gap-8 border-b-2 border-black py-3 lg:px-6   lg:py-3">
+                            <p className=" font-Inter  text-xs font-semibold  lg:text-xl">
+                              Rooms
+                            </p>
+
+                            <div className=" flex  items-center gap-4 ">
+                              <div
+                                className="  cursor-pointer   rounded-sm  border px-[2px]  py-[2px] hover:bg-black/30  "
+                                onClick={() => {
+                                  if (rooms > 1) {
+                                    setRooms((val) => val - 1);
+                                  }
+                                }}
+                              >
+                                <BiMinus className="   " />
+                              </div>
+
+                              <p className=" text-sm font-semibold lg:text-lg">
+                                {rooms}
+                              </p>
+
+                              <div className=" rounded-sm  border   px-[2px] py-[2px] hover:bg-black/30   ">
+                                <BiPlus
+                                  className=" cursor-pointer  "
+                                  onClick={() => {
+                                    setRooms((val) => val + 1);
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className=" flex   border-black  ">
+                            <div className=" w-1/2 border-r-2 border-black py-2 text-center  lg:px-4 lg:py-3 ">
+                              <p className=" pb-2  font-bold">GUESTS</p>
+                              <p>{guests}</p>
+                            </div>
+
+                            <div className=" w-1/2  py-2 text-center  lg:px-4 lg:py-3">
+                              <p className=" pb-2 font-bold">TOTAL RENT</p>
+                              <p className=" ">{grandTotal}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className=" mt-8 flex w-full justify-center font-Inter lg:mt-12">
+                          <button
+                            className=" w-full rounded-xl bg-black py-2 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
+                            onClick={displayRazorpay}
+                          >
+                            Reserve
+                          </button>
+                        </div>
+
+                        <div className=" flex   justify-center  gap-4   border-t-2 pt-6  font-Inter text-sm font-semibold   lg:pb-4 lg:pt-8  ">
+                          <p>Reservation Fee </p>
+                          <p>Rs.{FeePayable}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                <div className="  flex flex-col items-center justify-center gap-4 pb-16 pt-6 md:flex-row  lg:gap-8   lg:py-16">
+                  {listingID && <AddReview listingID={listingID} />}
+
+                  <div className=" flex h-[200px] items-center  justify-center gap-6  rounded-xl border-2  px-2  py-5   md:w-[46%] lg:h-[240px] ">
+                    <div className=" md:w-[35%] lg:w-[45%] ">
+                      <img
+                        src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
+                        alt=""
+                      />
+                    </div>
+
+                    <div className="  text-neutral-500 md:w-[60%]  ">
+                      <p className=" mt-2  text-xl font-bold text-black lg:text-[24px]">
+                        Address & Location
+                      </p>
+
+                      <div className=" mt-3 flex flex-col gap-2  text-sm   font-bold">
+                        <div className="flex gap-2">
+                          <p>{propertyData?.hotelName}</p>
+                          <p>{propertyData?.city}</p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <p>{propertyData?.district}</p>
+                          <p>{propertyData?.state}</p>
+                        </div>
+
+                        <p>{propertyData?.pinCode}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className=" mx-auto flex max-w-[90%] md:max-w-[80%]  pb-16 lg:pt-8">
+                  <div>
+                    <p className=" text-center text-3xl font-bold">
+                      More About This Place
+                    </p>
+
+                    <div className=" mt-14 text-center  text-sm font-semibold text-neutral-500 md:text-lg lg:mx-auto lg:w-3/4">
+                      <p>{propertyData?.aboutHotel}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {reviews?.length ? (
+                  <div className="  px-10 pb-14 lg:px-14">
+                    <p className=" text-center font-Sen text-4xl font-bold">
+                      Customer Reviews
+                    </p>
+
+                    <div className=" mt-14 grid grid-cols-1  gap-6 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+                      {reviews?.map((review) => (
+                        <div className=" flex  h-48 flex-col justify-between rounded-md border-2 px-6 py-6 ">
+                          <div className=" flex items-center  gap-4  font-Sen font-semibold">
+                            <div className="  h-8 w-8">
+                              {review?.image ? (
+                                <img
+                                  className=" h-full w-full rounded-full"
+                                  src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${review?.image}`}
+                                  alt=""
+                                />
+                              ) : (
+                                <img
+                                  className=" h-full w-full rounded-full"
+                                  src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${"ntfu4ktmnjkqbcix3vyh.svg"}`}
+                                  alt=""
+                                />
+                              )}
+                            </div>
+                            <p>{review.username}</p>
+                          </div>
+
+                          <div className=" mt-3 text-sm font-semibold">
+                            <p>{review.reviewMessage}</p>
+                          </div>
+
+                          <div className=" mt-1  flex  items-center justify-end gap-2">
+                            <p>{review.rating}</p>
+                            <p>
+                              <FaStar />
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
-            ) : (
-              ""
-            )}
-          </div>
-        </main>
+            </main>
+          )}{" "}
+        </>
       )}
     </>
   );

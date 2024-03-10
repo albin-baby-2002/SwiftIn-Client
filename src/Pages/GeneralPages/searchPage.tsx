@@ -23,9 +23,11 @@ import toast from "react-hot-toast";
 import { ROLES_LIST } from "../../Config/userRoles";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import ProductSkeleton from "../../Components/Skeletons/ProductSkeleton";
-import { TwishlistData, propertiesResponse, property } from "../../Types/propertyTypes";
-
-
+import {
+  TwishlistData,
+  propertiesResponse,
+  property,
+} from "../../Types/propertyTypes";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -68,6 +70,11 @@ const SearchPage = () => {
 
     const fetchData = async () => {
       try {
+        
+          window.scrollTo({
+          top: 0,
+          behavior: "smooth",  
+        });
         setIsLoading(true);
         console.log(searchState.destination, searchState.guests);
 
@@ -113,6 +120,14 @@ const SearchPage = () => {
     searchState.sortBy,
     page,
   ]);
+  
+  // useEffect(()=>{
+  //      window.scrollTo({
+  //        top: 0,
+  //        behavior: "smooth", // Optional: animated scroll
+  //      });
+  // },[loading])
+  
 
   useEffect(() => {
     let isMounted = true;
@@ -365,7 +380,7 @@ const SearchPage = () => {
               >
                 <div className="     w-full rounded-2xl sm:h-[240px]  ">
                   <img
-                    className=" h-full w-full rounded-b-xl rounded-t-2xl"
+                    className=" h-full w-full rounded-b-xl rounded-t-2xl object-cover"
                     src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
                     alt=""
                   />
@@ -375,15 +390,12 @@ const SearchPage = () => {
                   className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
                   onClick={(e) => {
                     e.stopPropagation();
-                    
-                    console.log(wishlist,'wis' )
-                    
-                 
-                    
+
+                    console.log(wishlist, "wis");
 
                     if (
                       wishlist?.find((val) => {
-                       return val._id === property._id;
+                        return val._id === property._id;
                       })
                     ) {
                       removeFromWishlist(property._id);
@@ -395,7 +407,7 @@ const SearchPage = () => {
                   <TbHeartPlus
                     className={`${
                       wishlist?.find((val) => {
-                       return  val._id === property._id;
+                        return val._id === property._id;
                       })
                         ? "  text-rose-500 "
                         : " text-white"
@@ -432,7 +444,36 @@ const SearchPage = () => {
           )}
         </div>
 
-        <div className="  mx-auto  flex w-3/4 items-center  justify-between  py-7 md:w-full    2xl:mt-12  ">
+        <div className=" flex w-full justify-center py-8 font-Sen">
+          <div className=" flex gap-4">
+            <button
+              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
+              onClick={() => setPage((page) => page - 1)}
+              disabled={page <= 1}
+            >
+              <IoIosArrowBack />
+            </button>
+            {new Array(totalPages).fill(0).map((val, i) => (
+              <div
+                className={` ${page === i + 1 ? " bg-gray-300" : ""} cursor-pointer rounded-md border-2 border-black px-2 text-sm`}
+                onClick={() => {
+                  setPage(i + 1);
+                }}
+              >
+                {i + 1}
+              </div>
+            ))}
+            <button
+              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
+              disabled={page >= totalPages}
+              onClick={() => setPage((page) => page + 1)}
+            >
+              <IoIosArrowForward />
+            </button>
+          </div>
+        </div>
+
+        {/* <div className="  mx-auto  flex w-3/4 items-center  justify-between  py-7 md:w-full    2xl:mt-12  ">
           <div className="flex items-center gap-4 text-sm 2xl:text-lg">
             <p>Total Pages : {totalPages}</p>
           </div>
@@ -456,7 +497,7 @@ const SearchPage = () => {
               <IoIosArrowForward />
             </button>
           </div>
-        </div>
+        </div> */}
         <SearchFilterModal
           reFetchData={() => {
             setTriggerRefetch((val) => !val);
