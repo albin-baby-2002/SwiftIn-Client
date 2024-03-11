@@ -18,7 +18,6 @@ interface TSearchFilterModalProps {
 }
 
 const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
-
   const searchModalState = useSearchModal();
   const searchState = useSearchState();
 
@@ -44,7 +43,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
 
       <p className=" mt-7 font-semibold">How Many Room You need ?</p>
 
-      <div className=" mt-7 flex gap-3 text-sm">
+      <div className=" mt-7 flex gap-2 text-sm sm:gap-3">
         <p
           className={`${searchState.rooms === 1 ? "  border-black bg-black/10  " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
           onClick={() => {
@@ -107,7 +106,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
         How many people do you expect the room to accommodate?
       </p>
 
-      <div className=" mt-7 flex gap-3 text-sm">
+      <div className=" mt-7 flex gap-2 text-sm sm:gap-3">
         <p
           className={`${searchState.guests === 1 ? "  border-black bg-black/10  " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
           onClick={() => {
@@ -200,7 +199,6 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
       }}
       isOpen={searchModalState.isOpen}
       body={bodyContent}
-     
     />
   );
 };

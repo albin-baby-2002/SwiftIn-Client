@@ -1,4 +1,5 @@
 import Container from "../UiComponents/Container";
+import CenterNav from "./SubComponents/CenterNav";
 import Logo from "./SubComponents/Logo";
 import NavMenuIcons from "./SubComponents/NavMenuIcons";
 
@@ -8,51 +9,16 @@ const Navbar = () => {
       id="nav"
       className=" fixed  top-0  flow-root   w-screen bg-transparent "
     >
-      <div
-        className=" 
-              px-3
-              py-6
-           
-            "
-      >
+      <div className="  px-3 py-6 ">
         <Container>
-          <div
-            className="
-                flex
-                flex-row
-                items-center
-                justify-between
-                gap-3
-                md:gap-0"
-          >
+          <div className="flex flex-row items-center justify-between gap-3 md:gap-0">
             <div className=" ">
               <Logo />
             </div>
 
-            <div
-              className="  hidden items-center justify-between gap-3
-              sm:flex 
-            "
-            >
-              <div
-                className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-              >
-                <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                  Reservations
-                </p>
-                <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                  {" "}
-                  Wishlists
-                </p>
-                <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                  {" "}
-                  Contact Us
-                </p>
-              </div>
-            </div>
+            <CenterNav />
 
-            <div className="  flex min-w-[100px] justify-end ">
+            <div className="  flex min-w-[80px] justify-end ">
               <NavMenuIcons />
             </div>
           </div>

@@ -108,7 +108,7 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
 
           <Route
-            path="/admin/console/test"
+            path="/admin/console"
             element={
               <PrivateRoute
                 Element={Console}

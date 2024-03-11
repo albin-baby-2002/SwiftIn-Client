@@ -1,19 +1,11 @@
 import { FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-import { z } from "zod";
 
-import { AiFillAppstore } from "react-icons/ai";
 import { MdOutlineTune } from "react-icons/md";
-import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
 import useAuth from "../../Hooks/zustandStore/useAuth";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
 import { useNavigate } from "react-router-dom";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import useSearchState from "../../Hooks/zustandStore/useSearchState";
 import SearchFilterModal from "../../Components/Modals/SearchFilterModal";
@@ -28,6 +20,8 @@ import {
   propertiesResponse,
   property,
 } from "../../Types/propertyTypes";
+import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
+import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -35,20 +29,7 @@ const SearchPage = () => {
   const searchState = useSearchState();
 
   const auth = useAuth();
-
-  const registerModal = useRegisterModal();
-
-  const loginModal = useLoginModal();
-
-  const logout = useLogout();
-
-  const [mainMenu, setMainMenu] = useState(false);
-
-  const [loading, setIsLoading] = useState(false);
-
-  const toggleMainMenu = () => {
-    setMainMenu((value) => !value);
-  };
+  const [loading,setIsLoading] = useState(false)
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -70,10 +51,9 @@ const SearchPage = () => {
 
     const fetchData = async () => {
       try {
-        
-          window.scrollTo({
+        window.scrollTo({
           top: 0,
-          behavior: "smooth",  
+          behavior: "smooth",
         });
         setIsLoading(true);
         console.log(searchState.destination, searchState.guests);
@@ -120,14 +100,6 @@ const SearchPage = () => {
     searchState.sortBy,
     page,
   ]);
-  
-  // useEffect(()=>{
-  //      window.scrollTo({
-  //        top: 0,
-  //        behavior: "smooth", // Optional: animated scroll
-  //      });
-  // },[loading])
-  
 
   useEffect(() => {
     let isMounted = true;
@@ -235,28 +207,7 @@ const SearchPage = () => {
               <div className=" flex items-center  justify-between px-4 py-5   text-sm">
                 <Logo />
 
-                <div
-                  className="  hidden items-center justify-between gap-3
-              md:flex 
-            "
-                >
-                  <div
-                    className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                  >
-                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                      Reservations
-                    </p>
-                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                      {" "}
-                      Wishlists
-                    </p>
-                    <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                      {" "}
-                      Contact Us
-                    </p>
-                  </div>
-                </div>
+                <CenterNav />
 
                 <div>
                   <div
@@ -264,7 +215,7 @@ const SearchPage = () => {
     "
                   >
                     <MdOutlineTune
-                      className=" cursor-pointer text-[24px] text-white  transition duration-150 hover:scale-110 "
+                      className=" cursor-pointer text-[20px] text-white transition  duration-150 hover:scale-110 sm:text-[24px] "
                       onClick={() => {
                         if (searchModalState.isOpen) {
                           return searchModalState.onClose();
@@ -272,85 +223,8 @@ const SearchPage = () => {
                         searchModalState.onOpen();
                       }}
                     />
-                    <div
-                      onClick={toggleMainMenu}
-                      className="
-             cursor-pointer "
-                    >
-                      <AiFillAppstore className=" transform  text-[24px] text-white transition  duration-150 hover:scale-110" />
-
-                      {mainMenu && (
-                        <Menu>
-                          {auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                navigate("/manage/property");
-                              }}
-                              label="Listings"
-                            />
-                          )}
-
-                          {auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                navigate("/reservations");
-                              }}
-                              label="Reservations"
-                            />
-                          )}
-
-                          {auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                navigate("/property/listing");
-                              }}
-                              label="List Your Property"
-                            />
-                          )}
-
-                          {auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                logout();
-                              }}
-                              label="Logout"
-                            />
-                          )}
-
-                          {auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                navigate("/profile");
-                              }}
-                              label="Profile"
-                            />
-                          )}
-
-                          {!auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                registerModal.onOpen();
-                              }}
-                              label="SignUp"
-                            />
-                          )}
-
-                          {!auth.accessToken && (
-                            <MenuItem
-                              onClick={() => {
-                                loginModal.onOpen();
-                              }}
-                              label="Login"
-                            />
-                          )}
-                        </Menu>
-                      )}
-                    </div>
+                    <MainMenu />
                   </div>
-                  {/* <div className=" flex  items-center gap-2 rounded-md  bg-black px-3 py-2 font-Sen text-white">
-                    <p>Filter</p>
-                    <RxMixerHorizontal size={20} />
-                  </div> */}
                 </div>
               </div>
             </nav>

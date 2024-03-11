@@ -55,7 +55,7 @@ const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
   };
 
   return (
-    <div className=" flex h-[200px] lg:h-[240px] md:w-[46%]  items-center justify-center gap-3 rounded-xl  border-2  px-3  lg:gap-6   lg:py-5 ">
+    <div className=" flex h-[200px] lg:h-[240px] md:w-[46%]  items-center justify-center gap-3 rounded-xl  border-2  px-3  lg:gap-6   lg:py-5  max-w-[400px] md:max-w-none">
       <div className="  text-neutral-500 md:w-1/3 lg:w-1/2 ">
         <div className=" ps-1">
           <p className="  mt-2 hidden font-Sen text-lg font-bold text-black lg:block lg:text-[24px]">

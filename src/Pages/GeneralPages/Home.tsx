@@ -118,9 +118,7 @@ const Home = () => {
                   </button>
                 </div>
 
-                {/* <button className="  mt-6 rounded-lg  bg-black  px-4 py-3  text-center font-Inter text-sm  font-semibold text-white  md:mt-10 md:text-base lg:mt-12">
-                  Reserve Now
-                </button> */}
+               
               </div>
             </div>
           </div>

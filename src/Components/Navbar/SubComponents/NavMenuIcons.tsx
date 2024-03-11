@@ -9,6 +9,7 @@ import useLoginModal from "../../../Hooks/zustandStore/useLoginModal";
 import useAuth from "../../../Hooks/zustandStore/useAuth";
 import useLogout from "../../../Hooks/AuthHooks/useLogout";
 import { useNavigate } from "react-router-dom";
+import MainMenu from "./MainMenu";
 
 const NavMenuIcons = () => {
   const navigate = useNavigate();
@@ -36,10 +37,11 @@ const NavMenuIcons = () => {
 
   return (
     <div
-      className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[12px] py-[6px]
+      className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[12px] py-2
     "
     >
-      <div
+      <MainMenu />
+      {/* <div
         onClick={toggleMainMenu}
         className="
              cursor-pointer "
@@ -112,7 +114,7 @@ const NavMenuIcons = () => {
             )}
           </Menu>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -65,7 +65,7 @@ const ReservationsManagement = () => {
       <main
         className={`${navBar ? " w-[55%] sm:w-[60%] md:w-[70%] lg:w-[75%] " : " w-full"} max-h-screen   `}
       >
-        <div className=" grid h-full  w-full grid-rows-[75px,1fr,60px]">
+        <div className=" grid h-full  w-full grid-rows-[70px,1fr,60px]">
           <div
             className="
            mx-auto

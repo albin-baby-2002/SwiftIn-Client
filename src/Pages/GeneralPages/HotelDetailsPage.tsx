@@ -6,13 +6,10 @@ import {
   FaStar,
 } from "react-icons/fa";
 
-import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
 import { useNavigate, useParams } from "react-router-dom";
 import useLogout from "../../Hooks/AuthHooks/useLogout";
 import useAuth from "../../Hooks/zustandStore/useAuth";
-import { AiFillAppstore } from "react-icons/ai";
 import { RiTvLine } from "react-icons/ri";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -44,6 +41,7 @@ import "../../style.css";
 import { Pagination } from "swiper/modules";
 import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
 import DataLoader from "../../Components/Loaders/DataLoader";
+import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
 
 const amenitiesTypes = {
   WIFI: "freeWifi",
@@ -57,24 +55,7 @@ const amenitiesTypes = {
 // the jsx function
 
 const HotelDetailsPage = () => {
-  // state of nav menu
-  const [menu, setMenu] = useState(false);
 
-  // function to toggle the nav menu
-
-  const toggleMenu = () => {
-    setMenu((value) => !value);
-  };
-
-  // state of login and register modal
-
-  const registerModal = useRegisterModal();
-
-  const loginModal = useLoginModal();
-
-  // logout hook
-
-  const logout = useLogout();
 
   const handleSelectedChat = useHandleSelectedChat();
 
@@ -489,28 +470,7 @@ const HotelDetailsPage = () => {
             <div className=" flex items-center  justify-between px-4 py-5   text-sm">
               <Logo />
 
-              <div
-                className="  hidden items-center justify-between gap-3
-              md:flex 
-            "
-              >
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
-              </div>
+           <CenterNav/>
 
               <div className=" flex min-w-[70px]  justify-end">
                 <div
@@ -699,16 +659,94 @@ const HotelDetailsPage = () => {
                 </div>
 
                 <div className="  my-16  flex flex-col  items-center md:flex-row">
-                  <div className=" mx-auto mb-14  w-[80%] font-Sen font-semibold sm:w-[70%] md:mb-0 md:w-[55%] md:max-w-[390px] lg:max-w-[500px]  ">
+                  <div className=" mx-auto mb-14  w-[90%]  font-Sen font-semibold sm:w-[85%] md:mb-0 md:w-[55%] md:max-w-[500px] lg:max-w-[600px]  ">
                     <p className=" text-center text-3xl md:text-2xl lg:text-3xl ">
                       What this place offers
                     </p>
 
-                    <div className=" mt-8 flex flex-col gap-9  md:text-sm lg:text-base  ">
+                    <div className=" mt-12 flex flex-col gap-9 text-xs  sm:text-base md:text-sm lg:text-base  ">
+                      <div className="  grid grid-cols-2 ">
+                        <div className="  w-[130px] justify-self-center sm:w-[175px]   ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <FaRegSnowflake className=" text-lg md:text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Air Conditioning
+                            </p>
+                          </div>
+                        </div>
+                        <div className=" w-[130px] justify-self-center sm:w-[175px] ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <MdOutlinePool className=" text-lg md:text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Common Pool
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className=" grid   grid-cols-[1fr,1fr] ">
+                        <div className="  w-[130px] justify-self-center  sm:w-[175px]  ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <TiWiFi className="text-lg md:text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Free wifi
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className=" w-[130px] justify-self-center sm:w-[175px]  ">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <RiTvLine className=" text-lg md:text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Cable Tv
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="  grid grid-cols-2">
+                        <div className=" w-[130px] justify-self-center sm:w-[175px]">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <FaHotTub className=" text-lg md:text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Hot Tub
+                            </p>
+                          </div>
+                        </div>
+                        <div className=" w-[130px] justify-self-center sm:w-[175px]">
+                          <div className=" flex items-center  gap-4 justify-self-start">
+                            <FaCar className=" text-lg md:text-xl lg:text-3xl" />
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
+                            >
+                              Car Parking
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* <div className=" mx-auto mb-14  w-[85%]  font-Sen font-semibold sm:w-[70%] md:mb-0 md:w-[55%] md:max-w-[390px] lg:max-w-[500px]  ">
+                    <p className=" text-center text-3xl md:text-2xl lg:text-3xl ">
+                      What this place offers
+                    </p>
+
+                    <div className=" mt-8 flex flex-col gap-9 text-xs  sm:text-sm lg:text-base  ">
                       <div className=" flex  w-full justify-between lg:mx-auto">
                         <div className=" grid  w-[67%] grid-cols-1 md:w-[50%] lg:w-[67%] lg:ps-6   ">
                           <div className=" flex items-center  gap-4 justify-self-start">
-                            <TiWiFi className=" text-xl lg:text-3xl" />
+                            <TiWiFi className="text-lg md:text-xl lg:text-3xl" />
                             <p
                               className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
                             >
@@ -719,7 +757,7 @@ const HotelDetailsPage = () => {
 
                         <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
                           <div className=" flex items-center  gap-4 justify-self-start">
-                            <MdOutlinePool className=" text-xl lg:text-3xl" />
+                            <MdOutlinePool className=" text-lg md:text-xl lg:text-3xl" />
                             <p
                               className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
                             >
@@ -732,7 +770,7 @@ const HotelDetailsPage = () => {
                       <div className=" flex  w-full justify-between lg:mx-auto">
                         <div className=" grid w-[67%] grid-cols-1 md:w-[50%]  lg:w-[67%] lg:ps-6   ">
                           <div className=" flex items-center  gap-4 justify-self-start">
-                            <FaRegSnowflake className=" text-xl lg:text-3xl" />
+                            <FaRegSnowflake className=" text-lg md:text-xl lg:text-3xl" />
                             <p
                               className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
                             >
@@ -743,7 +781,7 @@ const HotelDetailsPage = () => {
 
                         <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
                           <div className=" flex items-center  gap-4 justify-self-start">
-                            <FaCar className=" text-xl lg:text-3xl" />
+                            <FaCar className=" text-lg md:text-xl lg:text-3xl" />
                             <p
                               className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
                             >
@@ -756,7 +794,7 @@ const HotelDetailsPage = () => {
                       <div className=" flex  w-full justify-between lg:mx-auto">
                         <div className=" grid w-[67%] grid-cols-1 md:w-[50%] lg:w-[67%] lg:ps-6   ">
                           <div className=" flex items-center  gap-4 justify-self-start">
-                            <RiTvLine className=" text-xl lg:text-3xl" />
+                            <RiTvLine className=" text-lg md:text-xl lg:text-3xl" />
                             <p
                               className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
                             >
@@ -767,7 +805,7 @@ const HotelDetailsPage = () => {
 
                         <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
                           <div className=" flex items-center  gap-4 justify-self-start">
-                            <FaHotTub className=" text-xl lg:text-3xl" />
+                            <FaHotTub className=" text-lg md:text-xl lg:text-3xl" />
                             <p
                               className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
                             >
@@ -777,7 +815,7 @@ const HotelDetailsPage = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className=" mt-6 w-[80%] md:mt-0 md:w-[45%]">
                     <div className="   mx-auto   flex  max-w-[420px]  justify-center rounded-xl border border-neutral-300  py-6 shadow-2xl md:max-w-[325px]  lg:max-w-[400px] ">
@@ -899,26 +937,26 @@ const HotelDetailsPage = () => {
                 <div className="  flex flex-col items-center justify-center gap-4 pb-16 pt-6 md:flex-row  lg:gap-8   lg:py-16">
                   {listingID && <AddReview listingID={listingID} />}
 
-                  <div className=" flex h-[200px] items-center  justify-center gap-6  rounded-xl border-2  px-2  py-5   md:w-[46%] lg:h-[240px] ">
-                    <div className=" md:w-[35%] lg:w-[45%] ">
+                  <div className=" flex h-[200px] max-w-[400px] items-center justify-center  gap-6 rounded-xl  border-2 px-2  py-5  md:w-[46%]   md:max-w-none lg:h-[240px] ">
+                    <div className="w-1/2  md:w-[35%] lg:w-[45%] ">
                       <img
                         src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
                         alt=""
                       />
                     </div>
 
-                    <div className="  text-neutral-500 md:w-[60%]  ">
+                    <div className="  w-1/2 text-neutral-500  md:w-[60%]  ">
                       <p className=" mt-2  text-xl font-bold text-black lg:text-[24px]">
                         Address & Location
                       </p>
 
-                      <div className=" mt-3 flex flex-col gap-2  text-sm   font-bold">
-                        <div className="flex gap-2">
+                      <div className=" mt-3 flex flex-col gap-1 text-xs  font-bold md:gap-2   md:text-sm">
+                        <div className="flex gap-1 md:gap-2">
                           <p>{propertyData?.hotelName}</p>
                           <p>{propertyData?.city}</p>
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 md:gap-2">
                           <p>{propertyData?.district}</p>
                           <p>{propertyData?.state}</p>
                         </div>
@@ -929,13 +967,13 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className=" mx-auto flex max-w-[90%] md:max-w-[80%]  pb-16 lg:pt-8">
+                <div className=" mx-auto flex max-w-[90%] pb-16  md:max-w-[80%] lg:pt-8">
                   <div>
                     <p className=" text-center text-3xl font-bold">
                       More About This Place
                     </p>
 
-                    <div className=" mt-14 text-center  text-sm font-semibold text-neutral-500 md:text-lg lg:mx-auto lg:w-3/4">
+                    <div className=" mt-14 text-center  text-sm font-semibold text-neutral-500 md:text-lg ">
                       <p>{propertyData?.aboutHotel}</p>
                     </div>
                   </div>
