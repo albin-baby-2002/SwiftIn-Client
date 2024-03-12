@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import { bookingInfo, bookingsDataResponse } from "../../Types/bookingTypes";
 import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
+import { FaInfoCircle } from "react-icons/fa";
+import ReservationDetailsModal from "../../Components/Modals/ReservationDetailsModal";
+import useReservationDetailsModal from "../../Hooks/zustandStore/userReservationDetailsModal";
 
 const Reservations = () => {
   // axios private hook
@@ -16,6 +19,8 @@ const Reservations = () => {
   // bookings
 
   const [bookings, setBookings] = useState<bookingInfo[] | []>([]);
+
+  const reservationDetailsModalState = useReservationDetailsModal();
 
   useEffect(() => {
     let isMounted = true;
@@ -100,7 +105,6 @@ const Reservations = () => {
                 <div className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[8px] py-[6px] ">
                   <MainMenu />
                 </div>
-               
               </div>
             </div>
           </nav>
@@ -114,21 +118,44 @@ const Reservations = () => {
             Your Reservations
           </h1>
 
-          <div className=" grid grid-cols-2 gap-4 ">
+          <div className=" grid grid-cols-4 gap-4 ">
             {bookings.map((booking) => (
-              <div className="      items-center justify-center gap-4 rounded-xl  bg-white px-6 py-6 ">
+              <div className="      items-center justify-center gap-4 rounded-xl  bg-white px-6  ">
                 <div className=" flex gap-4">
                   <div className=" flex   flex-col items-center">
-                    <div className=" flex h-[200px] w-[240px]  justify-center">
+                    <div className=" flex w-full  items-center justify-between py-4">
+                      <p className="   ps-1 font-Sen text-lg font-bold">
+                        {booking.addressData.addressLine}
+                      </p>
+                      <p
+                        className=" cursor-pointer"
+                        onClick={() => {
+                          reservationDetailsModalState.onOpen(booking._id);
+                        }}
+                      >
+                        <FaInfoCircle size={18} className=" text-gray-500" />
+                      </p>
+                    </div>
+                    <div className=" flex min-h-[150px] w-full justify-center">
                       <img
                         className="  h-full rounded-md  "
                         src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${booking.image}`}
                         alt=""
                       />
                     </div>
+                    <div className=" w-full py-4  text-white ">
+                      <button
+                        className="  w-full rounded-md bg-black py-2 text-sm font-semibold hover:bg-black/90"
+                        onClick={() => {
+                          cancelReservation(booking._id);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
 
-                  <div className=" flex flex-col items-center  px-2 ">
+                  {/* <div className=" flex flex-col items-center  px-2 ">
                     <p className="  mt- font-Sen text-2xl font-bold">
                       {booking.addressData.addressLine}
                     </p>
@@ -176,13 +203,14 @@ const Reservations = () => {
                         Cancel
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))}
           </div>
         </Container>
       </main>
+      <ReservationDetailsModal bookings={bookings} />
     </>
   );
 };

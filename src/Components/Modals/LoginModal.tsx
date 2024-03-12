@@ -80,7 +80,7 @@ const LoginModal = () => {
       } else if (err.response?.status === 500) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else if (err.response?.status === 404) {
-        toast.error("Failed to identify user. Login again");
+        toast.error("This email is not registered");
       } else {
         toast.error("Login Failed");
       }

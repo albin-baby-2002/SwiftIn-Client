@@ -1,19 +1,15 @@
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import AddUserModal from "../../Components/Admin/Modals/AddUserModal";
-import { FaChevronRight, FaEdit, FaSearch } from "react-icons/fa";
-import Container from "../../Components/UiComponents/Container";
+import {  FaSearch } from "react-icons/fa";
 import Navbar from "../../Components/Admin/Navbar/Navbar";
 
 import { useEffect, useState } from "react";
 
-import EditUserModal from "../../Components/Admin/Modals/EditUserModal";
 import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
 import { z } from "zod";
 import { GET_LISTINGS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { CgMenuGridR } from "react-icons/cg";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
 import DataLoader from "../../Components/Loaders/DataLoader";
 
 type listingData = z.infer<typeof HotelListingSchema> & {

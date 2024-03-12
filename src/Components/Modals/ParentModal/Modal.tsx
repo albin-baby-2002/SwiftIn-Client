@@ -6,9 +6,9 @@ interface ModelProps {
   isOpen: boolean;
   disabled?: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit?: () => void;
   title?: string;
-  body?: React.ReactElement;
+  body?: React.ReactElement |JSX.Element[];
   footer?: React.ReactElement;
   submitActionLabel?: string;
   wider?: boolean;
@@ -46,8 +46,10 @@ const Modal: React.FC<ModelProps> = ({
     if (disabled) {
       return;
     }
-
-    onSubmit();
+    if(onSubmit){
+      
+      onSubmit();
+    }
   };
 
   if (!isOpen) {

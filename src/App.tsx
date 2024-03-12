@@ -24,6 +24,7 @@ import ManageReservations from "./Pages/Host Pages/ManageReservations";
 import Chat from "./Pages/UserPages/Chat";
 import Wishlist from "./Pages/UserPages/Wishlist";
 import ReservationsManagement from "./Pages/AdminPages/ReservationsManagement";
+import Hosts from "./Pages/AdminPages/Hosts";
 
 function App() {
   const router = createBrowserRouter(
@@ -112,6 +113,16 @@ function App() {
             element={
               <PrivateRoute
                 Element={Console}
+                allowedRoles={[ROLES_LIST.Admin]}
+              />
+            }
+          />
+
+          <Route
+            path="/admin/hosts"
+            element={
+              <PrivateRoute
+                Element={Hosts}
                 allowedRoles={[ROLES_LIST.Admin]}
               />
             }
