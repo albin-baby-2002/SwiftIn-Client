@@ -17,9 +17,11 @@ import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 import { Link, useNavigate } from "react-router-dom";
-import { hostReservationsData, hostReservationsResponse } from "../../Types/hostPagesTypes";
-
-
+import {
+  hostReservationsData,
+  hostReservationsResponse,
+} from "../../Types/hostPagesTypes";
+import HostNav from "../../Components/HostComponents/HostNav";
 
 const ManageReservations = () => {
   const [navigation, setNavigation] = useState(true);
@@ -94,87 +96,7 @@ const ManageReservations = () => {
 
   return (
     <div className=" mx-auto flex h-screen w-screen   max-w-[1800px]  ">
-      <nav
-        className={`${navigation ? "" : "hidden"}  z-10 min-w-[25%] overflow-y-scroll border-x-[2px]   bg-white px-4 font-Inter`}
-      >
-        <div>
-          <div>
-            <div className=" flex flex-col gap-3 px-4 py-8 md:gap-0">
-              <div className="  y-3 flex   flex-col  gap-4   rounded-md border-2  border-black bg-black px-3 py-3  text-[18px]">
-                <div className=" flex h-5    justify-center">
-                  <img
-                    src={swiftin}
-                    alt=""
-                    className=" h-full cursor-pointer"
-                    onClick={() => {
-                      navigate("/");
-                    }}
-                  />
-                </div>
-                {/* 
-                <p className="  text-center font-bold">Host Console</p> */}
-              </div>
-
-              <div className=" mt-6 flex  flex-col  text-lg font-semibold  text-gray-500">
-                <p className=" text-lg text-neutral-400">Manageable </p>
-
-                <div className=" mt-6  flex flex-col gap-4 ps-4 text-sm">
-                  <div className=" flex items-center gap-4">
-                    <FaBook />
-                    <p>Reservations</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <FaHotel />
-                    <p>Listings</p>
-                  </div>
-                  <div className=" flex items-center gap-4">
-                    <IoMdMail />
-                    <p>Messages</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className=" mt-7 flex  flex-col  text-lg font-semibold  text-gray-500">
-                <p className=" text-lg text-neutral-400">Navigations </p>
-
-                <div className=" mt-6  flex flex-col gap-4 ps-4 text-sm">
-                  <div className=" flex items-center gap-4">
-                    <FaHome />
-                    <p>Home</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <BiBookHeart />
-                    <p>Wishlists</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <FaLocationDot />
-                    <p>Bookings</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className=" mt-7 flex  flex-col  text-lg font-semibold  text-gray-500">
-                <p className=" text-lg text-neutral-400">Accounts </p>
-
-                <div className=" mt-6  flex flex-col gap-4 ps-4 text-sm">
-                  <div className=" flex items-center gap-4">
-                    <IoPerson />
-                    <p>Profile</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <FaPowerOff />
-                    <p>Logout</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {navigation && <HostNav />}
 
       <main
         className={`${navigation ? " max-w-[75%]" : ""} w-full   border-r-2  bg-gray-100    pb-10  font-Sen `}

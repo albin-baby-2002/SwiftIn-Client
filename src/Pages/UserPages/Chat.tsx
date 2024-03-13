@@ -397,7 +397,10 @@ const Chat = () => {
                                 </p>
 
                                 <p className="  lowercase">
-                                  {chat.latestMessage?.content}
+                                  {chat?.latestMessage?.content.length > 20
+                                    ? chat.latestMessage.content.slice(0, 20) +
+                                      "..."
+                                    : chat.latestMessage?.content}
                                 </p>
                               </div>
                             </div>
@@ -469,19 +472,22 @@ const Chat = () => {
                         ref={messageBox}
                         className=" h-full overflow-y-auto bg-gray-200"
                       >
-                        <div className=" px-3 py-4 text-sm">
-                          {messages &&
-                            messages.map((message, index) => (
-                              <div
-                                className={`${message.sender._id === auth.userID ? " justify-end " : " justify-start "} flex`}
-                              >
-                                <p
-                                  className={`${message.sender._id === auth.userID ? "  rounded-s-md rounded-br-md bg-gray-300 " : " rounded-e-md rounded-bl-md bg-slate-300"} ${!checkIsTheLastMessage(index) && message.sender._id === auth.userID ? "rounded-tr-md " : ""} ${!checkIsTheLastMessage(index) && message.sender._id !== auth.userID ? "rounded-tl-md " : ""} my-3 flex px-3 py-1`}
+                        <div className=" flex h-full flex-col justify-between px-3 py-4 text-sm">
+                          <div>
+                            {messages &&
+                              messages.map((message, index) => (
+                                <div
+                                  className={`${message.sender._id === auth.userID ? " justify-end " : " justify-start "} flex `}
                                 >
-                                  {message.content}
-                                </p>
-                              </div>
-                            ))}
+                                  <p
+                                    className={`${message.sender._id === auth.userID ? "  rounded-s-md rounded-br-md bg-gray-300  " : " rounded-e-md rounded-bl-md bg-slate-300"} ${!checkIsTheLastMessage(index) && message.sender._id === auth.userID ? "rounded-tr-md " : ""} ${!checkIsTheLastMessage(index) && message.sender._id !== auth.userID ? "rounded-tl-md " : ""} my-3 flex max-w-[55%]  px-3 py-1 md:max-w-[40%]`}
+                                  >
+                                    {message.content}
+                                  </p>
+                                </div>
+                              ))}
+                          </div>
+
                           {isTyping ? (
                             <div className="  my-1 text-xs">typing...</div>
                           ) : (

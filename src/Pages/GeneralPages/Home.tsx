@@ -30,10 +30,10 @@ const Home = () => {
 
       <main>
         <div className="mx-auto max-w-[1500px]">
-          <div className="   flex  h-screen items-center justify-center bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1708764087/hkwzciljjmdjbv2l4aps.jpg')]  bg-cover">
-            <div className="   mt-[px] pb-12 pt-[110px] text-center   md:pb-0   ">
-              <div className=" xl:py-18 mx-6  flex  flex-col items-center  justify-center gap-2 rounded-md  bg-white/80 px-3 py-12 sm:mx-8 md:mx-auto md:max-w-[700px] lg:max-w-[800px] lg:px-6 xl:max-w-none  ">
-                <div className=" text-[28px]    font-bold leading-[1.4]  lg:text-3xl xl:text-4xl  ">
+          <div className="   flex h-screen   items-center justify-center bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1708764087/hkwzciljjmdjbv2l4aps.jpg')]  bg-cover">
+            <div className="   mt-[px] text-center sm:pb-12 sm:pt-[110px]   md:pb-0   ">
+              <div className=" xl:py-18  mx-auto  flex  max-w-[90%] flex-col  items-center justify-center gap-2  rounded-md bg-white/80 px-3 py-12 sm:mx-8 md:max-w-[700px] lg:max-w-[800px] lg:px-6 xl:max-w-none  ">
+                <div className=" text-xl font-bold    leading-[1.4] sm:text-[28px]  lg:text-3xl xl:text-4xl  ">
                   <p className="  text ">
                     Stay In The Best Place For Your Winter Travel{" "}
                   </p>
@@ -42,12 +42,12 @@ const Home = () => {
                   </p>
                 </div>
 
-                <p className=" mx-auto  mt-3  w-[70%]   font-bold leading-relaxed text-neutral-500 md:mx-0 md:mr-6 lg:mt-6  lg:w-[60%] lg:text-base  xl:text-xl  ">
+                <p className=" mx-auto  mt-3 w-[85%]  text-sm  font-bold  leading-relaxed text-neutral-500 sm:w-[70%] md:mx-0 md:mr-6 lg:mt-6  lg:w-[60%] lg:text-base  xl:text-xl  ">
                   Reserve Your Dream Hotel Now Any Where in India By Paying Just
                   10% of the Hotel Fee{" "}
                 </p>
 
-                <div className="    mt-6   flex   justify-between     gap-7 rounded-xl bg-black px-3 py-3 align-middle text-xs sm:text-base ">
+                <div className="    mt-6   flex   justify-between      rounded-xl bg-black px-3 py-3 align-middle text-[10px] sm:gap-7 sm:text-base ">
                   <div className=" flex  items-center gap-2 ps-2">
                     <FaMapLocationDot className=" text-white" size={20} />
                     <input
@@ -61,7 +61,7 @@ const Home = () => {
                     />
                   </div>
 
-                  <div className=" relative flex  items-center gap-2">
+                  <div className=" relative flex    items-center gap-2">
                     <IoIosPeople className=" text-white" size={25} />
                     <p className=" font-semibold text-white">Guests</p>
                     <input
@@ -102,7 +102,7 @@ const Home = () => {
                   </div>
 
                   <button
-                    className="   rounded-lg bg-white  px-3 py-1  text-xs font-semibold outline outline-1  outline-white "
+                    className="   rounded-lg bg-white  px-2 ms-3 py-1 text-xs  font-semibold outline outline-1 outline-white  sm:px-3 "
                     onClick={() => {
                       searchState.setData(
                         destination,
@@ -117,8 +117,6 @@ const Home = () => {
                     <FaSearch />
                   </button>
                 </div>
-
-               
               </div>
             </div>
           </div>

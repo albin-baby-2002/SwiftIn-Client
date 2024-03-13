@@ -7,7 +7,7 @@ interface TcardSkeletonProps {
 }
 
 const ProductSkeleton: React.FC<TcardSkeletonProps> = ({ count }) => {
-  let CardCount: number[] = new Array(count).fill(0);
+  const CardCount: number[] = new Array(count).fill(0);
 
   return CardCount.map((v, i) => (
     <div key={i} className=" min-h-[270px] sm:min-h-[330px] w-[90%]">

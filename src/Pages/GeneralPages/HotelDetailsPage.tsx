@@ -55,8 +55,6 @@ const amenitiesTypes = {
 // the jsx function
 
 const HotelDetailsPage = () => {
-
-
   const handleSelectedChat = useHandleSelectedChat();
 
   // getting hotel listingID from params
@@ -470,7 +468,7 @@ const HotelDetailsPage = () => {
             <div className=" flex items-center  justify-between px-4 py-5   text-sm">
               <Logo />
 
-           <CenterNav/>
+              <CenterNav />
 
               <div className=" flex min-w-[70px]  justify-end">
                 <div
@@ -650,7 +648,7 @@ const HotelDetailsPage = () => {
                         onClick={() => {
                           handleMessageHost(propertyData.hostID);
                         }}
-                        className=" cursor-pointer text-xs"
+                        className=" cursor-pointer text-xs transition-all duration-300 hover:scale-105"
                       >
                         Message the Host Now
                       </p>

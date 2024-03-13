@@ -51,7 +51,7 @@ const MainMenu = () => {
                 onClick={() => {
                   navigate("/manage/property");
                 }}
-                label="Listings"
+                label="Host Dashboard"
               />
             )}
 
@@ -61,6 +61,14 @@ const MainMenu = () => {
                   navigate("/reservations");
                 }}
                 label="Reservations"
+              />
+            )}
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  navigate("/wishlist");
+                }}
+                label="Wishlist"
               />
             )}
 

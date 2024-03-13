@@ -18,9 +18,13 @@ import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 import { Link, useNavigate } from "react-router-dom";
-import { hostListingsData, hostListingsResponse } from "../../Types/hostPagesTypes";
-
-
+import {
+  hostListingsData,
+  hostListingsResponse,
+} from "../../Types/hostPagesTypes";
+import HostNav from "../../Components/HostComponents/HostNav";
+import DataLoader from "../../Components/Loaders/DataLoader";
+import TableLoader from "../../Components/Loaders/TableLoader";
 
 const ManageListings = () => {
   const [navigation, setNavigation] = useState(true);
@@ -36,22 +40,22 @@ const ManageListings = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
-  const navigate = useNavigate()
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    
-    
     let isMounted = true;
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await AxiosPrivate.get<hostListingsResponse>(
           GET_HOST_LISTINGS_URL,
           {
             params: { search, page },
           },
         );
+        setLoading(false);
 
         if (isMounted) {
           setPropertiesList(response.data.properties);
@@ -60,7 +64,9 @@ const ManageListings = () => {
 
           // console.log(response.data);
         }
-      } catch (err:any) {
+      } catch (err: any) {
+        setLoading(false);
+
         if (!err?.response) {
           toast.error("No Server Response");
         } else if (err.response?.status === 400) {
@@ -126,85 +132,7 @@ const ManageListings = () => {
 
   return (
     <div className=" mx-auto flex h-screen w-screen   max-w-[1800px]  ">
-      <nav
-        className={`${navigation ? "" : "hidden"}  z-10 min-w-[25%] overflow-y-scroll border-x-[2px]   bg-white px-4 font-Inter`}
-      >
-        <div>
-          <div>
-            <div className=" flex flex-col gap-3 px-4 py-8 md:gap-0">
-              <div className="  y-3 flex   flex-col  gap-4   rounded-md border-2  border-black bg-black px-3 py-3  text-[18px]">
-                <div className=" flex h-5    justify-center">
-                  <img
-                    src={swiftin}
-                    alt=""
-                    className=" h-full cursor-pointer"
-                    onClick={()=>{navigate('/')}}
-                  />
-                </div>
-                {/* 
-                <p className="  text-center font-bold">Host Console</p> */}
-              </div>
-
-              <div className=" mt-6 flex  flex-col  text-lg font-semibold  text-gray-500">
-                <p className=" text-lg text-neutral-400">Manageable </p>
-
-                <div className=" mt-6  flex flex-col gap-4 ps-4 text-sm">
-                  <div className=" flex items-center gap-4">
-                    <FaBook />
-                    <p>Reservations</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <FaHotel />
-                    <p>Listings</p>
-                  </div>
-                  <div className=" flex items-center gap-4">
-                    <IoMdMail />
-                    <p>Messages</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className=" mt-7 flex  flex-col  text-lg font-semibold  text-gray-500">
-                <p className=" text-lg text-neutral-400">Navigations </p>
-
-                <div className=" mt-6  flex flex-col gap-4 ps-4 text-sm">
-                  <div className=" flex items-center gap-4">
-                    <FaHome />
-                    <p>Home</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <BiBookHeart />
-                    <p>Wishlists</p>
-                  </div>
-
-                  <div className=" flex items-center gap-4">
-                    <FaLocationDot />
-                    <p>Bookings</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className=" mt-7 flex  flex-col  text-lg font-semibold  text-gray-500">
-                <p className=" text-lg text-neutral-400">Accounts </p>
-
-                <div className=" mt-6  flex flex-col gap-4 ps-4 text-sm">
-                  <div className=" flex items-center gap-4">
-                    <IoPerson />
-                    <p>Profile</p>
-                  </div>
-
-                  <div className=" flex items-center  gap-4">
-                    <FaPowerOff />
-                    <p>Logout</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {navigation && <HostNav />}
 
       <main
         className={`${navigation ? " max-w-[75%]" : ""} w-full   border-r-2  bg-gray-100    pb-10  font-Sen `}
@@ -252,78 +180,86 @@ const ManageListings = () => {
               </div>
 
               <div className=" min-h-[60vh] ">
-                {propertiesList && propertiesList.length > 0 ? (
-                  propertiesList?.map((property, index) => (
-                    <div className="   border-b-2 px-6 font-Sen  text-sm ">
-                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
-                        <div className=" flex items-center  gap-2 text-left   ">
-                          <div>
-                            <img
-                              src={`https://res.cloudinary.com/dfm8vhuea/image/upload/c_thumb,h_40,w_50/${property.mainImage}`}
-                              alt=""
-                            />
-                          </div>
-
-                          <p>{property.buildingName}</p>
-                        </div>
-                        <p className=" self-center  text-center    ">
-                          {" "}
-                          {property.approvedForReservation ? "true" : "false"}
-                        </p>
-                        <p className=" self-center  text-center ">
-                          {property.totalRooms}
-                        </p>
-                        <p className=" self-center  text-center ">
-                          {property.roomType}
-                        </p>
-                        <p className=" self-center  text-center ">
-                          {property.location}
-                        </p>
-
-                        <div className=" flex items-center  justify-center gap-4  text-xl">
-                          <div className="  w-10  text-xs">
-                            {property.isActiveForReservation ? (
-                              <p
-                                className=" cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white "
-                                onClick={() => {
-                                  deActivateListing(property._id);
-                                }}
-                              >
-                                block
-                              </p>
-                            ) : (
-                              <p
-                                className="  cursor-pointer rounded-md border-2  border-neutral-500  px-[2px]   py-[2px]  hover:bg-green-600 hover:text-white"
-                                onClick={() => {
-                                  activateListing(property._id);
-                                }}
-                              >
-                                open
-                              </p>
-                            )}
-                          </div>
-
-                          <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px] hover:bg-gray-400">
-                            <BiEditAlt
-                              className=" cursor-pointer text-sm"
-                              onClick={() => {
-                                editListingModalState.setData(property._id);
-                                editListingModalState.openDataModal();
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className=" flex min-h-[55vh] items-center justify-center font-Inter font-bold">
-                    <p>No Listing Data Found</p>
+                {loading ? (
+                  <div className=" flex min-h-[300px] items-center">
+                    <TableLoader />
                   </div>
+                ) : (
+                  <>
+                    {propertiesList && propertiesList.length > 0 ? (
+                      propertiesList?.map((property, index) => (
+                        <div className="   border-b-2 px-6 font-Sen  text-sm ">
+                          <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
+                            <div className=" flex items-center  gap-2 text-left   ">
+                              <div>
+                                <img
+                                  src={`https://res.cloudinary.com/dfm8vhuea/image/upload/c_thumb,h_40,w_50/${property.mainImage}`}
+                                  alt=""
+                                />
+                              </div>
+
+                              <p>{property.buildingName}</p>
+                            </div>
+                            <p className=" self-center  text-center    ">
+                              {" "}
+                              {property.approvedForReservation
+                                ? "true"
+                                : "false"}
+                            </p>
+                            <p className=" self-center  text-center ">
+                              {property.totalRooms}
+                            </p>
+                            <p className=" self-center  text-center ">
+                              {property.roomType}
+                            </p>
+                            <p className=" self-center  text-center ">
+                              {property.location}
+                            </p>
+
+                            <div className=" flex items-center  justify-center gap-4  text-xl">
+                              <div className="  w-10  text-xs">
+                                {property.isActiveForReservation ? (
+                                  <p
+                                    className=" cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white "
+                                    onClick={() => {
+                                      deActivateListing(property._id);
+                                    }}
+                                  >
+                                    block
+                                  </p>
+                                ) : (
+                                  <p
+                                    className="  cursor-pointer rounded-md border-2  border-neutral-500  px-[2px]   py-[2px]  hover:bg-green-600 hover:text-white"
+                                    onClick={() => {
+                                      activateListing(property._id);
+                                    }}
+                                  >
+                                    open
+                                  </p>
+                                )}
+                              </div>
+
+                              <div className=" rounded-md border-2 border-neutral-500 px-[2px] py-[2px] hover:bg-gray-400">
+                                <BiEditAlt
+                                  className=" cursor-pointer text-sm"
+                                  onClick={() => {
+                                    editListingModalState.setData(property._id);
+                                    editListingModalState.openDataModal();
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className=" flex min-h-[55vh] items-center justify-center font-Inter font-bold">
+                        <p>No Listing Data Found</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
-
-             
             </div>
           </div>
         </div>
