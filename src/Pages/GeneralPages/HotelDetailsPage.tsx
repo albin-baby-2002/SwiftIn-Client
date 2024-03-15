@@ -8,40 +8,49 @@ import {
 
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { useNavigate, useParams } from "react-router-dom";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import { RiTvLine } from "react-icons/ri";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import toast from "react-hot-toast";
 import { TiWiFi } from "react-icons/ti";
-import { AxiosRequestConfig } from "axios";
+import { AxiosError, AxiosRequestConfig } from "axios";
 import { TbHeartPlus } from "react-icons/tb";
 import { MdOutlinePool } from "react-icons/md";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { useEffect, useMemo, useState } from "react";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
-import { ROLES_LIST } from "../../Config/userRoles";
+import { ROLES_LIST } from "../../Enums/userRoles";
 import useHandleSelectedChat from "../../Hooks/ChatHooks/useHandleSelectedChat";
-import {
-  ListingInfo,
-  SingleListingDataResponse,
-  TreviewObject,
-} from "../../Types/propertyTypes";
+
 import AddReview from "../../Components/UserComponents/AddReview/AddReview";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-import "../../style.css";
+import "../../swiperStyles.css";
 
 // import required modules
 import { Pagination } from "swiper/modules";
 import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
 import DataLoader from "../../Components/Loaders/DataLoader";
 import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
+import {
+  ADD_TO_WISHLIST_URL,
+  CHECK_ROOM_AVAILIBILITY,
+  CREATE_ORDER_URL,
+  LISTING_DETAILS_URL,
+  PAYMENT_SUCCESS_URL,
+  REMOVE_FROM_WISHLIST_URL,
+  WISHLIST_DETAILS_URL,
+} from "../../Api/EndPoints";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import {
+  TGetListingDataResp,
+  TListingData,
+  TReviewData,
+  TWishlistData,
+} from "../../Types/GeneralTypes/apiResponseTypes";
 
 const amenitiesTypes = {
   WIFI: "freeWifi",
@@ -63,11 +72,11 @@ const HotelDetailsPage = () => {
 
   // data of property shown on the page
 
-  const [propertyData, SetPropertyData] = useState<ListingInfo | null>(null);
+  const [propertyData, SetPropertyData] = useState<TListingData | null>(null);
 
-  const [wishlist, setWishlist] = useState<string[] | null>(null);
+  const [wishlist, setWishlist] = useState<TWishlistData[] | null>(null);
 
-  const [reviews, SetReviews] = useState<TreviewObject[] | null>(null);
+  const [reviews, SetReviews] = useState<TReviewData[] | null>(null);
 
   const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
 
@@ -156,24 +165,22 @@ const HotelDetailsPage = () => {
       try {
         setLoading(true);
 
-        const response = await AxiosPrivate.get<SingleListingDataResponse>(
-          "/listing/details/" + `${listingID}`,
+        const response = await AxiosPrivate.get<TGetListingDataResp>(
+          LISTING_DETAILS_URL + `${listingID}`,
         );
 
         setLoading(false);
 
         if (isMounted) {
-          console.log(response.data);
           SetPropertyData(response.data.listing);
-          SetReviews(response.data.reviewData);
+          SetReviews(
+            response.data.reviewData ? response.data.reviewData : null,
+          );
           setGuests(response.data.listing.maxGuestsPerRoom);
-
-          console.log(response.data);
         }
       } catch (error) {
         setLoading(false);
         toast.error("failed to fetch page data");
-        console.error("Error fetching data:", error);
       }
     };
 
@@ -189,17 +196,15 @@ const HotelDetailsPage = () => {
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<{ wishlist: string[] }>(
-          "/user/listing/wishlist",
+        const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
+          WISHLIST_DETAILS_URL,
         );
 
         if (isMounted) {
-          setWishlist(response.data.wishlist);
-
-          console.log(response.data.wishlist);
+          setWishlist(response.data.wishLists);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -220,22 +225,19 @@ const HotelDetailsPage = () => {
         return;
       }
 
-      const response = await AxiosPrivate.patch(
-        "/user/listing/wishlist/add/" + listingID,
-        {},
-      );
+      await AxiosPrivate.patch(ADD_TO_WISHLIST_URL + listingID, {});
 
       toast.success("Added to wishlist");
 
       setTriggerWishlistRefetch((val) => !val);
-    } catch (err: any) {
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("failed to add to wishlist");
@@ -251,20 +253,18 @@ const HotelDetailsPage = () => {
         return;
       }
 
-      const response = await AxiosPrivate.patch(
-        "/user/listing/wishlist/remove/" + listingID,
-      );
+      await AxiosPrivate.patch(REMOVE_FROM_WISHLIST_URL + listingID);
 
       toast.success("removed from wishlist");
       setTriggerWishlistRefetch((val) => !val);
-    } catch (err: any) {
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("failed to remove from wishlist");
@@ -274,12 +274,18 @@ const HotelDetailsPage = () => {
 
   // api request to check if the room is available on specific days
 
+  useEffect(() => {
+    console.log(wishlist);
+
+    console.log(propertyData);
+  });
+
   const checkAvailability = async () => {
     try {
       let data = { checkInDate, checkOutDate, rooms, listingID };
 
       await AxiosPrivate.post(
-        "/user/listing/checkAvailability",
+        CHECK_ROOM_AVAILIBILITY,
         data as AxiosRequestConfig<{
           checkInDate: string;
           checKOutDate: string;
@@ -289,19 +295,17 @@ const HotelDetailsPage = () => {
       );
 
       toast.success(" Rooms are available for the given days");
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Listing Failed");
+        toast.error("Failed to find availability");
       }
     }
   };
@@ -360,18 +364,18 @@ const HotelDetailsPage = () => {
 
     let result;
     try {
-      result = await AxiosPrivate.post(
-        "/user/listing/reserve/createOrder",
-        data,
-      );
-    } catch (err: any) {
-      if (!err?.response) {
+      result = await AxiosPrivate.post(CREATE_ORDER_URL, data);
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401 || err.response?.status === 403) {
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
         toast.error("Failed Authorization:Login to reserve");
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to reserve ");
@@ -386,8 +390,6 @@ const HotelDetailsPage = () => {
     const { amount, id: order_id, currency } = result.data.order;
 
     const reservationID = result.data.reservationID;
-
-    console.log(result.data, "razor pay data");
 
     const options = {
       key: "rzp_test_rijEZunAGfAVNS",
@@ -411,21 +413,20 @@ const HotelDetailsPage = () => {
         let result;
 
         try {
-          result = await AxiosPrivate.post(
-            "/user/listing/reserve/success",
-            data,
-          );
-        } catch (err: any) {
-          if (!err?.response) {
+          result = await AxiosPrivate.post(PAYMENT_SUCCESS_URL, data);
+        } catch (err) {
+          if (!(err instanceof AxiosError)) {
             toast.error("No Server Response");
-          } else if (err.response?.status === 400) {
+          } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
             toast.error(err.response.data.message);
           } else if (
-            err.response?.status === 401 ||
-            err.response?.status === 403
+            err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+            err.response?.status === STATUS_CODES.FORBIDDEN
           ) {
             toast.error("Failed Authorization:Login");
-          } else if (err.response?.status === 500) {
+          } else if (
+            err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+          ) {
             toast.error("Oops! Something went wrong. Please try again later.");
           }
 
@@ -541,7 +542,11 @@ const HotelDetailsPage = () => {
                             e.stopPropagation();
 
                             if (propertyData) {
-                              if (wishlist?.includes(propertyData?._id)) {
+                              if (
+                                wishlist?.find((item) => {
+                                  return item._id === propertyData._id;
+                                })
+                              ) {
                                 removeFromWishlist(propertyData?._id);
                               } else {
                                 addToWishlist(propertyData?._id);
@@ -550,11 +555,23 @@ const HotelDetailsPage = () => {
                           }}
                         >
                           <TbHeartPlus
-                            className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} pt-[1px] font-bold`}
+                            className={`${
+                              wishlist?.find((item) => {
+                                return item._id === propertyData._id;
+                              })
+                                ? "  text-rose-400 "
+                                : " text-white"
+                            } pt-[1px] font-bold`}
                             size={18}
                           />
                           <p
-                            className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} `}
+                            className={`${
+                              wishlist?.find((item) => {
+                                return item._id === propertyData._id;
+                              })
+                                ? "  text-rose-400 "
+                                : " text-white"
+                            } `}
                           >
                             Wishlist
                           </p>
@@ -590,7 +607,11 @@ const HotelDetailsPage = () => {
                               e.stopPropagation();
 
                               if (propertyData) {
-                                if (wishlist?.includes(propertyData?._id)) {
+                                if (
+                                  wishlist?.find((item) => {
+                                    return item._id === propertyData._id;
+                                  })
+                                ) {
                                   removeFromWishlist(propertyData?._id);
                                 } else {
                                   addToWishlist(propertyData?._id);
@@ -599,11 +620,23 @@ const HotelDetailsPage = () => {
                             }}
                           >
                             <TbHeartPlus
-                              className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} pt-[1px] font-bold`}
+                              className={`${
+                                wishlist?.find((item) => {
+                                  return item._id === propertyData._id;
+                                })
+                                  ? "  text-rose-400 "
+                                  : " text-white"
+                              } pt-[1px] font-bold`}
                               size={18}
                             />
                             <p
-                              className={`${wishlist?.includes(propertyData?._id) ? "  text-rose-400 " : " text-white"} `}
+                              className={`${
+                                wishlist?.find((item) => {
+                                  return item._id === propertyData._id;
+                                })
+                                  ? "  text-rose-400 "
+                                  : " text-white"
+                              } `}
                             >
                               Wishlist
                             </p>
@@ -646,7 +679,9 @@ const HotelDetailsPage = () => {
                       <p>Hosted by {propertyData?.host}</p>
                       <p
                         onClick={() => {
-                          handleMessageHost(propertyData.hostID);
+                          handleMessageHost(
+                            propertyData.hostID ? propertyData.hostID : "",
+                          );
                         }}
                         className=" cursor-pointer text-xs transition-all duration-300 hover:scale-105"
                       >

@@ -1,42 +1,19 @@
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
-
-import { useEffect, useState } from "react";
+import Input from "../Inputs/Input";
 import Modal from "./ParentModal/Modal";
+import { useEffect, useState } from "react";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { SINGLE_LISTING_ADDRESS_UPDATE_URL } from "../../Api/EndPoints";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
-import { z } from "zod";
-import Input from "../Inputs/Input";
+import { TEditListingAddressModalProps } from "../../Types/GeneralTypes/propsTypes";
+import { EditListingAddressSchema } from "../../Schemas/User/editListingAddressSchema";
+import { TGetListingDataResp } from "../../Types/GeneralTypes/apiResponseTypes";
 
-const EditListingAddressSchema = z.object({
-  addressLine: z.string().min(3, " Min length For address is 3").max(20),
-  city: z.string().min(3, " Min length For city is 3").max(15),
-  district: z.string().min(3, " Min length For district is 3").max(15),
-  state: z.string().min(3, " Min length is 3").max(15),
-  pinCode: z.string().refine((value) => {
-    const INDIAN_PINCODE_REGEX = /^[1-9][0-9]{5}$/;
-    return INDIAN_PINCODE_REGEX.test(value);
-  }, "Invalid Indian Pincode"),
-});
-
-interface AddressInfo {
-  addressLine: string;
-  city: string;
-  district: string;
-  state: string;
-  pinCode: string;
-}
-interface ListingAddressDataResponse {
-  listing: AddressInfo;
-}
-
-interface EditListingAddressModal {
-  reFetchData: () => void;
-}
-
-const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
+const EditListingAddressModal: React.FC<TEditListingAddressModalProps> = ({
   reFetchData,
 }) => {
   const AxiosPrivate = useAxiosPrivate();
@@ -66,17 +43,15 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<ListingAddressDataResponse>(
+        const response = await AxiosPrivate.get<TGetListingDataResp>(
           `user/listing/address/${editListingModalState.listingID}`,
         );
 
         if (isMounted) {
-          //   console.log(response.data, "address");
-
           reset(response.data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Error fetching data");
       }
     };
 
@@ -100,23 +75,22 @@ const EditListingAddressModal: React.FC<EditListingAddressModal> = ({
 
       setIsLoading(false);
 
-      toast.success("Listing address Updated SuccessFully");
+      toast.success("Address Updated");
 
       editListingModalState.onClose();
 
       reFetchData();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
-      console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Registration Failed");
+        toast.error("Updation Failed");
       }
     }
   };

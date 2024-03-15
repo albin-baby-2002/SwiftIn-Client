@@ -3,24 +3,18 @@ import Container from "../../Components/UiComponents/Container";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "../../Components/Inputs/Input";
 import { AUTH_URL } from "../../Api/EndPoints";
-import swiftIn from "../../Assets/logo3.png";
 import toast from "react-hot-toast";
 
 import { useEffect } from "react";
 import { Axios } from "../../Api/Axios";
 import { useNavigate } from "react-router-dom";
-import { ROLES_LIST } from "../../Config/userRoles";
+import { ROLES_LIST } from "../../Enums/userRoles";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import Button from "../../Components/UiComponents/Button";
-import { AdminLoginSchema } from "../../Schemas/adminLoginSchema";
-
-interface AuthResponse {
-  accessToken: string;
-  roles: number[];
-  username: string;
-  image:string;
-  userID:string;
-}
+import { AdminLoginSchema } from "../../Schemas/Admin/adminLoginSchema";
+import { TAuthResponse } from "../../Types/GeneralTypes/apiResponseTypes";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const AdminLogin = () => {
   const auth = useAuth();
@@ -37,10 +31,8 @@ const AdminLogin = () => {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data, "data");
-
     try {
-      const response = await Axios.post<AuthResponse>(AUTH_URL, data, {
+      const response = await Axios.post<TAuthResponse>(AUTH_URL, data, {
         withCredentials: true,
       });
 
@@ -51,24 +43,22 @@ const AdminLogin = () => {
         response.data.roles,
         response.data.username,
         response.data.image,
-        response.data.userID
+        response.data.userID,
       );
 
       toast.success("login successful");
 
       navigate("/admin/users");
     } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
-      } else if (err.response?.status === 404) {
+      } else if (err.response?.status === STATUS_CODES.NOT_FOUND) {
         toast.error("Email not registered. Please SignUp");
       } else {
         toast.error("Login Failed");
@@ -90,10 +80,17 @@ const AdminLogin = () => {
 
   return (
     <>
-      <main className=" max-h-screen  overflow-y-hidden">
+      <main className=" flex  min-h-screen items-center  overflow-y-hidden ">
         <Container>
           <div className="  mx-auto my-10 flex   flex-col items-center  justify-center gap-4 rounded-lg border-2 py-12 shadow-md md:w-2/3 lg:w-2/5 ">
-            <img src={swiftIn} alt="" height={100} width={100} />
+            <img
+              src={
+                "https://res.cloudinary.com/dfm8vhuea/image/upload/v1709179408/f1asvgvdlhfvhowhsnjf.png"
+              }
+              alt=""
+              height={100}
+              width={100}
+            />
             <h1 className=" font-sen  text-center text-2xl  font-bold">
               Welcome Back Admin
             </h1>

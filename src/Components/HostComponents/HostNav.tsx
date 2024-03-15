@@ -1,13 +1,9 @@
-import swiftin from "../../Assets/logo5.png";
-
-import { FaBook, FaHome, FaHotel, FaPowerOff } from "react-icons/fa";
-
 import { IoMdMail } from "react-icons/io";
+import { IoPerson } from "react-icons/io5";
 import { BiBookHeart } from "react-icons/bi";
 import { FaLocationDot } from "react-icons/fa6";
-import { IoPerson } from "react-icons/io5";
-
 import { useNavigate } from "react-router-dom";
+import { FaBook, FaHome, FaHotel, FaPowerOff } from "react-icons/fa";
 
 const HostNav = () => {
   const navigate = useNavigate();
@@ -21,7 +17,9 @@ const HostNav = () => {
             <div className="  y-3 flex   flex-col  gap-4   rounded-md border-2  border-black bg-black px-3 py-3  text-[18px]">
               <div className=" flex h-5    justify-center">
                 <img
-                  src={swiftin}
+                  src={
+                    "https://res.cloudinary.com/dfm8vhuea/image/upload/b_rgb:000000/qhxi2b8uu3wgvvnnyrng.jpg"
+                  }
                   alt=""
                   className=" h-full cursor-pointer"
                   onClick={() => {
@@ -29,8 +27,6 @@ const HostNav = () => {
                   }}
                 />
               </div>
-              {/* 
-                <p className="  text-center font-bold">Host Console</p> */}
             </div>
 
             <div className=" mt-6 flex  flex-col  text-lg font-semibold  text-gray-500">

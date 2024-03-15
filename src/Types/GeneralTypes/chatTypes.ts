@@ -1,39 +1,39 @@
- export interface TuserData {
+ export interface TChatUserData {
   _id: string;
   username: string;
   email: string;
   image: string;
 }
 
-export interface Tmessage {
-  sender: Tsender;
+export interface TMessageData {
+  sender: TSender;
   content: string;
-  chat: Tchat;
+  chat: TChatData;
   _id: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Tsender {
+export interface TSender {
   _id: string;
   username: string;
   email: string;
   image: string;
 }
 
-export interface TlatestMessage{
+export interface TLatestMessageData{
   sender:string;
   content:string;
   chat:string;
 }
 
-export interface Tchat {
+export interface TChatData {
   _id: string;
   chatName: string;
   isGroupChat: boolean;
-  users: TuserData[];
+  users: TChatUserData[];
   createdAt: string;
   updatedAt: string;
   __v: number;
-  latestMessage: TlatestMessage;
+  latestMessage: TLatestMessageData;
 }

@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import Container from "../../Components/UiComponents/Container";
-import { MdOutlineBedroomParent } from "react-icons/md";
-import { FaPeopleGroup } from "react-icons/fa6";
+
 import toast from "react-hot-toast";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
-import { bookingInfo, bookingsDataResponse } from "../../Types/bookingTypes";
 import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
 import { FaInfoCircle } from "react-icons/fa";
 import ReservationDetailsModal from "../../Components/Modals/ReservationDetailsModal";
 import useReservationDetailsModal from "../../Hooks/zustandStore/userReservationDetailsModal";
+import { USER_BOOKINGS_URL } from "../../Api/EndPoints";
+import {
+  TBookingData,
+  TBookingDataResp,
+} from "../../Types/GeneralTypes/apiResponseTypes";
 
 const Reservations = () => {
   // axios private hook
@@ -18,7 +21,7 @@ const Reservations = () => {
 
   // bookings
 
-  const [bookings, setBookings] = useState<bookingInfo[] | []>([]);
+  const [bookings, setBookings] = useState<TBookingData[] | []>([]);
 
   const reservationDetailsModalState = useReservationDetailsModal();
 
@@ -28,7 +31,7 @@ const Reservations = () => {
     const fetchData = async () => {
       try {
         const response =
-          await AxiosPrivate.get<bookingsDataResponse>("/user/bookings/");
+          await AxiosPrivate.get<TBookingDataResp>(USER_BOOKINGS_URL);
 
         if (isMounted) {
           console.log(response.data);
@@ -39,7 +42,6 @@ const Reservations = () => {
         }
       } catch (error) {
         toast.error("failed to fetch page data");
-        console.error("Error fetching data:", error);
       }
     };
 
@@ -52,9 +54,7 @@ const Reservations = () => {
 
   const cancelReservation = async (reservationID: String) => {
     try {
-      const response = await AxiosPrivate.patch(
-        "/user/bookings/" + `${reservationID}`,
-      );
+      await AxiosPrivate.patch(USER_BOOKINGS_URL + `${reservationID}`);
 
       toast.success("reservation cancelled");
     } catch (error) {
@@ -119,8 +119,8 @@ const Reservations = () => {
           </h1>
 
           <div className=" grid grid-cols-4 gap-4 ">
-            {bookings.map((booking) => (
-              <div className="      items-center justify-center gap-4 rounded-xl  bg-white px-6  ">
+            {bookings.map((booking,i) => (
+              <div key={i} className="      items-center justify-center gap-4 rounded-xl  bg-white px-6  ">
                 <div className=" flex gap-4">
                   <div className=" flex   flex-col items-center">
                     <div className=" flex w-full  items-center justify-between py-4">

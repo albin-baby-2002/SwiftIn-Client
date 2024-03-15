@@ -1,19 +1,21 @@
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { FaSearch } from "react-icons/fa";
-import Navbar from "../../Components/Admin/Navbar/Navbar";
-import { useEffect, useState } from "react";
 import { CgMenuGridR } from "react-icons/cg";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import {
-  TAdminReservation,
-  TAdminReservationsResp,
-} from "../../Types/AdminTypes/reservationTypes";
+import { useEffect, useState } from "react";
+import Navbar from "../../Components/Admin/Navbar/Navbar";
 import DataLoader from "../../Components/Loaders/DataLoader";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import { GET_RESERVATIONS_DATA } from "../../Api/EndPoints";
+import toast from "react-hot-toast";
+import {
+  TGetReservationsDataResp,
+  TReservationData,
+} from "../../Types/AdminTypes/apiResponseTypes";
 
 const ReservationsManagement = () => {
   const AxiosPrivate = useAxiosPrivate();
 
-  const [reservations, setReservations] = useState<TAdminReservation[] | null>(
+  const [reservations, setReservations] = useState<TReservationData[] | null>(
     null,
   );
   const [loading, setLoading] = useState(false);
@@ -28,8 +30,8 @@ const ReservationsManagement = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await AxiosPrivate.get<TAdminReservationsResp>(
-          "/admin/reservations",
+        const response = await AxiosPrivate.get<TGetReservationsDataResp>(
+          GET_RESERVATIONS_DATA,
           {
             params: { search, page },
           },
@@ -42,7 +44,7 @@ const ReservationsManagement = () => {
         }
       } catch (error) {
         setLoading(false);
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -54,13 +56,7 @@ const ReservationsManagement = () => {
   }, [search, page]);
   return (
     <div className=" flex  h-screen ">
-      {navBar && (
-        <Navbar
-          closeNav={() => {
-            setNavBar(false);
-          }}
-        />
-      )}
+      {navBar && <Navbar />}
 
       <main
         className={`${navBar ? " w-[55%] sm:w-[60%] md:w-[70%] lg:w-[75%] " : " w-full"} max-h-screen   `}

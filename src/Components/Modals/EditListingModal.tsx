@@ -1,60 +1,24 @@
-import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
-
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import Input from "../Inputs/Input";
-
-import { useEffect, useState } from "react";
 import Modal from "./ParentModal/Modal";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { EditProfileSchema } from "../../Schemas/editProfileSchema";
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { PROFILE_DATA_URL, SINGLE_LISTING_URL } from "../../Api/EndPoints";
-import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
-import { z } from "zod";
+import { useEffect, useState } from "react";
 import Button from "../UiComponents/Button";
-import { MdPhoto } from "react-icons/md";
-import { FcAddressBook, FcPicture } from "react-icons/fc";
-import { HiMiniBuildingLibrary } from "react-icons/hi2";
-import { PiCameraBold } from "react-icons/pi";
 import { RiCamera2Fill } from "react-icons/ri";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import { HiMiniBuildingLibrary } from "react-icons/hi2";
+import { SINGLE_LISTING_URL } from "../../Api/EndPoints";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
+import { EditListingSchema } from "../../Schemas/User/editListingSchema";
+import { TEditListingModalProps } from "../../Types/GeneralTypes/propsTypes";
+import { TGetListingDataResp } from "../../Types/GeneralTypes/apiResponseTypes";
 
-const EditListingSchema = z.object({
-  totalRooms: z.number().min(1),
-  maxGuestsPerRoom: z.number().min(1),
-  bedsPerRoom: z.number().min(1),
-  bathroomPerRoom: z.number().min(1),
-  amenities: z.array(z.string()),
-  aboutHotel: z.string().min(20),
-  listingTitle: z.string().min(10).max(60),
-  roomType: z.string().min(3),
-  rentPerNight: z.number().min(1000),
-});
-
-interface ListingInfo {
-  _id: string;
-  userID: string;
-  totalRooms: number;
-  amenities: string[];
-  maxGuestsPerRoom: number;
-  listingTitle: string;
-  bedsPerRoom: number;
-  bathroomPerRoom: number;
-  roomType: string;
-  aboutHotel: string;
-  rentPerNight: number;
-  mainImage: string;
-  otherImages: string[];
-}
-interface SingleListingDataResponse {
-  listing: ListingInfo;
-}
-
-interface EditListingModal {
-  reFetchData: () => void;
-}
-
-const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
+const EditListingModal: React.FC<TEditListingModalProps> = ({
+  reFetchData,
+}) => {
   const AxiosPrivate = useAxiosPrivate();
 
   // definition for amenities
@@ -123,21 +87,20 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<SingleListingDataResponse>(
-          `user/listing/${editListingModalState.listingID}`,
+        const response = await AxiosPrivate.get<TGetListingDataResp>(
+          SINGLE_LISTING_URL + `/${editListingModalState.listingID}`,
         );
 
         if (isMounted) {
           reset(response.data.listing);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to fetch data");
       }
     };
-    
-    if(editListingModalState.listingID){
-        
-        fetchData();
+
+    if (editListingModalState.listingID) {
+      fetchData();
     }
 
     return () => {
@@ -156,23 +119,22 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
 
       setIsLoading(false);
 
-      toast.success("Listing Edited SuccessFully");
+      toast.success("Listing Edited ");
 
       editListingModalState.onClose();
 
       reFetchData();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
-      console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Registration Failed");
+        toast.error("Failed Updation");
       }
     }
   };
@@ -257,7 +219,7 @@ const EditListingModal: React.FC<EditListingModal> = ({ reFetchData }) => {
                 type="checkbox"
                 id="myCheckbox"
                 name="myCheckbox"
-                checked={amenities.includes(amenitiesTypes.WIFI)} // Set the checked attribute based on the state
+                checked={amenities.includes(amenitiesTypes.WIFI)}
                 onChange={(e) => {
                   let val = e.target.checked;
 

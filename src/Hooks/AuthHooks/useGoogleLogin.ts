@@ -5,14 +5,9 @@ import toast from "react-hot-toast";
 import useAuth from "../zustandStore/useAuth";
 import useLoginModal from "../zustandStore/useLoginModal";
 import { GOOGLE_AUTH_URL } from "../../Api/EndPoints";
-
-interface googleAuthResponse {
-  accessToken: string;
-  roles: number[];
-  user: string;
-  image:string;
-  userID:string;
-}
+import { TGoogleAuthResponse } from "../../Types/GeneralTypes/apiResponseTypes";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const UseGoogleLogin = () => {
   const registerModalState = useRegisterModal();
@@ -25,13 +20,19 @@ const UseGoogleLogin = () => {
     flow: "auth-code",
     onSuccess: async (response) => {
       try {
-        const res = await Axios.post<googleAuthResponse>(
+        const res = await Axios.post<TGoogleAuthResponse>(
           GOOGLE_AUTH_URL,
           { code: response.code },
           { withCredentials: true },
         );
 
-        auth.setAuth(res.data.accessToken, res.data.roles, res.data.user,res.data.image,res.data.userID);
+        auth.setAuth(
+          res.data.accessToken,
+          res.data.roles,
+          res.data.user,
+          res.data.image,
+          res.data.userID,
+        );
 
         if (registerModalState.isOpen) {
           registerModalState.onClose();
@@ -42,23 +43,22 @@ const UseGoogleLogin = () => {
         let message = `Welcome to SwiftIn ${res.data.user}`;
 
         toast.success(message);
-      } catch (err:any) {
-       console.log(err);
-
-       if (!err?.response) {
-         toast.error("No Server Response");
-       } else if (err.response?.status === 400) {
-         toast.error(err.response.data.message);
-       } else if (err.response?.status === 500) {
-         toast.error("Oops! Something went wrong. Please try again later.");
-       } else {
-         toast.error("Failed to disapprove");
-       }
+      } catch (err) {
+        if (!(err instanceof AxiosError)) {
+          toast.error("No Server Response");
+        } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
+          toast.error(err.response.data.message);
+        } else if (
+          err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+        ) {
+          toast.error("Oops! Something went wrong. Please try again later.");
+        } else {
+          toast.error("Failed to disapprove");
+        }
       }
     },
     onError: (err) => {
       toast.error("Google Login Failed Try Again");
-      console.log(err);
     },
   });
 

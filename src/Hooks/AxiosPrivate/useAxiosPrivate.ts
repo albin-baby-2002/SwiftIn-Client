@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { axiosPrivate } from "../../Api/Axios";
 import UseRefreshToken from "../AuthHooks/useRefreshToken";
 import useAuth from "../zustandStore/useAuth";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const useAxiosPrivate = () => {
   const auth = useAuth();
@@ -25,7 +26,10 @@ const useAxiosPrivate = () => {
       async (err) => {
         const prevRequest = err?.config;
 
-        if (err?.response?.status === 403 && !err.config._isRetry) {
+        if (
+          err?.response?.status === STATUS_CODES.FORBIDDEN &&
+          !err.config._isRetry
+        ) {
           err.config._isRetry = true;
 
           const newAccessToken = await refresh();

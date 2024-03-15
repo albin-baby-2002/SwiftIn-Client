@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import Button from "../../UiComponents/Button";
+import { TModalProps } from "../../../Types/GeneralTypes/propsTypes";
 
-interface ModelProps {
-  isOpen: boolean;
-  disabled?: boolean;
-  onClose: () => void;
-  onSubmit?: () => void;
-  title?: string;
-  body?: React.ReactElement |JSX.Element[];
-  footer?: React.ReactElement;
-  submitActionLabel?: string;
-  wider?: boolean;
-}
-
-const Modal: React.FC<ModelProps> = ({
+const Modal: React.FC<TModalProps> = ({
   isOpen,
   disabled,
   onClose,
@@ -46,8 +35,7 @@ const Modal: React.FC<ModelProps> = ({
     if (disabled) {
       return;
     }
-    if(onSubmit){
-      
+    if (onSubmit) {
       onSubmit();
     }
   };

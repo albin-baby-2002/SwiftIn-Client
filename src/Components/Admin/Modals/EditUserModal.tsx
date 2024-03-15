@@ -1,46 +1,20 @@
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Modal from "../../Modals/ParentModal/Modal.tsx";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import Input from "../../Inputs/Input.tsx";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import Modal from "../../Modals/ParentModal/Modal.tsx";
+import { ADMIN_SINGLE_USER_URL } from "../../../Api/EndPoints.ts";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { EditUserSchema } from "../../../Schemas/Admin/editUserSchema.ts";
 import useAxiosPrivate from "../../../Hooks/AxiosPrivate/useAxiosPrivate.ts";
 import useEditUserModal from "../../../Hooks/zustandStore/useEditUserModal.ts";
-import { useEffect, useState } from "react";
+import { TEditUserModalProps } from "../../../Types/AdminTypes/propsTypes.ts";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../../Enums/statusCodes.ts";
+import { TGetUserDataResp } from "../../../Types/AdminTypes/apiResponseTypes.ts";
 
-interface EditUserModalProps {
-  reFetchData: () => void;
-}
-
-interface axiosResponse {
-  user: user;
-}
-
-interface user {
-  _id: string;
-  username: string;
-  email: string;
-  phone: string;
-  joinedDate: string;
-  verified: boolean;
-  blocked: boolean;
-}
-
-const EditUserSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  username: z.string().min(5, "user name should have min 5 character"),
-  phone: z.string().refine((value) => {
-    if (!value) return true;
-    const IND_PHONE_REGEX = /^(\+91[\-\s]?)?[6789]\d{9}$/;
-    return IND_PHONE_REGEX.test(value);
-  }, "Invalid phone . It Should be 10 digits"),
-});
-
-const EditUserModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
+const EditUserModal: React.FC<TEditUserModalProps> = ({ reFetchData }) => {
   const EditUserModalState = useEditUserModal();
-
   const AxiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -48,8 +22,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<axiosResponse>(
-          "/admin/user/" + `${EditUserModalState.userID}`,
+        const response = await AxiosPrivate.get<TGetUserDataResp>(
+          ADMIN_SINGLE_USER_URL + `${EditUserModalState.userID}`,
         );
 
         if (isMounted) {
@@ -58,11 +32,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
           reset({
             username: data.username,
             email: data.email,
-            phone: data.phone,
+            phone: data.phone ? data.phone : "",
           });
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -90,7 +64,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       await AxiosPrivate.patch(
-        "/admin/user/" + `${EditUserModalState.userID}`,
+        ADMIN_SINGLE_USER_URL + `${EditUserModalState.userID}`,
         data,
       );
 
@@ -98,19 +72,15 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
       reFetchData();
 
       EditUserModalState.onClose();
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 409) {
-        toast.error("Email Already Registered");
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Failed to Edit  User");
+        toast.error("Failed to Edit User");
       }
     }
   };

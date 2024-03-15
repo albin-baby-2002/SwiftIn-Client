@@ -1,30 +1,28 @@
-import swiftin from "../../Assets/logo5.png";
-
-import { FaBook, FaHome, FaHotel, FaPowerOff, FaSearch } from "react-icons/fa";
-
-import { IoIosArrowBack, IoIosArrowForward, IoMdMail } from "react-icons/io";
-import { BiBookHeart, BiEditAlt } from "react-icons/bi";
-import { FaLocationDot } from "react-icons/fa6";
-import { IoPerson } from "react-icons/io5";
+import { FaSearch } from "react-icons/fa";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { BiEditAlt } from "react-icons/bi";
 import { CgMenuGridR } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { z } from "zod";
-import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-import { GET_HOST_LISTINGS_URL } from "../../Api/EndPoints";
+import {
+  ACTIVATE_LISTING_URL,
+  DEACTIVATE_LISTING_URL,
+  GET_HOST_LISTINGS_URL,
+} from "../../Api/EndPoints";
 import toast from "react-hot-toast";
 import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  hostListingsData,
-  hostListingsResponse,
-} from "../../Types/hostPagesTypes";
+
 import HostNav from "../../Components/HostComponents/HostNav";
-import DataLoader from "../../Components/Loaders/DataLoader";
 import TableLoader from "../../Components/Loaders/TableLoader";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import {
+  TGetListingDataResp,
+  TListingsData,
+} from "../../Types/GeneralTypes/apiResponseTypes";
 
 const ManageListings = () => {
   const [navigation, setNavigation] = useState(true);
@@ -34,9 +32,9 @@ const ManageListings = () => {
 
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
-  const [propertiesList, setPropertiesList] = useState<
-    hostListingsData[] | null
-  >(null);
+  const [propertiesList, setPropertiesList] = useState<TListingsData[] | null>(
+    null,
+  );
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -49,7 +47,7 @@ const ManageListings = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await AxiosPrivate.get<hostListingsResponse>(
+        const response = await AxiosPrivate.get<TGetListingDataResp>(
           GET_HOST_LISTINGS_URL,
           {
             params: { search, page },
@@ -64,14 +62,16 @@ const ManageListings = () => {
 
           // console.log(response.data);
         }
-      } catch (err: any) {
+      } catch (err) {
         setLoading(false);
 
-        if (!err?.response) {
+        if (!(err instanceof AxiosError)) {
           toast.error("No Server Response");
-        } else if (err.response?.status === 400) {
+        } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
           toast.error(err.response.data.message);
-        } else if (err.response?.status === 500) {
+        } else if (
+          err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+        ) {
           toast.error("Oops! Something went wrong. Please try again later.");
         } else {
           toast.error("Failed to access data");
@@ -88,19 +88,19 @@ const ManageListings = () => {
 
   const activateListing = async (listingID: string) => {
     try {
-      await AxiosPrivate.patch("/user/listings/activate/" + `${listingID}`);
+      await AxiosPrivate.patch(ACTIVATE_LISTING_URL + `${listingID}`);
 
       toast.success(" Listing activated for reservations");
 
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
+    } catch (err) {
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to activate listing");
@@ -110,7 +110,7 @@ const ManageListings = () => {
 
   const deActivateListing = async (listingID: string) => {
     try {
-      await AxiosPrivate.patch("/user/listings/deactivate/" + `${listingID}`);
+      await AxiosPrivate.patch(DEACTIVATE_LISTING_URL + `${listingID}`);
 
       toast.success(" Listing deactivated ");
 
@@ -118,11 +118,11 @@ const ManageListings = () => {
     } catch (err: any) {
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to deactivate listing");
@@ -188,7 +188,7 @@ const ManageListings = () => {
                   <>
                     {propertiesList && propertiesList.length > 0 ? (
                       propertiesList?.map((property, index) => (
-                        <div className="   border-b-2 px-6 font-Sen  text-sm ">
+                        <div key={index} className="   border-b-2 px-6 font-Sen  text-sm ">
                           <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
                             <div className=" flex items-center  gap-2 text-left   ">
                               <div>

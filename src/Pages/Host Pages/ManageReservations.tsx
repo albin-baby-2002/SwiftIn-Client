@@ -1,27 +1,27 @@
-import swiftin from "../../Assets/logo5.png";
+import { FaSearch } from "react-icons/fa";
 
-import { FaBook, FaHome, FaHotel, FaPowerOff, FaSearch } from "react-icons/fa";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-import { IoIosArrowBack, IoIosArrowForward, IoMdMail } from "react-icons/io";
-import { BiBookHeart, BiEditAlt } from "react-icons/bi";
-import { FaLocationDot } from "react-icons/fa6";
-import { IoPerson } from "react-icons/io5";
 import { CgMenuGridR } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 
-import { GET_HOST_RESERVATIONS_URL } from "../../Api/EndPoints";
+import {
+  GET_HOST_RESERVATIONS_URL,
+  HOST_CANCEL_RESERVATION_URL,
+} from "../../Api/EndPoints";
 import toast from "react-hot-toast";
-import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
 import EditListingModal from "../../Components/Modals/EditListingModal";
 import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
 import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  hostReservationsData,
-  hostReservationsResponse,
-} from "../../Types/hostPagesTypes";
+
 import HostNav from "../../Components/HostComponents/HostNav";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import {
+  TGetReservationsResponse,
+  TReservationsData,
+} from "../../Types/GeneralTypes/apiResponseTypes";
 
 const ManageReservations = () => {
   const [navigation, setNavigation] = useState(true);
@@ -30,21 +30,19 @@ const ManageReservations = () => {
 
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
-  const [reservations, setReservations] = useState<
-    hostReservationsData[] | null
-  >(null);
+  const [reservations, setReservations] = useState<TReservationsData[] | null>(
+    null,
+  );
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<hostReservationsResponse>(
+        const response = await AxiosPrivate.get<TGetReservationsResponse>(
           GET_HOST_RESERVATIONS_URL,
           {
             params: { search, page },
@@ -59,7 +57,7 @@ const ManageReservations = () => {
           console.log(response.data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -73,20 +71,20 @@ const ManageReservations = () => {
   const cancelReservation = async (reservationID: string) => {
     try {
       await AxiosPrivate.patch(
-        "/user/reservations/received/cancel/" + `${reservationID}`,
+        HOST_CANCEL_RESERVATION_URL + `${reservationID}`,
       );
 
       toast.success(" reservation cancelled ");
 
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
+    } catch (err) {
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to cancel  reservation");
@@ -146,8 +144,8 @@ const ManageReservations = () => {
 
               <div className=" min-h-[60vh] ">
                 {reservations && reservations.length > 0 ? (
-                  reservations?.map((reservation) => (
-                    <div className="   border-b-2 px-6 font-Sen  text-sm ">
+                  reservations?.map((reservation,i) => (
+                    <div key={i} className="   border-b-2 px-6 font-Sen  text-sm ">
                       <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]  ">
                         <div className=" flex items-center  gap-2 text-left   ">
                           <p>{reservation.hotelName}</p>

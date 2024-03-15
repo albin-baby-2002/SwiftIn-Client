@@ -4,21 +4,19 @@ import Heading from "../UiComponents/Heading";
 import Button from "../UiComponents/Button";
 import { FcGoogle } from "react-icons/fc";
 import Input from "../Inputs/Input";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import Modal from "./ParentModal/Modal";
 
 import toast from "react-hot-toast";
 import { Axios } from "../../Api/Axios";
 import { REGISTER_URL } from "../../Api/EndPoints";
-import { SignUpSchema } from "../../Schemas/signUpSchema";
+import { SignUpSchema } from "../../Schemas/User/signUpSchema";
 import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
 import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
 import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
-
-interface UserData {
-  userId: string;
-  email: string;
-}
+import { TRegisterResponse } from "../../Types/GeneralTypes/apiResponseTypes";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import { AxiosError } from "axios";
 
 const RegisterModal = () => {
   // state management Zustand
@@ -58,13 +56,13 @@ const RegisterModal = () => {
     setIsLoading(true);
 
     try {
-      const response = await Axios.post<UserData>(REGISTER_URL, data);
+      const response = await Axios.post<TRegisterResponse>(REGISTER_URL, data);
 
-      if (response.status === 201) {
+      if (response.status === STATUS_CODES.CREATED) {
         toast.success("User created successfully");
       }
 
-      if (response.status === 200) {
+      if (response.status === STATUS_CODES.OK) {
         toast.success("Account already exist but not verified. Verify now");
       }
 
@@ -77,16 +75,16 @@ const RegisterModal = () => {
       otpModalState.onOpen();
 
       reset();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 409) {
+      } else if (err.response?.status === STATUS_CODES.CONFLICT) {
         toast.error("Email Already Registered");
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Registration Failed");

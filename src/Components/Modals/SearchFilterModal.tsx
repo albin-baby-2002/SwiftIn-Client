@@ -1,21 +1,7 @@
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-
-import { useEffect, useState } from "react";
 import Modal from "./ParentModal/Modal";
-import { zodResolver } from "@hookform/resolvers/zod";
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { SINGLE_LISTING_ADDRESS_UPDATE_URL } from "../../Api/EndPoints";
-import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
-
-import Input from "../Inputs/Input";
 import useSearchModal from "../../Hooks/zustandStore/useSearchFilterModal";
-import { useSearchParams } from "react-router-dom";
 import useSearchState from "../../Hooks/zustandStore/useSearchState";
-
-interface TSearchFilterModalProps {
-  reFetchData: () => void;
-}
+import { TSearchFilterModalProps } from "../../Types/GeneralTypes/propsTypes";
 
 const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
   const searchModalState = useSearchModal();
@@ -187,6 +173,16 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           <p> Low Price To High</p>
         </div>
       </div>
+      <div className=" mt-10  w-full">
+        <button
+          className=" w-full rounded-md bg-black py-2 font-Sen text-white"
+          onClick={() => {
+            searchState.reset();
+          }}
+        >
+          Clear Filters
+        </button>
+      </div>
     </div>
   );
 
@@ -194,9 +190,6 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
     <Modal
       title="Filter And Search"
       onClose={searchModalState.onClose}
-      onSubmit={() => {
-        searchModalState.onClose();
-      }}
       isOpen={searchModalState.isOpen}
       body={bodyContent}
     />

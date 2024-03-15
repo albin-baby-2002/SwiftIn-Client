@@ -1,13 +1,9 @@
 import React from "react";
-import useReservationDetailsModal from "../../Hooks/zustandStore/userReservationDetailsModal";
 import Modal from "./ParentModal/Modal";
-import { bookingInfo } from "../../Types/bookingTypes";
+import { TReservationDetailsModalProps } from "../../Types/GeneralTypes/propsTypes";
+import useReservationDetailsModal from "../../Hooks/zustandStore/userReservationDetailsModal";
 
-interface ReservationDetailsModalProps {
-  bookings: bookingInfo[];
-}
-
-const ReservationDetailsModal: React.FC<ReservationDetailsModalProps> = ({
+const ReservationDetailsModal: React.FC<TReservationDetailsModalProps> = ({
   bookings,
 }) => {
   const reservationDetailsModalState = useReservationDetailsModal();

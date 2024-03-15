@@ -1,28 +1,11 @@
-import { useEffect } from "react";
-import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
+import { TInputComponentProps } from "../../Types/GeneralTypes/propsTypes";
 
-interface InputProps {
-  id: string;
-  label: string;
-  type?: string;
-  disabled?: boolean;
-  required?: boolean;
-  textBox?: boolean;
-  register: UseFormRegister<FieldValues>;
-  errors: FieldErrors<FieldValues>;
-  HalfWidth?: boolean;
-  labelBlack?: boolean;
-  textBase?: boolean;
-  placeholder?: string;
-}
-
-const Input: React.FC<InputProps> = ({
+const Input: React.FC<TInputComponentProps> = ({
   id,
   label,
   type = "text",
   disabled,
   register,
-  required,
   textBox,
   errors,
   labelBlack,
@@ -30,8 +13,6 @@ const Input: React.FC<InputProps> = ({
   textBase,
   placeholder,
 }) => {
-  useEffect(() => {}, [errors]);
-
   return (
     <div
       className={`${HalfWidth ? "w-[48%]" : ""} ${textBase ? " " : "text-sm"} flex flex-col gap-2  `}

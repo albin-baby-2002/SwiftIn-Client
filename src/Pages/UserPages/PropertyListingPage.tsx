@@ -1,5 +1,4 @@
 import {
-  FaCamera,
   FaCar,
   FaHotTub,
   FaMinus,
@@ -9,10 +8,9 @@ import {
 } from "react-icons/fa";
 
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import swiftin from "../../Assets/logo3.png";
 import { RiTvLine } from "react-icons/ri";
 import { TiWiFi } from "react-icons/ti";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { z } from "zod";
 import toast from "react-hot-toast";
@@ -24,8 +22,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FaTrashCan } from "react-icons/fa6";
 import { LIST_PROPERTY_URL } from "../../Api/EndPoints";
-import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
+import { HotelListingSchema } from "../../Schemas/User/hotelListingSchema";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 // types used
 
@@ -197,16 +197,16 @@ const PropertyListingPage = () => {
       setTimeout(() => {
         navigate("/");
       }, 500);
-    } catch (err: any) {
+    } catch (err) {
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Listing Failed");
@@ -315,7 +315,7 @@ const PropertyListingPage = () => {
               }
 
               toast.success(" Image Uploaded");
-            } catch (err: any) {
+            } catch (err) {
               toast.error(" Failed image Upload");
             }
           }
@@ -339,17 +339,14 @@ const PropertyListingPage = () => {
               setValue("hotelLicenseUrl", result.info.public_id);
 
               toast.success("pdf upload successful");
-            } catch (err: any) {
+            } catch (err) {
               toast.error(" Failed File Upload");
             }
           }
         },
       );
     }
-  }, [mainImage,otherImages]);
-  
-  
-
+  }, [mainImage, otherImages]);
 
   const pageOne = (
     <>

@@ -1,32 +1,27 @@
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import AddUserModal from "../../Components/Admin/Modals/AddUserModal";
-import { FaChevronRight, FaEdit, FaSearch } from "react-icons/fa";
-import Container from "../../Components/UiComponents/Container";
-import Navbar from "../../Components/Admin/Navbar/Navbar";
-
 import toast from "react-hot-toast";
+import { BiEditAlt } from "react-icons/bi";
+import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { CgMenuGridR } from "react-icons/cg";
+import Navbar from "../../Components/Admin/Navbar/Navbar";
+import DataLoader from "../../Components/Loaders/DataLoader";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import AddUserModal from "../../Components/Admin/Modals/AddUserModal";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import useAddUserModal from "../../Hooks/zustandStore/useAddUserModal";
 import useEditUserModal from "../../Hooks/zustandStore/useEditUserModal";
 import EditUserModal from "../../Components/Admin/Modals/EditUserModal";
-import { CgMenuGridR } from "react-icons/cg";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import DataLoader from "../../Components/Loaders/DataLoader";
-import { BiEditAlt } from "react-icons/bi";
-
-interface user {
-  _id: string;
-  username: string;
-  email: string;
-  joinedDate: string;
-  verified: boolean;
-  blocked: boolean;
-}
-
-interface GetUsersResponse {
-  users: user[];
-  totalPages: number;
-}
+import {
+  TGetUsersDataResp,
+  TUserData,
+} from "../../Types/AdminTypes/apiResponseTypes";
+import {
+  BLOCK_USER_URL,
+  GET_USERS_DATA,
+  UNBLOCK_USER_URL,
+} from "../../Api/EndPoints";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const Users = () => {
   const AxiosPrivate = useAxiosPrivate();
@@ -38,7 +33,7 @@ const Users = () => {
   const [triggerRefetch, setTriggerRefetch] = useState(true);
   const [loading, setLoading] = useState(false);
   const [navBar, setNavBar] = useState(true);
-  const [usersList, setUsersList] = useState<user[] | null>(null);
+  const [usersList, setUsersList] = useState<TUserData[] | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -50,8 +45,8 @@ const Users = () => {
       try {
         setLoading(true);
 
-        const response = await AxiosPrivate.get<GetUsersResponse>(
-          "/admin/users",
+        const response = await AxiosPrivate.get<TGetUsersDataResp>(
+          GET_USERS_DATA,
           {
             params: { search, page },
           },
@@ -68,7 +63,7 @@ const Users = () => {
         }
       } catch (error) {
         setLoading(false);
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -81,21 +76,21 @@ const Users = () => {
 
   const blockUser = async (userID: string) => {
     try {
-      await AxiosPrivate.patch("/admin/user/block/" + `${userID}`);
+      await AxiosPrivate.patch(BLOCK_USER_URL + `${userID}`);
 
       toast.success(" User blocked successfully");
 
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
+    } catch (err) {
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 409) {
+      } else if (err.response?.status === STATUS_CODES.CONFLICT) {
         toast.error("Email Already Registered");
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to create new User");
@@ -105,21 +100,19 @@ const Users = () => {
 
   const unBlockUser = async (userID: string) => {
     try {
-      await AxiosPrivate.patch("/admin/user/unblock/" + `${userID}`);
+      await AxiosPrivate.patch(UNBLOCK_USER_URL + `${userID}`);
 
       toast.success(" User unblocked successfully");
 
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 409) {
+      } else if (err.response?.status === STATUS_CODES.CONFLICT) {
         toast.error("Email Already Registered");
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to create new User");
@@ -129,13 +122,7 @@ const Users = () => {
 
   return (
     <div className=" flex  h-screen ">
-      {navBar && (
-        <Navbar
-          closeNav={() => {
-            setNavBar(false);
-          }}
-        />
-      )}
+      {navBar && <Navbar />}
 
       <main
         className={`${navBar ? " w-[55%] sm:w-[60%] md:w-[70%] lg:w-[75%] " : " w-full"} max-h-screen   `}

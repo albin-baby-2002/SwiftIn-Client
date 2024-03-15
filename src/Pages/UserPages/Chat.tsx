@@ -11,13 +11,23 @@ import useChatState from "../../Hooks/zustandStore/useChatState";
 import io, { Socket } from "socket.io-client";
 import { BASE_URL } from "../../Api/Axios";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { Tmessage, TuserData } from "../../Types/chatTypes";
+import {
+  TChatUserData,
+  TMessageData,
+} from "../../Types/GeneralTypes/chatTypes";
 import SearchDrawer from "../../Components/UserComponents/ChatComponents/SearchDrawer";
 import useChatSearchDrawer from "../../Hooks/zustandStore/useChatSearchDrawer";
 import ChatHeader from "../../Components/UserComponents/ChatComponents/ChatHeader";
 import ChatSkeleton from "../../Components/Skeletons/ChatSkeleton";
 import DataLoader from "../../Components/Loaders/DataLoader";
 import UseRefreshToken from "../../Hooks/AuthHooks/useRefreshToken";
+import {
+  GET_CHATS_DATA_URL,
+  MESSAGES_URL,
+  SEND_MESSAGES_URL,
+} from "../../Api/EndPoints";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 let retrysMade = 0;
@@ -36,7 +46,7 @@ const Chat = () => {
 
   // local states
 
-  const [messages, setMessages] = useState<Tmessage[] | []>([]);
+  const [messages, setMessages] = useState<TMessageData[] | []>([]);
 
   const [newMessage, setNewMessage] = useState("");
 
@@ -142,7 +152,7 @@ const Chat = () => {
   // listner to handle message recieved
 
   useEffect(() => {
-    const handleMessageRecieved = (newMessage: Tmessage) => {
+    const handleMessageRecieved = (newMessage: TMessageData) => {
       console.log("message recieved");
 
       if (
@@ -174,20 +184,22 @@ const Chat = () => {
     const getChats = async () => {
       try {
         setLoadingAllChats(true);
-        const response = await AxiosPrivate.get("/chat/conversations/data");
+        const response = await AxiosPrivate.get(GET_CHATS_DATA_URL);
 
         if (isMounted) {
           chatState.setChats(response.data.conversations);
 
           setLoadingAllChats(false);
         }
-      } catch (err: any) {
+      } catch (err) {
         setLoadingAllChats(false);
-        if (!err?.response) {
+        if (!(err instanceof AxiosError)) {
           toast.error("No Server Response");
-        } else if (err.response?.status === 400) {
+        } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
           toast.error(err.response.data.message);
-        } else if (err.response?.status === 500) {
+        } else if (
+          err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+        ) {
           toast.error("Oops! Something went wrong. Please try again later.");
         } else {
           toast.error("Failed to get chat conversations");
@@ -210,7 +222,7 @@ const Chat = () => {
       try {
         setLoadingMessages(true);
         const response = await AxiosPrivate.get(
-          "/messages/" + chatState.selectedChat?._id,
+          MESSAGES_URL + chatState.selectedChat?._id,
         );
 
         setLoadingMessages(false);
@@ -220,14 +232,16 @@ const Chat = () => {
 
           socket.emit("join chat", chatState.selectedChat?._id);
         }
-      } catch (err: any) {
+      } catch (err) {
         setLoadingMessages(false);
 
-        if (!err?.response) {
+        if (!(err instanceof AxiosError)) {
           toast.error("No Server Response");
-        } else if (err.response?.status === 400) {
+        } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
           toast.error(err.response.data.message);
-        } else if (err.response?.status === 500) {
+        } else if (
+          err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+        ) {
           toast.error("Oops! Something went wrong. Please try again later.");
         } else {
           toast.error("Failed to get conversation data");
@@ -259,7 +273,7 @@ const Chat = () => {
         setNewMessage("");
         socket.emit("stop typing", chatState.selectedChat?._id);
 
-        const response = await AxiosPrivate.post("/messages/send", {
+        const response = await AxiosPrivate.post(SEND_MESSAGES_URL, {
           content: newMessage,
           chatID: chatState.selectedChat?._id,
         });
@@ -269,12 +283,14 @@ const Chat = () => {
         socket.emit("new message", response.data);
 
         setMessages([...messages, response.data]);
-      } catch (err: any) {
-        if (!err?.response) {
+      } catch (err) {
+        if (!(err instanceof AxiosError)) {
           toast.error("No Server Response");
-        } else if (err.response?.status === 400) {
+        } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
           toast.error(err.response.data.message);
-        } else if (err.response?.status === 500) {
+        } else if (
+          err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+        ) {
           toast.error("Oops! Something went wrong. Please try again later.");
         } else {
           toast.error("Failed to send message");
@@ -321,7 +337,7 @@ const Chat = () => {
     }
   };
 
-  const getChatRecipient = (users: TuserData[]) => {
+  const getChatRecipient = (users: TChatUserData[]) => {
     if (users[0]._id === auth.userID) {
       return users[1];
     }
@@ -362,8 +378,9 @@ const Chat = () => {
                   <>
                     {chatState?.chats?.length > 0 && (
                       <div className=" flex h-full flex-col gap-6 overflow-y-scroll  px-4 ">
-                        {chatState.chats.map((chat) => (
+                        {chatState.chats.map((chat,i) => (
                           <div
+                          key={i}
                             className={`  ${chatState.selectedChat?._id === chat._id ? "   border-slate-600 bg-slate-300  " : " border-gray-600   "}  flex cursor-pointer items-center gap-4  rounded-lg border-2  px-4 py-2  text-xs hover:bg-slate-300 `}
                             onClick={() => {
                               chatState.setSelectedChat(chat);
@@ -477,6 +494,7 @@ const Chat = () => {
                             {messages &&
                               messages.map((message, index) => (
                                 <div
+                                key={index}
                                   className={`${message.sender._id === auth.userID ? " justify-end " : " justify-start "} flex `}
                                 >
                                   <p

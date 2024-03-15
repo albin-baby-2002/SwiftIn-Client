@@ -18,22 +18,32 @@ const useEditListingsModal = create<EditListingsModal>((set) => ({
   addressModalIsOpen: false,
   listingID: "",
   openDataModal: () => {
-    set({dataModalIsOpen:true,imageModalIsOpen:false,addressModalIsOpen:false });
+    set({
+      dataModalIsOpen: true,
+      imageModalIsOpen: false,
+      addressModalIsOpen: false,
+    });
   },
-   openImageModal: () => {
-     set({dataModalIsOpen:false,imageModalIsOpen:true,addressModalIsOpen:false });
+  openImageModal: () => {
+    set({
+      dataModalIsOpen: false,
+      imageModalIsOpen: true,
+      addressModalIsOpen: false,
+    });
   },
-   openAddressModal: () => {
-     set({dataModalIsOpen:false,imageModalIsOpen:false,addressModalIsOpen:true });
+  openAddressModal: () => {
+    set({
+      dataModalIsOpen: false,
+      imageModalIsOpen: false,
+      addressModalIsOpen: true,
+    });
   },
   onClose: () => {
-    
     set({
       dataModalIsOpen: false,
       imageModalIsOpen: false,
       addressModalIsOpen: false,
     });
-    
   },
   setData: (listingID) => {
     set({ listingID });

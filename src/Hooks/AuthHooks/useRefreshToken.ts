@@ -1,4 +1,3 @@
-import toast from "react-hot-toast";
 import { Axios } from "../../Api/Axios";
 import useAuth from "../zustandStore/useAuth";
 
@@ -18,15 +17,13 @@ const UseRefreshToken = () => {
         response.data.roles,
         response.data.user,
         response.data.image,
-        response.data.userID
+        response.data.userID,
       );
 
       // Return the new access token
       return response.data.accessToken;
     } catch (error) {
       auth.onLogout();
-
-      console.error("Error refreshing token:", error);
 
       return null;
     }

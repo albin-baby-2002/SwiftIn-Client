@@ -6,14 +6,17 @@ import { CgMenuGridR } from "react-icons/cg";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import DataLoader from "../../Components/Loaders/DataLoader";
-import { THostData, THostDataResp } from "../../Types/AdminTypes/hostTypes";
+import { HOSTS_DATA_URL } from "../../Api/EndPoints";
+import toast from "react-hot-toast";
+import {
+  THostData,
+  THostDataResp,
+} from "../../Types/AdminTypes/apiResponseTypes";
 
 const Hosts = () => {
   const AxiosPrivate = useAxiosPrivate();
 
-  const [Hosts, setHosts] = useState<THostData[] | null>(
-    null,
-  );
+  const [Hosts, setHosts] = useState<THostData[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [navBar, setNavBar] = useState(true);
   const [search, setSearch] = useState("");
@@ -26,12 +29,9 @@ const Hosts = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await AxiosPrivate.get<THostDataResp>(
-          "/admin/hosts",
-          {
-            params: { search, page },
-          },
-        );
+        const response = await AxiosPrivate.get<THostDataResp>(HOSTS_DATA_URL, {
+          params: { search, page },
+        });
         setLoading(false);
         if (isMounted) {
           setHosts(response.data.hosts);
@@ -40,7 +40,7 @@ const Hosts = () => {
         }
       } catch (error) {
         setLoading(false);
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -50,16 +50,10 @@ const Hosts = () => {
       isMounted = false;
     };
   }, [search, page]);
-  
+
   return (
     <div className=" flex  h-screen ">
-      {navBar && (
-        <Navbar
-          closeNav={() => {
-            setNavBar(false);
-          }}
-        />
-      )}
+      {navBar && <Navbar />}
 
       <main
         className={`${navBar ? " w-[55%] sm:w-[60%] md:w-[70%] lg:w-[75%] " : " w-full"} max-h-screen   `}

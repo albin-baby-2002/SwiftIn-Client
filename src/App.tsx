@@ -8,7 +8,7 @@ import Home from "./Pages/GeneralPages/Home";
 import PersistentLogin from "./HOC/persistentLogin";
 import AdminLogin from "./Pages/AdminPages/AdminLogin";
 import PrivateRoute from "./HOC/privateRoute";
-import { ROLES_LIST } from "./Config/userRoles";
+import { ROLES_LIST } from "./Enums/userRoles";
 import useLogout from "./Hooks/AuthHooks/useLogout";
 import Dashboard from "./Pages/AdminPages/Console";
 import Console from "./Pages/AdminPages/Console";
@@ -121,10 +121,7 @@ function App() {
           <Route
             path="/admin/hosts"
             element={
-              <PrivateRoute
-                Element={Hosts}
-                allowedRoles={[ROLES_LIST.Admin]}
-              />
+              <PrivateRoute Element={Hosts} allowedRoles={[ROLES_LIST.Admin]} />
             }
           />
 

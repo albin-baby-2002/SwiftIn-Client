@@ -7,7 +7,7 @@ interface TcardSkeletonProps {
 }
 
 const ChatSkeleton: React.FC<TcardSkeletonProps> = ({ count }) => {
-  let CardCount: number[] = new Array(count).fill(0);
+  const CardCount: number[] = new Array(count).fill(0);
 
   return CardCount.map((v, i) => (
     <div key={i}>

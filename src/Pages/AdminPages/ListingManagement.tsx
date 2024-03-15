@@ -1,30 +1,20 @@
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import {  FaSearch } from "react-icons/fa";
-import Navbar from "../../Components/Admin/Navbar/Navbar";
-
-import { useEffect, useState } from "react";
-
-import { HotelListingSchema } from "../../Schemas/hotelListingSchema";
-import { z } from "zod";
-import { GET_LISTINGS_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { FaSearch } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { CgMenuGridR } from "react-icons/cg";
+import {
+  APPROVE_LISTING_URL,
+  DISAPPROVE_LISTING_URL,
+  GET_LISTINGS_URL,
+} from "../../Api/EndPoints";
+import Navbar from "../../Components/Admin/Navbar/Navbar";
 import DataLoader from "../../Components/Loaders/DataLoader";
-
-type listingData = z.infer<typeof HotelListingSchema> & {
-  _id: string;
-  isActiveForReservation: Boolean;
-  approvedForReservation: Boolean;
-  hostName: string;
-  location: string;
-  buildingName: string;
-};
-
-interface listingsResponse {
-  properties: listingData[];
-  totalPages: number;
-}
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import { TGetListingsDataResp } from "../../Types/AdminTypes/apiResponseTypes";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import { TListingsData } from "../../Types/GeneralTypes/apiResponseTypes";
 
 const ListingManagement = () => {
   const AxiosPrivate = useAxiosPrivate();
@@ -32,7 +22,7 @@ const ListingManagement = () => {
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
   const [navBar, setNavBar] = useState(true);
-  const [propertiesList, setPropertiesList] = useState<listingData[] | null>(
+  const [propertiesList, setPropertiesList] = useState<TListingsData[] | null>(
     null,
   );
   const [loading, setLoading] = useState(false);
@@ -46,7 +36,7 @@ const ListingManagement = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await AxiosPrivate.get<listingsResponse>(
+        const response = await AxiosPrivate.get<TGetListingsDataResp>(
           GET_LISTINGS_URL,
           {
             params: { search, page },
@@ -63,7 +53,7 @@ const ListingManagement = () => {
         }
       } catch (error) {
         setLoading(false);
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -76,41 +66,39 @@ const ListingManagement = () => {
 
   const approveListing = async (listingID: string) => {
     try {
-      await AxiosPrivate.patch("/admin/listings/approve/" + `${listingID}`);
+      await AxiosPrivate.patch(APPROVE_LISTING_URL + `${listingID}`);
 
-      toast.success(" Property approved for reservations");
+      toast.success(" Property approved ");
 
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Failed to approve listing");
+        toast.error("Failed to approve ");
       }
     }
   };
 
   const disApproveListing = async (listingID: string) => {
     try {
-      await AxiosPrivate.patch("/admin/listings/disapprove/" + `${listingID}`);
+      await AxiosPrivate.patch(DISAPPROVE_LISTING_URL + `${listingID}`);
 
       toast.success(" listing  reservations stopped ");
 
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
+    } catch (err) {
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to disapprove");
@@ -120,13 +108,7 @@ const ListingManagement = () => {
 
   return (
     <div className=" flex  h-screen ">
-      {navBar && (
-        <Navbar
-          closeNav={() => {
-            setNavBar(false);
-          }}
-        />
-      )}
+      {navBar && <Navbar />}
 
       <main
         className={`${navBar ? " w-[55%] sm:w-[60%] md:w-[70%] lg:w-[75%] " : " w-full"} max-h-screen   `}

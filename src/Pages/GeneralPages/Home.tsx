@@ -102,7 +102,7 @@ const Home = () => {
                   </div>
 
                   <button
-                    className="   rounded-lg bg-white  px-2 ms-3 py-1 text-xs  font-semibold outline outline-1 outline-white  sm:px-3 "
+                    className="   ms-3 rounded-lg  bg-white px-2 py-1 text-xs  font-semibold outline outline-1 outline-white  sm:px-3 "
                     onClick={() => {
                       searchState.setData(
                         destination,

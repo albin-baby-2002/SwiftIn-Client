@@ -2,12 +2,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import useAxiosPrivate from "../../../Hooks/AxiosPrivate/useAxiosPrivate";
+import { TAddReviewProps } from "../../../Types/GeneralTypes/propsTypes";
+import { ADD_REVIEW_URL } from "../../../Api/EndPoints";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../../Enums/statusCodes";
 
-interface TaddReviewProps {
-  listingID: string;
-}
-
-const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
+const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
   const [review, setReview] = useState("");
 
   const [rating, setRating] = useState(1);
@@ -18,19 +18,17 @@ const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
     try {
       let data = { rating, reviewMessage: review };
 
-      await AxiosPrivate.post("/user/listing/review/add/" + listingID, data);
+      await AxiosPrivate.post(ADD_REVIEW_URL + listingID, data);
 
       toast.success(" Review Added");
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed To Add Review");
@@ -55,7 +53,7 @@ const AddReview: React.FC<TaddReviewProps> = ({ listingID }) => {
   };
 
   return (
-    <div className=" flex h-[200px] lg:h-[240px] md:w-[46%]  items-center justify-center gap-3 rounded-xl  border-2  px-3  lg:gap-6   lg:py-5  max-w-[400px] md:max-w-none">
+    <div className=" flex h-[200px] max-w-[400px] items-center  justify-center gap-3 rounded-xl border-2  px-3  md:w-[46%]  md:max-w-none   lg:h-[240px]  lg:gap-6 lg:py-5">
       <div className="  text-neutral-500 md:w-1/3 lg:w-1/2 ">
         <div className=" ps-1">
           <p className="  mt-2 hidden font-Sen text-lg font-bold text-black lg:block lg:text-[24px]">

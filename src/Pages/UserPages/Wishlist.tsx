@@ -1,46 +1,20 @@
-import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import Menu from "../../Components/Navbar/SubComponents/Menu";
 import { useNavigate } from "react-router-dom";
-import useLogout from "../../Hooks/AuthHooks/useLogout";
 import useAuth from "../../Hooks/zustandStore/useAuth";
-import { AiFillAppstore } from "react-icons/ai";
-
-import LogoImg from "/images/logo5.png";
-
 import { useEffect, useState } from "react";
-import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
-import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
-import Container from "../../Components/UiComponents/Container";
-import { MdClose, MdOutlineBedroomParent } from "react-icons/md";
-import { FaPeopleGroup } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
-import { FaTrash, FaTrashAlt } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import { TwishlistData } from "../../Types/propertyTypes";
-import { ROLES_LIST } from "../../Config/userRoles";
+import { ROLES_LIST } from "../../Enums/userRoles";
 import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
+import {
+  REMOVE_FROM_WISHLIST_URL,
+  WISHLIST_DETAILS_URL,
+} from "../../Api/EndPoints";
+import { AxiosError } from "axios";
+import { TWishlistData } from "../../Types/GeneralTypes/apiResponseTypes";
 
 const Wishlist = () => {
-  const [menu, setMenu] = useState(false);
-
-  // function to toggle the nav menu
-
-  const toggleMenu = () => {
-    setMenu((value) => !value);
-  };
-
-  // state of login and register modal
-
-  const registerModal = useRegisterModal();
-
-  const loginModal = useLoginModal();
-
-  // logout hook
-
-  const logout = useLogout();
-
   // axios private hook
 
   const AxiosPrivate = useAxiosPrivate();
@@ -55,15 +29,15 @@ const Wishlist = () => {
 
   const [triggerRefetch, setTriggerRefetch] = useState(false);
 
-  const [wishlist, setWishlist] = useState<TwishlistData[] | null>(null);
+  const [wishlist, setWishlist] = useState<TWishlistData[] | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<{ wishLists: TwishlistData[] }>(
-          "/user/listing/wishlist",
+        const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
+          WISHLIST_DETAILS_URL,
         );
 
         if (isMounted) {
@@ -72,7 +46,7 @@ const Wishlist = () => {
           console.log(response.data.wishLists);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -93,14 +67,12 @@ const Wishlist = () => {
         return;
       }
 
-      const response = await AxiosPrivate.patch(
-        "/user/listing/wishlist/remove/" + listingID,
-      );
+      await AxiosPrivate.patch(REMOVE_FROM_WISHLIST_URL + listingID);
 
       toast.success("removed from wishlist");
       setTriggerRefetch((val) => !val);
-    } catch (err: any) {
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
       } else if (err.response?.status === 400) {
         toast.error(err.response.data.message);
@@ -157,7 +129,7 @@ const Wishlist = () => {
                   className="relative flex  flex-row items-center justify-around  gap-3  rounded-xl   bg-black  px-[8px] py-[6px]
     "
                 >
-                 <MainMenu/>
+                  <MainMenu />
                 </div>
               </div>
             </div>
@@ -168,14 +140,14 @@ const Wishlist = () => {
       <main className=" pt-[130px]">
         <div className=" mx-auto max-w-[1500px] px-2 sm:px-6 ">
           <div className=" px-4">
-            <h1 className=" text-center font-Sen text-3xl font-bold md:text-left  sm:text-4xl">
+            <h1 className=" text-center font-Sen text-3xl font-bold sm:text-4xl  md:text-left">
               Your Wishlist
             </h1>
           </div>
 
           <div className=" mx-auto mt-10 grid max-w-[90%] grid-cols-1 gap-4 gap-y-10 sm:mx-0 sm:max-w-none sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  xl:grid-cols-5">
-            {wishlist?.map((item) => (
-              <div className="  rounded-lg border  shadow-xl">
+            {wishlist?.map((item,i) => (
+              <div key={i} className="  rounded-lg border  shadow-xl">
                 <div className=" mx-auto px-6 py-6">
                   <img
                     className=" w-full cursor-pointer rounded-lg sm:h-[180px]"

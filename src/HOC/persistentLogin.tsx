@@ -8,7 +8,6 @@ import OtpModal from "../Components/Modals/OtpModal";
 import LoginModal from "../Components/Modals/LoginModal";
 import PageLoader from "../Components/Loaders/PageLoader";
 
-
 const PersistentLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,12 +36,7 @@ const PersistentLogin = () => {
       <RegisterModal />
       <OtpModal />
       <LoginModal />
-      {isLoading ? (
-       
-       <PageLoader/>
-      ) : (
-        <Outlet />
-      )}
+      {isLoading ? <PageLoader /> : <Outlet />}
     </>
   );
 };

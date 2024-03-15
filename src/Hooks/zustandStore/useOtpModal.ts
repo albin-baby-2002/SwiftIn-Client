@@ -3,31 +3,28 @@ import { devtools } from "zustand-devtools";
 
 interface OtpModalStore {
   isOpen: boolean;
-  userId:string;
-  email:string;
+  userId: string;
+  email: string;
   onOpen: () => void;
   onClose: () => void;
-  setData:(userId:string,email:string)=>void;
-  
+  setData: (userId: string, email: string) => void;
 }
 
 const useOtpModal = create<OtpModalStore>((set) => ({
   isOpen: false,
-  userId:'',
-  email:'',
+  userId: "",
+  email: "",
   onOpen: () => {
     set({ isOpen: true });
   },
   onClose: () => {
     set({ isOpen: false });
   },
-  setData:(userId,email)=>{
-    
-    set({userId,email})
-    
-  }
+  setData: (userId, email) => {
+    set({ userId, email });
+  },
 }));
 
-devtools(useOtpModal)
+devtools(useOtpModal);
 
 export default useOtpModal;

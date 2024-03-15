@@ -15,6 +15,7 @@ interface TSearchState {
   setRooms: (rooms: number) => void;
   setGuests: (guests: number) => void;
   setSortBy: (sortBy: "highToLow" | "lowToHigh") => void;
+  reset: () => void;
 }
 
 const useSearchState = create<TSearchState>((set) => ({
@@ -31,11 +32,14 @@ const useSearchState = create<TSearchState>((set) => ({
   setGuests: (guests) => {
     set({ guests });
   },
-  setSortBy:(sortBy)=>{
-    set({sortBy})
+  setSortBy: (sortBy) => {
+    set({ sortBy });
   },
   setData: (destination, guests, sortBy, rooms) => {
     set({ destination, guests, sortBy, rooms });
+  },
+  reset: () => {
+    set({ destination: "", guests: 1, rooms: 1, sortBy: "lowToHigh" });
   },
 }));
 

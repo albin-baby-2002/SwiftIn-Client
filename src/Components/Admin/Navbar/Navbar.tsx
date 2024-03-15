@@ -1,16 +1,11 @@
 import { BiSolidBuildings, BiSolidUserRectangle } from "react-icons/bi";
 import { FaChartSimple, FaPeopleGroup } from "react-icons/fa6";
 import { NavLink, useNavigate } from "react-router-dom";
-import swiftIn from "/images/logo5.png";
-import { IoIosHeart, IoMdClose } from "react-icons/io";
+import { IoIosHeart } from "react-icons/io";
 import useLogout from "../../../Hooks/AuthHooks/useLogout";
 import { FaHome, FaPowerOff, FaSearch, FaUserTie } from "react-icons/fa";
 
-interface NavProps {
-  closeNav: () => void;
-}
-
-const Navbar: React.FC<NavProps> = ({ closeNav }) => {
+const Navbar = () => {
   const logout = useLogout();
   const navigate = useNavigate();
 
@@ -25,7 +20,7 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
           </div>
 
           <p className=" px-2 py-3 font-Inter font-bold uppercase text-slate-500 xl:py-4 xl:text-lg 2xl:text-xl">
-            Admin Pages{" "}
+            Admin Pages
           </p>
 
           <div className=" flex min-w-[230px] flex-col gap-4 px-2 py-3 font-Sen  text-sm  font-bold xl:gap-5  xl:text-base 2xl:text-lg   ">
@@ -90,7 +85,7 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
           </div>
 
           <p className=" px-2 py-3  font-Inter font-bold uppercase text-slate-500 xl:py-4 xl:text-lg 2xl:text-xl">
-            User Pages{" "}
+            User Pages
           </p>
 
           <div className=" flex min-w-[230px] flex-col gap-4 px-2 py-3  font-Sen text-sm  font-bold xl:gap-5  xl:text-base  2xl:text-lg    ">
@@ -124,7 +119,7 @@ const Navbar: React.FC<NavProps> = ({ closeNav }) => {
           </div>
 
           <p className=" px-2 py-3  font-Inter font-bold uppercase text-slate-500 xl:py-4 xl:text-lg ">
-            Account{" "}
+            Account
           </p>
 
           <div

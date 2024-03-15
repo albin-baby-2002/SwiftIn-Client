@@ -12,16 +12,11 @@ import toast from "react-hot-toast";
 import { Axios } from "../../Api/Axios";
 import { AUTH_URL } from "../../Api/EndPoints";
 import useAuth from "../../Hooks/zustandStore/useAuth";
-import { loginSchema } from "../../Schemas/loginSchema";
+import { loginSchema } from "../../Schemas/User/loginSchema";
 import UseGoogleLogin from "../../Hooks/AuthHooks/useGoogleLogin";
-
-interface AuthResponse {
-  accessToken: string;
-  roles: number[];
-  username: string;
-  image:string;
-  userID:string;
-}
+import { TAuthResponse } from "../../Types/GeneralTypes/apiResponseTypes";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const LoginModal = () => {
   const auth = useAuth();
@@ -48,7 +43,7 @@ const LoginModal = () => {
     try {
       setIsLoading(true);
 
-      const response = await Axios.post<AuthResponse>(AUTH_URL, data, {
+      const response = await Axios.post<TAuthResponse>(AUTH_URL, data, {
         withCredentials: true,
       });
 
@@ -61,25 +56,24 @@ const LoginModal = () => {
         response.data.roles,
         response.data.username,
         response.data.image,
-        response.data.userID
+        response.data.userID,
       );
 
       toast.success("login successful");
 
       loginModal.onClose();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
-      console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
-      } else if (err.response?.status === 404) {
+      } else if (err.response?.status === STATUS_CODES.NOT_FOUND) {
         toast.error("This email is not registered");
       } else {
         toast.error("Login Failed");

@@ -1,11 +1,12 @@
 import Modal from "./ParentModal/Modal";
 import useOtpModal from "../../Hooks/zustandStore/useOtpModal";
-import logo from "../../Assets/logo3.png";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Axios } from "../../Api/Axios";
 import { RESEND_OTP_URL, VERIFY_OTP_URL } from "../../Api/EndPoints";
 import useLoginModal from "../../Hooks/zustandStore/useLoginModal";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const OtpModal = () => {
   // Zustand states
@@ -44,7 +45,8 @@ const OtpModal = () => {
       }, 1000);
     }
 
-    return () => clearInterval(intervalId); // Cleanup interval on unmount or when timer reaches 0
+    return () => clearInterval(intervalId);
+    // Cleanup interval on unmount or when timer reaches 0
   }, [timer, otpModalState.isOpen]);
 
   // function handle change in value in each field
@@ -114,20 +116,20 @@ const OtpModal = () => {
       otpModalState.onClose();
 
       loginModalState.onOpen();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
       console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         if (err.response.data.message.trim() === "email or userId is empty") {
           toast.error("Unexpected error: Sign Up Again");
 
           return;
         }
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Verification Failed");
@@ -149,19 +151,17 @@ const OtpModal = () => {
       });
 
       toast.success("OTP send to your email ");
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         if (err.response.data.message.trim() === "email or userId is empty") {
           toast.error("Unexpected error: Sign Up Again");
 
           return;
         }
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to ResendOtp try again");

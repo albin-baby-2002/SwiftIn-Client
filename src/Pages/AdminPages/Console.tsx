@@ -4,15 +4,12 @@ import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import { CgMenuGridR } from "react-icons/cg";
 import { FaBook, FaUserTie, FaUsers } from "react-icons/fa";
 import { RiHotelFill } from "react-icons/ri";
-import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import { BarChart, Bar, XAxis, Tooltip } from "recharts";
 import ChartLoader from "../../Components/Loaders/ChartLoader";
+import { CHART_DATA_URL, CONSOLE_DATA_URL } from "../../Api/EndPoints";
+import toast from "react-hot-toast";
+import { TConsoleCardDataResponse } from "../../Types/AdminTypes/apiResponseTypes";
 
-interface consoleDataResponse {
-  users: number;
-  hosts: number;
-  listings: number;
-  reservations: number;
-}
 const months: { [key in number]: string } = {
   1: "January",
   2: "February",
@@ -63,20 +60,17 @@ const Console = () => {
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<consoleDataResponse>(
-          "/admin/console",
-          {},
-        );
+        const response =
+          await AxiosPrivate.get<TConsoleCardDataResponse>(CONSOLE_DATA_URL);
 
         if (isMounted) {
-          console.log(response);
           setUsers(response.data.users);
           setHosts(response.data.hosts);
           setReservations(response.data.reservations);
           setListings(response.data.listings);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -93,7 +87,7 @@ const Console = () => {
     const fetchData = async () => {
       try {
         setChartLoading(true);
-        const response = await AxiosPrivate.get("/admin/charts", {
+        const response = await AxiosPrivate.get(CHART_DATA_URL, {
           params: {
             usersChart: usersChartBasis,
             listingsChart: listingsChartBasis,
@@ -103,7 +97,6 @@ const Console = () => {
         setChartLoading(false);
 
         if (isMounted) {
-          console.log(response.data, "RESP");
           setUsersChartData(response.data.usersChartData);
           setListingsChartData(response.data.listingsChartData);
           setReservationChartData(response.data.reservationsChartData);
@@ -111,7 +104,7 @@ const Console = () => {
       } catch (error) {
         setChartLoading(false);
 
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load chart data");
       }
     };
 
@@ -122,19 +115,9 @@ const Console = () => {
     };
   }, [usersChartBasis, listingsChartBasis, reservationChartBasis]);
 
-  useEffect(() => {
-    console.log(listingsChartData);
-  }, [listingsChartData]);
-
   return (
     <div className=" flex  h-screen ">
-      {navBar && (
-        <Navbar
-          closeNav={() => {
-            setNavBar(false);
-          }}
-        />
-      )}
+      {navBar && <Navbar />}
 
       <main
         className={`${navBar ? " w-[55%] sm:w-[60%] md:w-[70%] lg:w-[75%] " : " w-full  "} max-h-screen   `}
@@ -211,8 +194,6 @@ const Console = () => {
                   </p>
                 </div>
               </div>
-
-            
 
               <div className=" mt-14  flex w-full flex-col justify-center rounded-md bg-white pb-8 ">
                 <div className=" flex w-full items-center justify-between px-5 py-8">

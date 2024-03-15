@@ -12,7 +12,7 @@ import { MdEmail, MdOutlinePhotoCamera } from "react-icons/md";
 import { FaLinkedin, FaPhoneAlt, FaUserEdit } from "react-icons/fa";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import EditProfileModal from "../../Components/Modals/EditProfileModal";
-import { PROFILE_DATA_URL, UPDATE_PROFILE_IMG_URL } from "../../Api/EndPoints";
+import { PROFILE_URL, UPDATE_PROFILE_IMG_URL } from "../../Api/EndPoints";
 import toast from "react-hot-toast";
 import Container from "../../Components/UiComponents/Container";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
@@ -24,11 +24,16 @@ import useRegisterModal from "../../Hooks/zustandStore/useRegisterModal";
 import { AiFillAppstore } from "react-icons/ai";
 import Menu from "../../Components/Navbar/SubComponents/Menu";
 import MenuItem from "../../Components/Navbar/SubComponents/MenuItem";
-import { ProfileResponse, TProfileInfo } from "../../Types/profileType";
 
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import { AxiosError } from "axios";
+import {
+  TGetProfileDataResp,
+  TProfileData,
+} from "../../Types/GeneralTypes/apiResponseTypes";
 
 const Profile = () => {
-  const [profileInfo, setProfileInfo] = useState<TProfileInfo | null>(null);
+  const [profileInfo, setProfileInfo] = useState<TProfileData | null>(null);
 
   const [triggerRefetch, setTriggerRefetch] = useState(true);
 
@@ -49,7 +54,7 @@ const Profile = () => {
           uploadPreset: "lmyyofoj",
           clientAllowedFormats: ["jpg", "jpeg", "png", "webP"],
           maxFiles: 1,
-          cropping:true
+          cropping: true,
         },
         async function (error: any, result: any) {
           if (error) {
@@ -67,14 +72,16 @@ const Profile = () => {
               toast.success("profile img updated");
 
               setTriggerRefetch((val) => !val);
-            } catch (err: any) {
+            } catch (err) {
               console.log(err);
 
-              if (!err?.response) {
+              if (!(err instanceof AxiosError)) {
                 toast.error("No Server Response");
-              } else if (err.response?.status === 400) {
+              } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
                 toast.error(err.response.data.message);
-              } else if (err.response?.status === 500) {
+              } else if (
+                err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR
+              ) {
                 toast.error(
                   "Oops! Something went wrong. Please try again later.",
                 );
@@ -94,7 +101,7 @@ const Profile = () => {
     const fetchData = async () => {
       try {
         const response =
-          await AxiosPrivate.get<ProfileResponse>(PROFILE_DATA_URL);
+          await AxiosPrivate.get<TGetProfileDataResp>(PROFILE_URL);
 
         console.log(response);
 
@@ -103,12 +110,12 @@ const Profile = () => {
 
           console.log(response.data);
         }
-      } catch (err: any) {
+      } catch (err) {
         console.log(err);
 
-        if (!err?.response) {
+        if (!(err instanceof AxiosError)) {
           toast.error("No Server Response");
-        } else if (err.response?.status === 400) {
+        } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
           toast.error(err.response.data.message);
         } else if (err.response?.status === 500) {
           toast.error("Oops! Something went wrong. Please try again later.");
@@ -144,7 +151,7 @@ const Profile = () => {
   return (
     <>
       <header>
-        <nav  className=" fixed z-10 w-screen border-b-2 bg-white  ">
+        <nav className=" fixed z-10 w-screen border-b-2 bg-white  ">
           <div
             className=" 
              
@@ -287,11 +294,7 @@ const Profile = () => {
       <main className="  px-6 pt-[120px]   ">
         <div className=" mx-auto max-w-[1150px] ">
           <div className="  rounded-lg     px-4 py-2 font-Sen">
-            <div className=" mx-2   flex  justify-center ">
-              {/* <h1 className="  text-center text-4xl font-semibold    md:text-[38px]">
-                Account
-              </h1> */}
-            </div>
+            <div className=" mx-2   flex  justify-center "></div>
           </div>
 
           <div className=" mt- mx-6 flex flex-col items-center  gap-10 pt-7  sm:flex-row sm:items-stretch ">

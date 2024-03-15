@@ -5,55 +5,24 @@ import {
   useForm,
 } from "react-hook-form";
 import toast from "react-hot-toast";
-
-import { useEffect, useRef, useState } from "react";
 import Modal from "./ParentModal/Modal";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { SINGLE_LISTING_IMAGE_UPDATE_URL } from "../../Api/EndPoints";
-import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
-import { z } from "zod";
-
-import { TbCameraPlus } from "react-icons/tb";
 import { FaTrashCan } from "react-icons/fa6";
+import { TbCameraPlus } from "react-icons/tb";
+import { useEffect, useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import {
+  SINGLE_LISTING_IMAGE_UPDATE_URL,
+  SINGLE_LISTING_URL,
+} from "../../Api/EndPoints";
+import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
+import { EditListingImageSchema } from "../../Schemas/User/editListingImageSchema";
+import { TEditListingImageModalProps } from "../../Types/GeneralTypes/propsTypes";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import { TGetListingDataResp } from "../../Types/GeneralTypes/apiResponseTypes";
 
-const EditListingImageSchema = z.object({
-  mainImage: z.string().refine((value) => {
-    return value;
-  }, "Main Img Is Compulsory"),
-
-  otherImages: z.array(z.string()).refine((values) => {
-    let pics = values.filter((val) => val.trim());
-
-    return pics.length >= 4;
-  }, "Needed Four Other Images"),
-});
-
-interface ListingInfo {
-  _id: string;
-  userID: string;
-  totalRooms: number;
-  amenities: string[];
-  maxGuestsPerRoom: number;
-  listingTitle: string;
-  bedsPerRoom: number;
-  bathroomPerRoom: number;
-  roomType: string;
-  aboutHotel: string;
-  rentPerNight: number;
-  mainImage: string;
-  otherImages: string[];
-}
-interface SingleListingDataResponse {
-  listing: ListingInfo;
-}
-
-interface EditListingImageModal {
-  reFetchData: () => void;
-}
-
-const EditListingImageModal: React.FC<EditListingImageModal> = ({
+const EditListingImageModal: React.FC<TEditListingImageModalProps> = ({
   reFetchData,
 }) => {
   const AxiosPrivate = useAxiosPrivate();
@@ -62,13 +31,7 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<FieldValues>({
+  const { handleSubmit, watch, setValue, reset } = useForm<FieldValues>({
     defaultValues: {
       mainImage: "",
       otherImages: ["", "", "", ""],
@@ -83,10 +46,6 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
     string[],
   ];
 
-  useEffect(() => {
-    console.log(errors, "err");
-  }, [otherImages]);
-
   const handleDeleteImage = (imageNo: number) => {
     if (imageNo >= 0 && imageNo < 5) {
       if (imageNo === 0) {
@@ -94,11 +53,7 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
       } else {
         let values = otherImages;
 
-        console.log(values, "before delete");
-
         values[imageNo - 1] = "";
-
-        console.log(values, "after delete");
 
         setValue("otherImages", values);
       }
@@ -110,26 +65,18 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
 
     const fetchData = async () => {
       try {
-        const response = await AxiosPrivate.get<SingleListingDataResponse>(
-          `user/listing/${editListingModalState.listingID}`,
+        const response = await AxiosPrivate.get<TGetListingDataResp>(
+          SINGLE_LISTING_URL + `/${editListingModalState.listingID}`,
         );
 
         if (isMounted) {
-          console.log(mainImage, otherImages, "before useEffect");
-
-          console.log(
-            response.data.listing.mainImage,
-            response.data.listing.otherImages,
-            "intial useEffect",
-          );
-
           reset({
             mainImage: response.data.listing.mainImage,
             otherImages: response.data.listing.otherImages,
           });
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to fetch data");
       }
     };
 
@@ -149,8 +96,6 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
     cloudinaryRef.current = window.cloudinary;
 
     if (cloudinaryRef.current) {
-      // hotel image upload widget
-
       imageWidgetRef.current = cloudinaryRef.current.createUploadWidget(
         {
           cloudName: "dfm8vhuea",
@@ -164,15 +109,11 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
           }
 
           if (result.info.public_id) {
-            console.log(otherImages, "after success");
-
             try {
               if (imgSelectedForUploadRef.current === 0) {
                 setValue("mainImage", result.info.public_id);
               } else if (imgSelectedForUploadRef.current < 5) {
                 let values = otherImages;
-
-                console.log(values, "values");
 
                 values[imgSelectedForUploadRef.current - 1] =
                   result.info.public_id;
@@ -188,7 +129,7 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
         },
       );
     }
-  }, [otherImages,mainImage]);
+  }, [otherImages, mainImage]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
@@ -200,30 +141,27 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
 
       setIsLoading(false);
 
-      toast.success("Listing Images Updated SuccessFully");
+      toast.success(" Images Updated ");
 
       editListingModalState.onClose();
 
       reFetchData();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
-      console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Registration Failed");
+        toast.error("Updation Failed");
       }
     }
   };
 
   const onSubmittionInvalid = (err: FieldErrors<FieldValues>) => {
-    console.log(err);
-
     if (err.otherImages || err.mainImage) {
       toast.error("All Image Fields Are Mandatory");
     } else {
@@ -232,7 +170,7 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
   };
 
   const bodyContent = (
-    <div className="  ">
+    <div>
       <div className=" mx-auto mt-10 flex max-w-[80%] gap-4">
         <div
           className={`${mainImage ? "" : " border-4 "}  relative flex  h-[230px] w-[50%] rounded-l-xl  border-gray-400   xl:h-[300px]`}
@@ -295,11 +233,8 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
                   className=" cursor-pointer  text-4xl text-gray-400 "
                   onClick={() => {
                     imgSelectedForUploadRef.current = 1;
-                    console.log(otherImages, "before open");
 
                     imageWidgetRef.current.open();
-
-                    console.log(otherImages, "after open");
                   }}
                 />
               </div>
@@ -369,11 +304,7 @@ const EditListingImageModal: React.FC<EditListingImageModal> = ({
                   onClick={() => {
                     imgSelectedForUploadRef.current = 3;
 
-                    console.log(otherImages, "before open");
-
                     imageWidgetRef.current.open();
-
-                    console.log(otherImages, "after open");
                   }}
                 />
               </div>

@@ -1,40 +1,21 @@
-import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
-
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import Input from "../Inputs/Input";
-
-import { useEffect, useState } from "react";
 import Modal from "./ParentModal/Modal";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EditProfileSchema } from "../../Schemas/editProfileSchema";
+import { PROFILE_URL } from "../../Api/EndPoints";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-import { PROFILE_DATA_URL } from "../../Api/EndPoints";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { EditProfileSchema } from "../../Schemas/User/editProfileSchema";
+import useEditProfileModal from "../../Hooks/zustandStore/useEditProfileModal";
+import { TEditProfileModalProps } from "../../Types/GeneralTypes/propsTypes";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import { TGetProfileDataResp } from "../../Types/GeneralTypes/apiResponseTypes";
 
-interface TProfileInfo {
-  _id: string;
-  username: string;
-  email: string;
-  phone: string;
-  wallet: number;
-  aboutYou: string;
-  addressLine: string;
-  locality: string;
-  city: string;
-  district: string;
-  state: string;
-  country: string;
-  pinCode: string;
-}
-interface ProfileResponse {
-  userData: TProfileInfo;
-}
-
-interface EditUserModalProps {
-  reFetchData: () => void;
-}
-
-const EditProfileModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
+const EditProfileModal: React.FC<TEditProfileModalProps> = ({
+  reFetchData,
+}) => {
   const AxiosPrivate = useAxiosPrivate();
 
   const editProfileModalState = useEditProfileModal();
@@ -68,13 +49,13 @@ const EditProfileModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
     const fetchData = async () => {
       try {
         const response =
-          await AxiosPrivate.get<ProfileResponse>(PROFILE_DATA_URL);
+          await AxiosPrivate.get<TGetProfileDataResp>(PROFILE_URL);
 
         if (isMounted) {
           reset(response.data.userData);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed fetch data");
       }
     };
 
@@ -88,7 +69,7 @@ const EditProfileModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       setIsLoading(true);
-      await AxiosPrivate.patch("/user/profile", data);
+      await AxiosPrivate.patch(PROFILE_URL, data);
 
       setIsLoading(false);
 
@@ -97,18 +78,17 @@ const EditProfileModal: React.FC<EditUserModalProps> = ({ reFetchData }) => {
       editProfileModalState.onClose();
 
       reFetchData();
-    } catch (err: any) {
+    } catch (err) {
       setIsLoading(false);
-      console.log(err);
 
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Registration Failed");
+        toast.error("Failed to Edit");
       }
     }
   };

@@ -1,47 +1,23 @@
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Modal from "../../Modals/ParentModal/Modal.tsx";
-import toast from "react-hot-toast";
-import Input from "../../Inputs/Input.tsx";
 import useAddUserModal from "../../../Hooks/zustandStore/useAddUserModal.ts";
+import { AddUserSchema } from "../../../Schemas/Admin/addUserSchema.ts";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import Modal from "../../Modals/ParentModal/Modal.tsx";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Input from "../../Inputs/Input.tsx";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { STATUS_CODES } from "../../../Enums/statusCodes.ts";
+import { ADMIN_ADD_USER_URL } from "../../../Api/EndPoints.ts";
 import useAxiosPrivate from "../../../Hooks/AxiosPrivate/useAxiosPrivate.ts";
+import { TAddUserModalProps } from "../../../Types/AdminTypes/propsTypes.ts";
 
-interface AddUserModalProps {
-  reFetchData: () => void;
-}
+// modal for admin to add new users
 
-const AddUserSchema = z
-
-  .object({
-    email: z.string().email("Enter a valid email"),
-    username: z.string().min(5, "user name should have min 5 character"),
-    phone: z.string().refine((value) => {
-      if (!value) return true;
-      const IND_PHONE_REGEX = /^(\+91[\-\s]?)?[6789]\d{9}$/;
-      return IND_PHONE_REGEX.test(value);
-    }, "Invalid phone . It Should be 10 digits"),
-    password: z
-      .string()
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        {
-          message:
-            "minimum 8 char & min one (uppercase & lowercase letter, special char & number)",
-        },
-      ),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Confirm Password does not match original password",
-    path: ["confirmPassword"],
-  });
-
-const AddUserModal: React.FC<AddUserModalProps> = ({ reFetchData }) => {
-  const AddUserModal = useAddUserModal();
-
+const AddUserModal: React.FC<TAddUserModalProps> = ({ reFetchData }) => {
+  const AddUserModalState = useAddUserModal();
   const AxiosPrivate = useAxiosPrivate();
+
+  // useForm for adding new user
 
   const {
     register,
@@ -60,23 +36,21 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ reFetchData }) => {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
-      await AxiosPrivate.post("/admin/user/add", data);
+      await AxiosPrivate.post(ADMIN_ADD_USER_URL, data);
 
-      AddUserModal.onClose();
+      AddUserModalState.onClose();
 
       toast.success("New User Successfully Created");
 
       reFetchData();
-    } catch (err: any) {
-      console.log(err);
-
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 409) {
+      } else if (err.response?.status === STATUS_CODES.CONFLICT) {
         toast.error("Email Already Registered");
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("Failed to create new User");
@@ -115,9 +89,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ reFetchData }) => {
   return (
     <Modal
       title="Add New User"
-      onClose={AddUserModal.onClose}
+      onClose={AddUserModalState.onClose}
       onSubmit={handleSubmit(onSubmit)}
-      isOpen={AddUserModal.isOpen}
+      isOpen={AddUserModalState.isOpen}
       submitActionLabel="Create User"
       body={bodyContent}
     />

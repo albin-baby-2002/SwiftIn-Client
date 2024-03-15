@@ -1,14 +1,15 @@
 import { create } from "zustand";
-import { Tchat, Tmessage } from "../../Types/chatTypes";
+import { TChatData, TMessageData } from "../../Types/GeneralTypes/chatTypes";
+
 
 interface TChatState {
-  chats: Tchat[];
-  notifications: Tmessage[];
-  selectedChat: Tchat | null;
-  setChats: (chats: Tchat[]) => void;
-  setSelectedChat: (chat: Tchat) => void;
-  setNotifications: (messages: Tmessage[]) => void;
-  clearSelectedChat:()=> void;
+  chats: TChatData[];
+  notifications: TMessageData[];
+  selectedChat: TChatData | null;
+  setChats: (chats: TChatData[]) => void;
+  setSelectedChat: (chat: TChatData) => void;
+  setNotifications: (messages: TMessageData[]) => void;
+  clearSelectedChat: () => void;
 }
 
 const useChatState = create<TChatState>((set) => ({
@@ -24,9 +25,9 @@ const useChatState = create<TChatState>((set) => ({
   setNotifications: (messages) => {
     set({ notifications: messages });
   },
-  clearSelectedChat:()=>{
-    set({selectedChat:null})
-  }
+  clearSelectedChat: () => {
+    set({ selectedChat: null });
+  },
 }));
 
 export default useChatState;

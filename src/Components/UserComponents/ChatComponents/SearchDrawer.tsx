@@ -2,17 +2,16 @@ import toast from "react-hot-toast";
 import { FaUser } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { TuserData } from "../../../Types/chatTypes";
-import useChatState from "../../../Hooks/zustandStore/useChatState";
 import useAxiosPrivate from "../../../Hooks/AxiosPrivate/useAxiosPrivate";
 import useChatSearchDrawer from "../../../Hooks/zustandStore/useChatSearchDrawer";
 import ChatSkeleton from "../../Skeletons/ChatSkeleton";
 import useHandleSelectedChat from "../../../Hooks/ChatHooks/useHandleSelectedChat";
 import DataLoader from "../../Loaders/DataLoader";
-
-interface TSearchDrawerProps {
-  open: boolean;
-}
+import { TSearchDrawerProps } from "../../../Types/GeneralTypes/propsTypes";
+import { CHAT_GET_USERS_URL } from "../../../Api/EndPoints";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../../Enums/statusCodes";
+import { TChatUserData } from "../../../Types/GeneralTypes/chatTypes";
 
 const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
   // axios private
@@ -20,11 +19,12 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
 
   // chat state and chat drawer state
   const chatSearchDrawerState = useChatSearchDrawer();
-  const chatState = useChatState();
 
   // local states
   const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState<TuserData[] | null>(null);
+  const [searchResult, setSearchResult] = useState<TChatUserData[] | null>(
+    null,
+  );
 
   // local state to close and open drawer to apply transition
   const [drawerChildOpen, setDrawerChildOpen] = useState(false);
@@ -57,22 +57,22 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
   const handleSearch = async () => {
     try {
       setLoadingSearch(true);
-      const response = await AxiosPrivate.get("/chat/search/users", {
+      const response = await AxiosPrivate.get(CHAT_GET_USERS_URL, {
         params: { search },
       });
 
       setLoadingSearch(false);
       setSearchResult(response.data.Users);
-    } catch (err: any) {
+    } catch (err) {
       setLoadingSearch(false);
-      if (!err?.response) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
-        toast.error("Failed to get search results");
+        toast.error("Failed to get data");
       }
     }
   };
@@ -140,8 +140,9 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
                   </div>
                 ) : (
                   <>
-                    {searchResult?.map((user) => (
+                    {searchResult?.map((user,i) => (
                       <div
+                      key={i}
                         className=" flex cursor-pointer  items-center gap-4  rounded-lg border-2 border-black px-4 py-2  text-xs hover:bg-black hover:text-white xl:text-lg "
                         onClick={() => {
                           handleSelectedUser(user._id);

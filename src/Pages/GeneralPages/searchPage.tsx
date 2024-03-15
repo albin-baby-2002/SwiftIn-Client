@@ -1,27 +1,34 @@
+import {
+  GetPropertiesData,
+  TPropertyData,
+  TWishlistData,
+} from "../../Types/GeneralTypes/apiResponseTypes";
+import {
+  ADD_TO_WISHLIST_URL,
+  REMOVE_FROM_WISHLIST_URL,
+  SEARCH_URL,
+  WISHLIST_DETAILS_URL,
+} from "../../Api/EndPoints";
+import toast from "react-hot-toast";
 import { FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
-
+import { TbHeartPlus } from "react-icons/tb";
 import { MdOutlineTune } from "react-icons/md";
-
-import useAuth from "../../Hooks/zustandStore/useAuth";
 import { useNavigate } from "react-router-dom";
+import { ROLES_LIST } from "../../Enums/userRoles";
+import useAuth from "../../Hooks/zustandStore/useAuth";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import useSearchState from "../../Hooks/zustandStore/useSearchState";
+import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
 import SearchFilterModal from "../../Components/Modals/SearchFilterModal";
 import useSearchModal from "../../Hooks/zustandStore/useSearchFilterModal";
-import { TbHeartPlus } from "react-icons/tb";
-import toast from "react-hot-toast";
-import { ROLES_LIST } from "../../Config/userRoles";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import ProductSkeleton from "../../Components/Skeletons/ProductSkeleton";
-import {
-  TwishlistData,
-  propertiesResponse,
-  property,
-} from "../../Types/propertyTypes";
+
 import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
 import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
+import { AxiosError } from "axios";
+import { STATUS_CODES } from "../../Enums/statusCodes";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -29,7 +36,7 @@ const SearchPage = () => {
   const searchState = useSearchState();
 
   const auth = useAuth();
-  const [loading,setIsLoading] = useState(false)
+  const [loading, setIsLoading] = useState(false);
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -37,8 +44,10 @@ const SearchPage = () => {
 
   const searchModalState = useSearchModal();
 
-  const [propertiesList, setPropertiesList] = useState<property[] | null>(null);
-  const [wishlist, setWishlist] = useState<TwishlistData[] | null>(null);
+  const [propertiesList, setPropertiesList] = useState<TPropertyData[] | null>(
+    null,
+  );
+  const [wishlist, setWishlist] = useState<TWishlistData[] | null>(null);
 
   const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
 
@@ -58,7 +67,7 @@ const SearchPage = () => {
         setIsLoading(true);
         console.log(searchState.destination, searchState.guests);
 
-        const response = await AxiosPrivate.get<propertiesResponse>("/search", {
+        const response = await AxiosPrivate.get<GetPropertiesData>(SEARCH_URL, {
           params: {
             search: searchState.destination,
             guests: searchState.guests,
@@ -83,7 +92,7 @@ const SearchPage = () => {
         }
       } catch (error) {
         setIsLoading(false);
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
       }
     };
 
@@ -94,6 +103,7 @@ const SearchPage = () => {
     };
   }, [
     triggerRefetch,
+    auth.accessToken,
     searchState.destination,
     searchState.guests,
     searchState.rooms,
@@ -108,8 +118,8 @@ const SearchPage = () => {
       try {
         console.log(searchState.destination, searchState.guests);
 
-        const response = await AxiosPrivate.get<{ wishLists: TwishlistData[] }>(
-          "/user/listing/wishlist",
+        const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
+          WISHLIST_DETAILS_URL,
         );
 
         if (isMounted) {
@@ -118,7 +128,7 @@ const SearchPage = () => {
           console.log(response.data.wishLists);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        toast.error("Failed to load wishlist data");
       }
     };
 
@@ -139,22 +149,19 @@ const SearchPage = () => {
         return;
       }
 
-      const response = await AxiosPrivate.patch(
-        "/user/listing/wishlist/add/" + listingID,
-        {},
-      );
+      await AxiosPrivate.patch(ADD_TO_WISHLIST_URL + listingID, {});
 
       toast.success("Added to wishlist");
 
       setTriggerWishlistRefetch((val) => !val);
-    } catch (err: any) {
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("failed to add to wishlist");
@@ -170,20 +177,18 @@ const SearchPage = () => {
         return;
       }
 
-      const response = await AxiosPrivate.patch(
-        "/user/listing/wishlist/remove/" + listingID,
-      );
+      await AxiosPrivate.patch(REMOVE_FROM_WISHLIST_URL + listingID);
 
       toast.success("removed from wishlist");
       setTriggerWishlistRefetch((val) => !val);
-    } catch (err: any) {
-      if (!err?.response) {
+    } catch (err) {
+      if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
-      } else if (err.response?.status === 400) {
+      } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 401) {
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === 500) {
+      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
         toast.error("failed to remove from wishlist");
@@ -245,8 +250,9 @@ const SearchPage = () => {
           {loading ? (
             <ProductSkeleton count={30} />
           ) : (
-            propertiesList?.map((property) => (
+            propertiesList?.map((property, i) => (
               <div
+                key={i}
                 onClick={() => {
                   navigate(`/hotel/details/${property._id}`);
                 }}
@@ -329,6 +335,7 @@ const SearchPage = () => {
             </button>
             {new Array(totalPages).fill(0).map((val, i) => (
               <div
+              key={i}
                 className={` ${page === i + 1 ? " bg-gray-300" : ""} cursor-pointer rounded-md border-2 border-black px-2 text-sm`}
                 onClick={() => {
                   setPage(i + 1);
@@ -347,31 +354,6 @@ const SearchPage = () => {
           </div>
         </div>
 
-        {/* <div className="  mx-auto  flex w-3/4 items-center  justify-between  py-7 md:w-full    2xl:mt-12  ">
-          <div className="flex items-center gap-4 text-sm 2xl:text-lg">
-            <p>Total Pages : {totalPages}</p>
-          </div>
-
-          <div className=" flex items-center gap-4 text-sm 2xl:text-lg ">
-            <button
-              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
-              onClick={() => setPage((page) => page - 1)}
-              disabled={page <= 1}
-            >
-              <IoIosArrowBack />
-            </button>
-
-            <p>Page {page}</p>
-
-            <button
-              className=" cursor-pointer rounded-full px-1 py-1 hover:bg-neutral-300"
-              disabled={page >= totalPages}
-              onClick={() => setPage((page) => page + 1)}
-            >
-              <IoIosArrowForward />
-            </button>
-          </div>
-        </div> */}
         <SearchFilterModal
           reFetchData={() => {
             setTriggerRefetch((val) => !val);
