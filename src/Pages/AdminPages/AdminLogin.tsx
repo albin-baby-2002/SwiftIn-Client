@@ -54,9 +54,7 @@ const AdminLogin = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
+      }  else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else if (err.response?.status === STATUS_CODES.NOT_FOUND) {
         toast.error("Email not registered. Please SignUp");

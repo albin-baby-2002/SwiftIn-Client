@@ -57,7 +57,7 @@ const UseGoogleLogin = () => {
         }
       }
     },
-    onError: (err) => {
+    onError: () => {
       toast.error("Google Login Failed Try Again");
     },
   });

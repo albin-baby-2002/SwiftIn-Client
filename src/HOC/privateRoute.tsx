@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useAuth from "../Hooks/zustandStore/useAuth";
 import { Navigate } from "react-router-dom";
 

@@ -77,8 +77,6 @@ const SearchPage = () => {
           },
         });
 
-        setIsLoading(false);
-
         if (isMounted) {
           setPropertiesList(response.data.properties);
 
@@ -88,8 +86,16 @@ const SearchPage = () => {
 
           console.log(response.data);
 
-          setTotalHotels(response.data.totalHotels);
+          setTotalHotels(() => {
+            
+            setIsLoading(false);
+            console.log('inside false')
+            return response.data.totalHotels;
+          });
         }
+
+        
+        
       } catch (error) {
         setIsLoading(false);
         toast.error("Failed to load data");
@@ -159,8 +165,11 @@ const SearchPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
+        toast.error("Login to add to wishlist");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -186,8 +195,11 @@ const SearchPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
+        toast.error("Login to remove from wishlist");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -333,9 +345,9 @@ const SearchPage = () => {
             >
               <IoIosArrowBack />
             </button>
-            {new Array(totalPages).fill(0).map((val, i) => (
+            {new Array(totalPages).fill(0).map((v, i) => (
               <div
-              key={i}
+                key={i + v}
                 className={` ${page === i + 1 ? " bg-gray-300" : ""} cursor-pointer rounded-md border-2 border-black px-2 text-sm`}
                 onClick={() => {
                   setPage(i + 1);

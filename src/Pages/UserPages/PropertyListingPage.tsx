@@ -26,6 +26,7 @@ import { HotelListingSchema } from "../../Schemas/User/hotelListingSchema";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 import { AxiosError } from "axios";
 import { STATUS_CODES } from "../../Enums/statusCodes";
+import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
 
 // types used
 
@@ -204,8 +205,11 @@ const PropertyListingPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
+        toast.error("Login to list the property");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -359,22 +363,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
+              <CenterNav/>
 
                 <div className=" flex gap-2 font-Inter  ">
                   <button className=" w-14 rounded-md bg-black    py-[6px] font-semibold text-white">
@@ -484,22 +473,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
+                <CenterNav />
 
                 <div className=" flex gap-2 font-Inter ">
                   <button
@@ -687,22 +661,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
+                <CenterNav />
 
                 <div className=" flex gap-2 font-Inter ">
                   <button
@@ -840,22 +799,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
+                <CenterNav />
 
                 <div className=" flex gap-2 font-Inter ">
                   <button
@@ -888,8 +832,8 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[130px]">
-        <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
+      <main className="  grid h-screen grid-rows-[60px,1fr] pt-[130px]">
+        <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10 ">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
               <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
@@ -909,9 +853,9 @@ const PropertyListingPage = () => {
           </div>
         </div>
 
-        <div className=" mx-auto mt-9 flex max-w-[75%] gap-4">
+        <div className=" mx-auto mt-9 flex w-full max-w-[75%] gap-4 pb-10">
           <div
-            className={`${mainImage ? "" : " border-4 "}  relative flex  h-[260px] w-[50%]  rounded-l-xl   border-gray-400`}
+            className={`${mainImage ? "" : " border-4 "}  relative flex   min-h-[260px] w-[50%]  rounded-l-xl   border-gray-400`}
           >
             {mainImage ? (
               <>
@@ -944,7 +888,7 @@ const PropertyListingPage = () => {
             )}
           </div>
 
-          <div className=" gap- flex h-[260px]  w-[25%] flex-col   justify-between   ">
+          <div className=" gap- flex min-h-[260px]  w-[25%] flex-col   justify-between   ">
             <div
               className={`${otherImages[0] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
             >
@@ -1014,7 +958,7 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" gap- flex h-[260px]  w-[25%] flex-col   justify-between   ">
+          <div className=" gap- flex min-h-[260px]  w-[25%] flex-col   justify-between   ">
             <div
               className={`${otherImages[2] ? "" : "border-4"} relative  h-[47%]  rounded-tr-lg  border-gray-400 `}
             >
@@ -1099,22 +1043,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
+                <CenterNav />
 
                 <div className=" flex gap-2 font-Inter ">
                   <button
@@ -1254,22 +1183,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
+                <CenterNav />
 
                 <div className=" flex gap-2 font-Inter ">
                   <button

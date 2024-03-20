@@ -4,7 +4,7 @@ import Heading from "../UiComponents/Heading";
 import Button from "../UiComponents/Button";
 import { FcGoogle } from "react-icons/fc";
 import Input from "../Inputs/Input";
-import { startTransition, useState } from "react";
+import {  useState } from "react";
 import Modal from "./ParentModal/Modal";
 
 import toast from "react-hot-toast";

@@ -9,8 +9,6 @@ import PersistentLogin from "./HOC/persistentLogin";
 import AdminLogin from "./Pages/AdminPages/AdminLogin";
 import PrivateRoute from "./HOC/privateRoute";
 import { ROLES_LIST } from "./Enums/userRoles";
-import useLogout from "./Hooks/AuthHooks/useLogout";
-import Dashboard from "./Pages/AdminPages/Console";
 import Console from "./Pages/AdminPages/Console";
 import Users from "./Pages/AdminPages/UsersManagement";
 import Profile from "./Pages/UserPages/Profile";

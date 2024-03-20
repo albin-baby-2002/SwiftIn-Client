@@ -26,8 +26,11 @@ const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
+        toast.error("Login to add review");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {

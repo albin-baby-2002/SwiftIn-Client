@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../Hooks/zustandStore/useAuth";
 import { RiTvLine } from "react-icons/ri";
 import { Swiper, SwiperSlide } from "swiper/react";
+import loader2 from "../../Assets/btnloader.svg";
 
 import toast from "react-hot-toast";
 import { TiWiFi } from "react-icons/ti";
@@ -79,6 +80,8 @@ const HotelDetailsPage = () => {
   const [reviews, SetReviews] = useState<TReviewData[] | null>(null);
 
   const [triggerWishlistRefetch, setTriggerWishlistRefetch] = useState(true);
+
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   // axios private hook
 
@@ -235,8 +238,11 @@ const HotelDetailsPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
+        toast.error("Login to add to wishlist");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -262,8 +268,11 @@ const HotelDetailsPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
+        toast.error("Login to remove from wishlist");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -300,8 +309,8 @@ const HotelDetailsPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED) {
-        toast.error(err.response.data.message);
+      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED || err.response?.status === STATUS_CODES.FORBIDDEN) {
+        toast.error("login to know availability");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -343,16 +352,21 @@ const HotelDetailsPage = () => {
   // function to display RazorPay and create order / make and validate payment
 
   async function displayRazorpay() {
+    setPaymentLoading(true);
+
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js",
     );
 
     if (!res) {
+      setPaymentLoading(false);
       alert("Razorpay SDK failed to load. Are you online?");
       return;
     }
 
     if (!auth.accessToken) {
+      setPaymentLoading(false);
+
       toast.error("login to make a reservation");
 
       return;
@@ -366,6 +380,8 @@ const HotelDetailsPage = () => {
     try {
       result = await AxiosPrivate.post(CREATE_ORDER_URL, data);
     } catch (err) {
+      setPaymentLoading(false);
+
       if (!(err instanceof AxiosError)) {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
@@ -374,7 +390,7 @@ const HotelDetailsPage = () => {
         err.response?.status === STATUS_CODES.UNAUTHORIZED ||
         err.response?.status === STATUS_CODES.FORBIDDEN
       ) {
-        toast.error("Failed Authorization:Login to reserve");
+        toast.error("Login to reserve");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
       } else {
@@ -383,6 +399,8 @@ const HotelDetailsPage = () => {
     }
 
     if (!result) {
+      setPaymentLoading(false);
+
       return;
     }
 
@@ -414,7 +432,10 @@ const HotelDetailsPage = () => {
 
         try {
           result = await AxiosPrivate.post(PAYMENT_SUCCESS_URL, data);
+          setPaymentLoading(false);
         } catch (err) {
+          setPaymentLoading(false);
+
           if (!(err instanceof AxiosError)) {
             toast.error("No Server Response");
           } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
@@ -950,12 +971,21 @@ const HotelDetailsPage = () => {
                         </div>
 
                         <div className=" mt-8 flex w-full justify-center font-Inter lg:mt-12">
-                          <button
-                            className=" w-full rounded-xl bg-black py-2 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
-                            onClick={displayRazorpay}
-                          >
-                            Reserve
-                          </button>
+                          {paymentLoading ? (
+                            <button
+                              className=" flex max-h-10 w-full items-center justify-center rounded-xl bg-black py-1 text-sm font-bold tracking-wide  text-white hover:bg-black/85 lg:px-4 lg:text-base"
+                              onClick={displayRazorpay}
+                            >
+                              <img className=" h-full" src={loader2} alt="" />
+                            </button>
+                          ) : (
+                            <button
+                              className=" flex items-center justify-center max-h-10 w-full rounded-xl bg-black py-2 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
+                              onClick={displayRazorpay}
+                            >
+                              Reserve
+                            </button>
+                          )}
                         </div>
 
                         <div className=" flex   justify-center  gap-4   border-t-2 pt-6  font-Inter text-sm font-semibold   lg:pb-4 lg:pt-8  ">
@@ -1059,7 +1089,7 @@ const HotelDetailsPage = () => {
                 )}
               </div>
             </main>
-          )}{" "}
+          )}
         </>
       )}
     </>

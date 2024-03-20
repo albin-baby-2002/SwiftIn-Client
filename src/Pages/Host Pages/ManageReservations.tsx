@@ -1,27 +1,27 @@
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 import { FaSearch } from "react-icons/fa";
-
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-
-import { CgMenuGridR } from "react-icons/cg";
 import { useEffect, useState } from "react";
+import { CgMenuGridR } from "react-icons/cg";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import HostNav from "../../Components/HostComponents/HostNav";
+import TableLoader from "../../Components/Loaders/TableLoader";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+
+import {
+  TGetReservationsResponse,
+  TReservationsData,
+} from "../../Types/GeneralTypes/apiResponseTypes";
+
+import HostCancelReservationConfirm from "../../Components/Modals/HostCancelReservationConfirm";
+
+import useHostConfirmReservationCancel from "../../Hooks/zustandStore/useHostConfirmCancelReservation";
 
 import {
   GET_HOST_RESERVATIONS_URL,
   HOST_CANCEL_RESERVATION_URL,
 } from "../../Api/EndPoints";
-import toast from "react-hot-toast";
-import EditListingModal from "../../Components/Modals/EditListingModal";
-import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
-import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
-
-import HostNav from "../../Components/HostComponents/HostNav";
-import { AxiosError } from "axios";
-import { STATUS_CODES } from "../../Enums/statusCodes";
-import {
-  TGetReservationsResponse,
-  TReservationsData,
-} from "../../Types/GeneralTypes/apiResponseTypes";
 
 const ManageReservations = () => {
   const [navigation, setNavigation] = useState(true);
@@ -34,14 +34,22 @@ const ManageReservations = () => {
     null,
   );
   const [search, setSearch] = useState("");
+
   const [page, setPage] = useState(1);
+
   const [totalPages, setTotalPages] = useState(1);
+
+  const [loading, setLoading] = useState(false);
+
+  const HostConfirmCancelReserationModal = useHostConfirmReservationCancel();
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       try {
+        setLoading(true);
+
         const response = await AxiosPrivate.get<TGetReservationsResponse>(
           GET_HOST_RESERVATIONS_URL,
           {
@@ -52,11 +60,14 @@ const ManageReservations = () => {
         if (isMounted) {
           setReservations(response.data.reservations);
 
-          setTotalPages(response.data.totalPages);
-
-          console.log(response.data);
+          setTotalPages(() => {
+            setLoading(false);
+            return response.data.totalPages;
+          });
         }
       } catch (error) {
+        setLoading(false);
+
         toast.error("Failed to load data");
       }
     };
@@ -75,6 +86,8 @@ const ManageReservations = () => {
       );
 
       toast.success(" reservation cancelled ");
+
+      HostConfirmCancelReserationModal.onClose();
 
       setTriggerRefetch((val) => !val);
     } catch (err) {
@@ -108,7 +121,7 @@ const ManageReservations = () => {
                   setNavigation((val) => !val);
                 }}
               />
-              <p className=" font-semibold">Manage Listing</p>
+              <p className=" font-semibold">Manage Reservations</p>
             </div>
             <div className=" ms-3  flex max-w-[190px] items-center gap-3 rounded-md  border-2   border-gray-400 text-xs sm:max-w-max sm:px-4 sm:py-2 ">
               <FaSearch />
@@ -143,54 +156,68 @@ const ManageReservations = () => {
               </div>
 
               <div className=" min-h-[60vh] ">
-                {reservations && reservations.length > 0 ? (
-                  reservations?.map((reservation,i) => (
-                    <div key={i} className="   border-b-2 px-6 font-Sen  text-sm ">
-                      <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]  ">
-                        <div className=" flex items-center  gap-2 text-left   ">
-                          <p>{reservation.hotelName}</p>
-                        </div>
-                        <p className=" self-center  text-center    ">
-                          {" "}
-                          {reservation.reservationStatus}
-                        </p>
-                        <p className=" self-center  text-center ">
-                          {reservation.rooms}
-                        </p>
-                        <p className=" self-center  text-center lowercase ">
-                          {reservation.customerName}
-                        </p>
-                        <p className=" self-center  text-center ">
-                          {reservation.checkInDate}
-                        </p>
-                        <p className=" self-center  text-center ">
-                          {reservation.checkOutDate}
-                        </p>
+                {loading ? (
+                  <div className=" flex min-h-[300px] items-center">
+                    <TableLoader />
+                  </div>
+                ) : (
+                  <>
+                    {" "}
+                    {reservations && reservations.length > 0 ? (
+                      reservations?.map((reservation, i) => (
+                        <div
+                          key={i}
+                          className="   border-b-2 px-6 font-Sen  text-sm "
+                        >
+                          <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]  ">
+                            <div className=" flex items-center  gap-2 text-left   ">
+                              <p>{reservation.hotelName}</p>
+                            </div>
+                            <p className=" self-center  text-center    ">
+                              {" "}
+                              {reservation.reservationStatus}
+                            </p>
+                            <p className=" self-center  text-center ">
+                              {reservation.rooms}
+                            </p>
+                            <p className=" self-center  text-center lowercase ">
+                              {reservation.customerName}
+                            </p>
+                            <p className=" self-center  text-center ">
+                              {reservation.checkInDate}
+                            </p>
+                            <p className=" self-center  text-center ">
+                              {reservation.checkOutDate}
+                            </p>
 
-                        <div className=" flex items-center  justify-center gap-4  text-xl">
-                          <div className="  flex w-12  justify-center  text-xs">
-                            <p></p>
+                            <div className=" flex items-center  justify-center gap-4  text-xl">
+                              <div className="  flex w-12  justify-center  text-xs">
+                                <p></p>
 
-                            <button
-                              disabled={
-                                reservation.reservationStatus !== "success"
-                              }
-                              className={`${!(reservation.reservationStatus === "success") ? "line-through" : " cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white"} `}
-                              onClick={() => {
-                                cancelReservation(reservation._id);
-                              }}
-                            >
-                              cancel
-                            </button>
+                                <button
+                                  disabled={
+                                    reservation.reservationStatus !== "success"
+                                  }
+                                  className={`${!(reservation.reservationStatus === "success") ? "rounded-md border-2 border-neutral-500 px-[2px]  py-[2px] line-through" : " cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white"} `}
+                                  onClick={() => {
+                                    HostConfirmCancelReserationModal.onOpen(
+                                      reservation._id,
+                                    );
+                                  }}
+                                >
+                                  cancel
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className=" flex min-h-[55vh] items-center justify-center font-Inter font-bold">
+                        <p>No reservation Data Found</p>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className=" flex min-h-[55vh] items-center justify-center font-Inter font-bold">
-                    <p>No reservation Data Found</p>
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -223,23 +250,7 @@ const ManageReservations = () => {
           </div>
         </div>
       </main>
-      <EditListingModal
-        reFetchData={() => {
-          setTriggerRefetch((val) => !val);
-        }}
-      />
-
-      <EditListingImageModal
-        reFetchData={() => {
-          setTriggerRefetch((val) => !val);
-        }}
-      />
-
-      <EditListingAddressModal
-        reFetchData={() => {
-          setTriggerRefetch((val) => !val);
-        }}
-      />
+      <HostCancelReservationConfirm cancelReservation={cancelReservation} />
     </div>
   );
 };

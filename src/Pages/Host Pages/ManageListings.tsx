@@ -1,31 +1,35 @@
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 import { FaSearch } from "react-icons/fa";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { BiEditAlt } from "react-icons/bi";
-import { CgMenuGridR } from "react-icons/cg";
 import { useEffect, useState } from "react";
+import { CgMenuGridR } from "react-icons/cg";
+import { STATUS_CODES } from "../../Enums/statusCodes";
+import HostNav from "../../Components/HostComponents/HostNav";
+import TableLoader from "../../Components/Loaders/TableLoader";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import useAxiosPrivate from "../../Hooks/AxiosPrivate/useAxiosPrivate";
+import EditListingModal from "../../Components/Modals/EditListingModal";
+import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
+import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
+import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
+
 import {
   ACTIVATE_LISTING_URL,
   DEACTIVATE_LISTING_URL,
   GET_HOST_LISTINGS_URL,
 } from "../../Api/EndPoints";
-import toast from "react-hot-toast";
-import useEditListingsModal from "../../Hooks/zustandStore/useEditListingsModal";
-import EditListingModal from "../../Components/Modals/EditListingModal";
-import EditListingImageModal from "../../Components/Modals/EditListingImgModal";
-import EditListingAddressModal from "../../Components/Modals/EditListingAddressModal";
 
-import HostNav from "../../Components/HostComponents/HostNav";
-import TableLoader from "../../Components/Loaders/TableLoader";
-import { AxiosError } from "axios";
-import { STATUS_CODES } from "../../Enums/statusCodes";
 import {
   TGetListingDataResp,
   TListingsData,
 } from "../../Types/GeneralTypes/apiResponseTypes";
+import ConfirmBlockListingModal from "../../Components/Modals/ConfirmBlockListing";
+import useConfirmBlockListing from "../../Hooks/zustandStore/useConfirmBlockListing";
 
 const ManageListings = () => {
   const [navigation, setNavigation] = useState(true);
+
   const editListingModalState = useEditListingsModal();
 
   const AxiosPrivate = useAxiosPrivate();
@@ -36,10 +40,15 @@ const ManageListings = () => {
     null,
   );
   const [search, setSearch] = useState("");
+
   const [page, setPage] = useState(1);
+
   const [totalPages, setTotalPages] = useState(1);
 
   const [loading, setLoading] = useState(false);
+  
+  const confirmBlockListing = useConfirmBlockListing();
+  
 
   useEffect(() => {
     let isMounted = true;
@@ -53,14 +62,15 @@ const ManageListings = () => {
             params: { search, page },
           },
         );
-        setLoading(false);
 
         if (isMounted) {
           setPropertiesList(response.data.properties);
 
-          setTotalPages(response.data.totalPages);
+          setTotalPages(() => {
+            setLoading(false);
 
-          // console.log(response.data);
+            return response.data.totalPages;
+          });
         }
       } catch (err) {
         setLoading(false);
@@ -115,6 +125,8 @@ const ManageListings = () => {
       toast.success(" Listing deactivated ");
 
       setTriggerRefetch((val) => !val);
+      
+      confirmBlockListing.onClose()
     } catch (err: any) {
       console.log(err);
 
@@ -188,7 +200,10 @@ const ManageListings = () => {
                   <>
                     {propertiesList && propertiesList.length > 0 ? (
                       propertiesList?.map((property, index) => (
-                        <div key={index} className="   border-b-2 px-6 font-Sen  text-sm ">
+                        <div
+                          key={index}
+                          className="   border-b-2 px-6 font-Sen  text-sm "
+                        >
                           <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(4,minmax(100px,1fr))_100px]  ">
                             <div className=" flex items-center  gap-2 text-left   ">
                               <div>
@@ -222,7 +237,7 @@ const ManageListings = () => {
                                   <p
                                     className=" cursor-pointer  rounded-md  border-2 border-neutral-500    px-[2px] py-[2px] hover:bg-rose-500 hover:text-white "
                                     onClick={() => {
-                                      deActivateListing(property._id);
+                                      confirmBlockListing.onOpen(property._id)
                                     }}
                                   >
                                     block
@@ -307,6 +322,8 @@ const ManageListings = () => {
           setTriggerRefetch((val) => !val);
         }}
       />
+      
+      <ConfirmBlockListingModal deactivateListing={deActivateListing}/>
     </div>
   );
 };

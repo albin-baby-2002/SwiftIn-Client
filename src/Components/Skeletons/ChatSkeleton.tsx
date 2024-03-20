@@ -9,8 +9,8 @@ interface TcardSkeletonProps {
 const ChatSkeleton: React.FC<TcardSkeletonProps> = ({ count }) => {
   const CardCount: number[] = new Array(count).fill(0);
 
-  return CardCount.map((v, i) => (
-    <div key={i}>
+  return CardCount.map((v,i) => (
+    <div key={i+v}>
       <div className=" flex h-14   items-center gap-3 rounded-md border-2  border-[#808080] px-4  ">
         <div className=" w-8  ">
           <Skeleton circle width={26} height={26} />

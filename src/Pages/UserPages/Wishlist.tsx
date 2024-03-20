@@ -13,6 +13,8 @@ import {
 } from "../../Api/EndPoints";
 import { AxiosError } from "axios";
 import { TWishlistData } from "../../Types/GeneralTypes/apiResponseTypes";
+import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
+import WishlistSkeleton from "../../Components/Skeletons/wishlistSkeleton";
 
 const Wishlist = () => {
   // axios private hook
@@ -31,21 +33,26 @@ const Wishlist = () => {
 
   const [wishlist, setWishlist] = useState<TWishlistData[] | null>(null);
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
           WISHLIST_DETAILS_URL,
         );
 
         if (isMounted) {
-          setWishlist(response.data.wishLists);
-
-          console.log(response.data.wishLists);
+          setWishlist(() => {
+            setLoading(false);
+            return response.data.wishLists;
+          });
         }
       } catch (error) {
+        setLoading(false);
         toast.error("Failed to load data");
       }
     };
@@ -101,28 +108,7 @@ const Wishlist = () => {
             <div className=" flex items-center  justify-between px-4 py-5   text-sm">
               <Logo />
 
-              <div
-                className="  hidden items-center justify-between gap-3
-              md:flex 
-            "
-              >
-                <div
-                  className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
-              "
-                >
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    Reservations
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Wishlists
-                  </p>
-                  <p className=" transform cursor-pointer  transition duration-200 hover:scale-110 hover:text-neutral-200">
-                    {" "}
-                    Contact Us
-                  </p>
-                </div>
-              </div>
+              <CenterNav />
 
               <div className=" flex min-w-[85px]  justify-end">
                 <div
@@ -145,37 +131,47 @@ const Wishlist = () => {
             </h1>
           </div>
 
-          <div className=" mx-auto mt-10 grid max-w-[90%] grid-cols-1 gap-4 gap-y-10 sm:mx-0 sm:max-w-none sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  xl:grid-cols-5">
-            {wishlist?.map((item,i) => (
-              <div key={i} className="  rounded-lg border  shadow-xl">
-                <div className=" mx-auto px-6 py-6">
-                  <img
-                    className=" w-full cursor-pointer rounded-lg sm:h-[180px]"
-                    src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${item.mainImage}`}
-                    alt=""
-                    onClick={() => {
-                      navigate(`/hotel/details/${item._id}`);
-                    }}
-                  />
-
-                  <div className="mt-4 flex items-center justify-between rounded-md bg-black py-2 pe-2 ps-3 text-white">
-                    <p className="   font-Sen text-sm font-semibold">
-                      {item.hotelName}
-                    </p>
-
-                    <p
-                      className="  cursor-pointer  rounded-md  bg-black text-white"
+          {loading ? (
+            <div className=" mx-auto mt-10 grid max-w-[90%] grid-cols-1 gap-4 gap-y-10 sm:mx-0 sm:max-w-none sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  xl:grid-cols-5">
+              <WishlistSkeleton count={30} />
+            </div>
+          ) : wishlist?.length ? (
+            <div className=" mx-auto mt-10 grid max-w-[90%] grid-cols-1 gap-4 gap-y-10 sm:mx-0 sm:max-w-none sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  xl:grid-cols-5">
+              {wishlist?.map((item, i) => (
+                <div key={i} className="  rounded-lg border  shadow-xl">
+                  <div className=" mx-auto px-6 py-6">
+                    <img
+                      className=" w-full cursor-pointer rounded-lg sm:h-[180px]"
+                      src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${item.mainImage}`}
+                      alt=""
                       onClick={() => {
-                        removeFromWishlist(item._id);
+                        navigate(`/hotel/details/${item._id}`);
                       }}
-                    >
-                      <IoClose size={22} />
-                    </p>
+                    />
+
+                    <div className="mt-4 flex items-center justify-between rounded-md bg-black py-2 pe-2 ps-3 text-white">
+                      <p className="   font-Sen text-sm font-semibold">
+                        {item.hotelName}
+                      </p>
+
+                      <p
+                        className="  cursor-pointer  rounded-md  bg-black text-white"
+                        onClick={() => {
+                          removeFromWishlist(item._id);
+                        }}
+                      >
+                        <IoClose size={22} />
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="  pt-10 text-center md:ps-5 md:text-left">
+              <p>No Data Found In Your Wishlist</p>
+            </div>
+          )}
         </div>
       </main>
     </>

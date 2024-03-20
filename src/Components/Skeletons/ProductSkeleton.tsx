@@ -10,7 +10,7 @@ const ProductSkeleton: React.FC<TcardSkeletonProps> = ({ count }) => {
   const CardCount: number[] = new Array(count).fill(0);
 
   return CardCount.map((v, i) => (
-    <div key={i} className=" min-h-[270px] sm:min-h-[330px] w-[90%]">
+    <div key={i+v} className=" min-h-[270px] sm:min-h-[330px] w-[90%]">
       <div className="  h-full  items-center   gap-3    ">
         <div className="  h-2/3   ">
           <Skeleton className=" h-full rounded-xl" />
