@@ -72,7 +72,7 @@ const Modal: React.FC<TModalProps> = ({
             </div>
 
             <div className="max-h-[95vh]  overflow-y-scroll">
-              <div className="px-8 py-4 ">{body}</div>
+              <div className=" px-4 py-4 sm:px-8 ">{body}</div>
 
               {submitActionLabel && (
                 <div className="px-8 py-4">

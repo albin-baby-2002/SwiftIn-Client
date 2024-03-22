@@ -59,3 +59,12 @@ export interface TInputComponentProps {
   textBase?: boolean;
   placeholder?: string;
 }
+
+
+export interface TMainMenuProps {
+  colorBlack?: boolean;
+}
+
+export interface TFooterProps {
+  bg?:string;
+}

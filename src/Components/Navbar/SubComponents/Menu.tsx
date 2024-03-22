@@ -10,7 +10,7 @@ const Menu: React.FC<MenuProps> = ({ children }) => {
                 -right-3 
                 top-12 
                 z-30 
-                min-w-[150px] 
+                min-w-[160px] 
                 rounded-md 
                  border-2
                 bg-white 

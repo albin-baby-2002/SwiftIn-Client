@@ -56,8 +56,8 @@ const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
   };
 
   return (
-    <div className=" flex h-[200px] max-w-[400px] items-center  justify-center gap-3 rounded-xl border-2  px-3  md:w-[46%]  md:max-w-none   lg:h-[240px]  lg:gap-6 lg:py-5">
-      <div className="  text-neutral-500 md:w-1/3 lg:w-1/2 ">
+    <div className=" flex h-[200px] w-[90%]  items-center justify-center gap-2  rounded-xl border-2 px-3 sm:max-w-[400px]  sm:gap-3  md:w-[46%]  md:max-w-none   lg:h-[240px]  lg:gap-6 lg:py-5">
+      <div className="  w-1/2 text-neutral-500 md:w-1/3 lg:w-1/2 ">
         <div className=" ps-1">
           <p className="  mt-2 hidden font-Sen text-lg font-bold text-black lg:block lg:text-[24px]">
             Add Your Review
@@ -71,7 +71,7 @@ const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
             tell us about your experience
           </p>
 
-          <p className=" mt-2 w-[80%]  text-xs font-bold   lg:text-sm">
+          <p className=" mt-2 hidden  w-[80%] text-xs font-bold sm:block   lg:text-sm">
             {" "}
             Also give rating
           </p>
@@ -81,7 +81,7 @@ const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
           onClick={addReview}
           className=" mt-5 rounded-md bg-black px-4 py-2 text-xs font-semibold text-white  lg:hidden lg:text-sm"
         >
-          Submit Review
+          Submit Now
         </button>
         <button
           onClick={addReview}
@@ -94,7 +94,7 @@ const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
       <div className="   flex  flex-col justify-center gap-2 ">
         <div className=" flex justify-center gap-2 text-xs lg:text-sm"></div>
 
-        <div className="   flex items-center justify-between  gap-2 rounded-md border-2  border-gray-200   px-4  py-2 ">
+        <div className="   flex items-center justify-between  gap-2 rounded-md border-2  border-gray-200  px-2  py-1 sm:px-4  sm:py-2 ">
           <p className=" font-Sen text-xs font-bold  lg:text-base">Rating</p>
 
           <div className=" flex  items-center gap-4">

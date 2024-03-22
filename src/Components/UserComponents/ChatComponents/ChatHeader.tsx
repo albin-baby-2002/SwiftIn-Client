@@ -1,37 +1,16 @@
 import { useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { AiFillAppstore } from "react-icons/ai";
-import useAuth from "../../../Hooks/zustandStore/useAuth";
-import useLogout from "../../../Hooks/AuthHooks/useLogout";
-import Menu from "../../Navbar/SubComponents/Menu";
 import useChatState from "../../../Hooks/zustandStore/useChatState";
-import useLoginModal from "../../../Hooks/zustandStore/useLoginModal";
-import MenuItem from "../../Navbar/SubComponents/MenuItem";
-import useRegisterModal from "../../../Hooks/zustandStore/useRegisterModal";
+import MainMenu from "../../Navbar/SubComponents/MainMenu";
 
 const ChatHeader = () => {
+  
   const navigate = useNavigate();
-
-  // global states
 
   const chatState = useChatState();
 
-  const registerModal = useRegisterModal();
-
-  const auth = useAuth();
-
-  const loginModal = useLoginModal();
-
-  const logout = useLogout();
-
-  const [mainMenu, setMainMenu] = useState(false);
-
   const [showNotificationList, setShowNotificationList] = useState(false);
-
-  const toggleMainMenu = () => {
-    setMainMenu((value) => !value);
-  };
 
   return (
     <header className=" fixed  w-full    ">
@@ -119,83 +98,7 @@ const ChatHeader = () => {
                 className="relative flex  h-7 flex-row items-center  justify-around  gap-3  rounded-xl  px-[7px] py-[5px]
     "
               >
-                <div
-                  onClick={toggleMainMenu}
-                  className="
-             cursor-pointer "
-                >
-                  <AiFillAppstore
-                    size={24}
-                    className=" transform    transition  duration-150 hover:scale-110"
-                  />
-
-                  {mainMenu && (
-                    <Menu>
-                      {auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/manage/property");
-                          }}
-                          label="Listings"
-                        />
-                      )}
-
-                      {auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/reservations");
-                          }}
-                          label="Reservations"
-                        />
-                      )}
-
-                      {auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/property/listing");
-                          }}
-                          label="List Your Property"
-                        />
-                      )}
-
-                      {auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            logout();
-                          }}
-                          label="Logout"
-                        />
-                      )}
-
-                      {auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            navigate("/profile");
-                          }}
-                          label="Profile"
-                        />
-                      )}
-
-                      {!auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            registerModal.onOpen();
-                          }}
-                          label="SignUp"
-                        />
-                      )}
-
-                      {!auth.accessToken && (
-                        <MenuItem
-                          onClick={() => {
-                            loginModal.onOpen();
-                          }}
-                          label="Login"
-                        />
-                      )}
-                    </Menu>
-                  )}
-                </div>
+                <MainMenu colorBlack />
               </div>
             </div>
           </div>

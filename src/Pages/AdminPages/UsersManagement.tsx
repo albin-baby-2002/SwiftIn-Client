@@ -174,12 +174,12 @@ const Users = () => {
           {/* main users table  */}
 
           <div className=" max-h-full max-w-full  overflow-x-auto overflow-y-auto    bg-gray-200 px-6  pt-8 ">
-            <div className=" flex h-full   min-w-[500px] flex-col  justify-between overflow-x-auto rounded-xl  bg-white pb-8 lg:mx-auto ">
+            <div className=" flex h-full   min-w-[500px] flex-col  justify-between overflow-x-auto rounded-xl  bg-white pb-4 lg:mx-auto ">
               {loading ? (
                 <DataLoader />
               ) : (
                 <div>
-                  <div className=" border-b px-6 py-6  font-Sen text-xs font-bold md:text-sm ">
+                  <div className=" border-b px-6 py-5  font-Sen text-xs font-bold md:text-sm ">
                     <div
                       className=" grid 
                    grid-cols-[minmax(100px,1fr)_minmax(50px,1fr)_repeat(3,minmax(60px,1fr))_60px]
@@ -196,7 +196,7 @@ const Users = () => {
                   {usersList?.map((user, index) => (
                     <div key={index} className="  px-6 font-Sen  text-xs ">
                       <div
-                        className=" grid grid-cols-[minmax(100px,1fr)_minmax(50px,1fr)_repeat(3,minmax(60px,1fr))_60px] py-3   md:grid-cols-[minmax(130px,3fr)_minmax(80px,3fr)_repeat(3,minmax(80px,2fr))_100px]
+                        className=" grid grid-cols-[minmax(100px,1fr)_minmax(50px,1fr)_repeat(3,minmax(60px,1fr))_60px] py-3.5   md:grid-cols-[minmax(130px,3fr)_minmax(80px,3fr)_repeat(3,minmax(80px,2fr))_100px]
                         
                    "
                       >

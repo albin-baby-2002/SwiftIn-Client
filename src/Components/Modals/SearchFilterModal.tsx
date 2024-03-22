@@ -31,7 +31,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
 
       <div className=" mt-7 flex gap-2 text-sm sm:gap-3">
         <p
-          className={`${searchState.rooms === 1 ? "  border-black bg-black/10  " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms === 1 ? "  border-black bg-black/10  " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(1);
           }}
@@ -39,7 +39,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           1
         </p>
         <p
-          className={`${searchState.rooms === 2 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms === 2 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(2);
           }}
@@ -47,7 +47,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           2
         </p>
         <p
-          className={`${searchState.rooms === 3 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms === 3 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(3);
           }}
@@ -55,7 +55,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           3
         </p>
         <p
-          className={`${searchState.rooms === 4 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms === 4 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(4);
           }}
@@ -63,7 +63,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           4
         </p>
         <p
-          className={`${searchState.rooms === 5 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms === 5 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(5);
           }}
@@ -71,7 +71,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           5
         </p>
         <p
-          className={`${searchState.rooms === 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms === 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(6);
           }}
@@ -79,7 +79,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           6
         </p>
         <p
-          className={`${searchState.rooms > 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.rooms > 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleRoomChange(7);
           }}
@@ -94,7 +94,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
 
       <div className=" mt-7 flex gap-2 text-sm sm:gap-3">
         <p
-          className={`${searchState.guests === 1 ? "  border-black bg-black/10  " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests === 1 ? "  border-black bg-black/10  " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(1);
           }}
@@ -102,7 +102,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           1
         </p>
         <p
-          className={`${searchState.guests === 2 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests === 2 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(2);
           }}
@@ -110,7 +110,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           2
         </p>
         <p
-          className={`${searchState.guests === 3 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests === 3 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(3);
           }}
@@ -118,7 +118,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           3
         </p>
         <p
-          className={`${searchState.guests === 4 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests === 4 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(4);
           }}
@@ -126,7 +126,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           4
         </p>
         <p
-          className={`${searchState.guests === 5 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests === 5 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(5);
           }}
@@ -134,7 +134,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           5
         </p>
         <p
-          className={`${searchState.guests === 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests === 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(6);
           }}
@@ -142,7 +142,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
           6
         </p>
         <p
-          className={`${searchState.guests > 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-3 py-[2px]`}
+          className={`${searchState.guests > 6 ? "  border-2 border-black bg-black/10   " : " border-gray-500"} cursor-pointer rounded-md border-2 px-2 py-[2px] sm:px-3`}
           onClick={() => {
             handleGuestsChange(7);
           }}
@@ -152,7 +152,7 @@ const SearchFilterModal: React.FC<TSearchFilterModalProps> = () => {
       </div>
       <p className=" mt-7 font-semibold">How to sort Hotels ? </p>
 
-      <div className=" mt-6 flex justify-between gap-4  text-sm">
+      <div className=" mt-6 flex justify-between gap-4 text-xs  sm:text-sm">
         <div
           className={`${searchState.sortBy === "highToLow" ? "  border-2 border-black bg-black/10   " : " border-gray-500"}  flex w-1/2 cursor-pointer items-center justify-center rounded-md border-2  border-gray-500 px-2 py-2 font-Sen`}
           onClick={() => {

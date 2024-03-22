@@ -16,6 +16,7 @@ import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
 import CancelReservationConfirm from "../../Components/Modals/CancelReservationConfirm";
 import useConfirmReservationCancel from "../../Hooks/zustandStore/useConfirmReservationCancelModal";
 import ReservationSkeleton from "../../Components/Skeletons/ReservationSkeleton";
+import Footer from "../../Components/Footer/Footer";
 
 const Reservations = () => {
   // axios private hook
@@ -107,7 +108,7 @@ const Reservations = () => {
         </div>
       </header>
 
-      <main className=" min-h-screen bg-gray-100 pt-[110px] sm:pt-[130px]">
+      <main className=" min-h-screen bg-gray-100 pb-10 pt-[110px] sm:pt-[130px]">
         <Container>
           <h1 className=" pb-10 text-center font-Sen  text-2xl font-semibold sm:px-4  sm:text-3xl  md:text-left">
             {" "}
@@ -126,7 +127,7 @@ const Reservations = () => {
                     {bookings.map((booking, i) => (
                       <div
                         key={i}
-                        className="   items-center    justify-center gap-4 rounded-xl bg-white  px-6 shadow-md  "
+                        className="   items-center  justify-center   gap-4 rounded-xl bg-white px-6  py-2 shadow-md  "
                       >
                         <div className=" flex gap-4">
                           <div className=" flex   flex-col items-center">
@@ -142,9 +143,9 @@ const Reservations = () => {
                                 alt=""
                               />
                             </div>
-                            <div className=" flex  w-full gap-2 py-4   ">
+                            <div className=" flex  w-full gap-2 pb-4  pt-6  sm:pt-4 ">
                               <button
-                                className="  w-full rounded-md  border-2 border-black py-1 text-sm font-semibold hover:bg-black/10"
+                                className="  w-full rounded-md  border-2 border-black py-2 text-sm font-semibold hover:bg-black/10 sm:py-1"
                                 onClick={() => {
                                   reservationDetailsModalState.onOpen(
                                     booking._id,
@@ -154,7 +155,7 @@ const Reservations = () => {
                                 Details
                               </button>
                               <button
-                                className="  w-full rounded-md bg-black py-1 text-sm font-semibold text-white hover:bg-black/90"
+                                className="  w-full rounded-md bg-black py-2 text-sm font-semibold text-white hover:bg-black/90 sm:py-1"
                                 onClick={() => {
                                   cancelReservationConfirmModalState.onOpen(
                                     booking._id,
@@ -179,6 +180,7 @@ const Reservations = () => {
           </div>
         </Container>
       </main>
+      <Footer bg="bg-gray-100" />
       <ReservationDetailsModal bookings={bookings} />
       <CancelReservationConfirm cancelReservation={cancelReservation} />
     </>

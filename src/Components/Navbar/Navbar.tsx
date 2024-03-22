@@ -24,7 +24,7 @@ const Navbar = () => {
   return (
     <nav
       id="nav"
-      className={`${scrolled ? "" : "bg-transparent"} absolute  top-0  z-20   flow-root  w-screen`}
+      className={`${scrolled ? "" : "bg-transparent"} max-w-screen  absolute top-0  z-20   flow-root  w-full`}
     >
       <div className="  px-3 py-5 ">
         <Container>

@@ -39,8 +39,12 @@ const EditUserModal: React.FC<TEditUserModalProps> = ({ reFetchData }) => {
         toast.error("Failed to load data");
       }
     };
-
-    fetchData();
+    
+    
+    if(EditUserModalState.userID){
+      
+      fetchData();
+    }
 
     return () => {
       isMounted = false;

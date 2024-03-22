@@ -52,6 +52,7 @@ import {
   TReviewData,
   TWishlistData,
 } from "../../Types/GeneralTypes/apiResponseTypes";
+import Footer from "../../Components/Footer/Footer";
 
 const amenitiesTypes = {
   WIFI: "freeWifi",
@@ -309,7 +310,10 @@ const HotelDetailsPage = () => {
         toast.error("No Server Response");
       } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
         toast.error(err.response.data.message);
-      } else if (err.response?.status === STATUS_CODES.UNAUTHORIZED || err.response?.status === STATUS_CODES.FORBIDDEN) {
+      } else if (
+        err.response?.status === STATUS_CODES.UNAUTHORIZED ||
+        err.response?.status === STATUS_CODES.FORBIDDEN
+      ) {
         toast.error("login to know availability");
       } else if (err.response?.status === STATUS_CODES.INTERNAL_SERVER_ERROR) {
         toast.error("Oops! Something went wrong. Please try again later.");
@@ -505,7 +509,7 @@ const HotelDetailsPage = () => {
         </div>
       </header>
       {loading ? (
-        <div className=" pt-[20px]">
+        <div className=" flex h-screen items-center justify-center pt-[20px]">
           <DataLoader />
         </div>
       ) : (
@@ -513,17 +517,19 @@ const HotelDetailsPage = () => {
           {propertyData && (
             <main>
               <div className=" mx-auto max-w-[1500px]">
-                <div className=" max-h-screen  bg-gray-100  font-Merriweather  lg:pb-6    xl:bg-white ">
+                <div className=" h-screen  bg-gray-100 font-Merriweather  sm:max-h-screen  lg:pb-6    xl:bg-white ">
                   <div className=" flex  h-full justify-center  gap-5 ">
                     <div
                       className="   
                       grid h-full w-[90%] 
                       grid-rows-[200px_minmax(300px,1fr)]
+                      pb-4 
                       sm:w-[95%] 
                       sm:grid-rows-[160px_minmax(1fr,340px)] 
+                      sm:pb-0   
                       lg:w-[85%] 
-                      lg:grid-rows-[190px_minmax(340px,1fr)]   
-                      xl:grid-rows-[180px_minmax(1fr,340px)] "
+                      lg:grid-rows-[190px_minmax(340px,1fr)] xl:grid-rows-[180px_minmax(1fr,340px)]
+                      "
                     >
                       <div className=" flex  items-center  justify-center px-2 pt-[70px] md:pb-[10px] md:pt-[100px]">
                         <h1 className="   text-center  text-xl font-semibold capitalize md:text-2xl xl:text-3xl   ">
@@ -536,7 +542,7 @@ const HotelDetailsPage = () => {
                       <Swiper
                         pagination={true}
                         modules={[Pagination]}
-                        className="mySwiper relative sm:hidden"
+                        className="mySwiper relative  sm:hidden"
                       >
                         <SwiperSlide>
                           {" "}
@@ -791,87 +797,7 @@ const HotelDetailsPage = () => {
                     </div>
                   </div>
 
-                  {/* <div className=" mx-auto mb-14  w-[85%]  font-Sen font-semibold sm:w-[70%] md:mb-0 md:w-[55%] md:max-w-[390px] lg:max-w-[500px]  ">
-                    <p className=" text-center text-3xl md:text-2xl lg:text-3xl ">
-                      What this place offers
-                    </p>
-
-                    <div className=" mt-8 flex flex-col gap-9 text-xs  sm:text-sm lg:text-base  ">
-                      <div className=" flex  w-full justify-between lg:mx-auto">
-                        <div className=" grid  w-[67%] grid-cols-1 md:w-[50%] lg:w-[67%] lg:ps-6   ">
-                          <div className=" flex items-center  gap-4 justify-self-start">
-                            <TiWiFi className="text-lg md:text-xl lg:text-3xl" />
-                            <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.WIFI) ? " text-gray-400  line-through " : ""}`}
-                            >
-                              Free wifi
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
-                          <div className=" flex items-center  gap-4 justify-self-start">
-                            <MdOutlinePool className=" text-lg md:text-xl lg:text-3xl" />
-                            <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.POOL) ? " text-gray-400  line-through " : ""}`}
-                            >
-                              Common Pool
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className=" flex  w-full justify-between lg:mx-auto">
-                        <div className=" grid w-[67%] grid-cols-1 md:w-[50%]  lg:w-[67%] lg:ps-6   ">
-                          <div className=" flex items-center  gap-4 justify-self-start">
-                            <FaRegSnowflake className=" text-lg md:text-xl lg:text-3xl" />
-                            <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
-                            >
-                              Air Conditioning
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
-                          <div className=" flex items-center  gap-4 justify-self-start">
-                            <FaCar className=" text-lg md:text-xl lg:text-3xl" />
-                            <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.PARKING) ? " text-gray-400  line-through " : ""}`}
-                            >
-                              Car Parking
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className=" flex  w-full justify-between lg:mx-auto">
-                        <div className=" grid w-[67%] grid-cols-1 md:w-[50%] lg:w-[67%] lg:ps-6   ">
-                          <div className=" flex items-center  gap-4 justify-self-start">
-                            <RiTvLine className=" text-lg md:text-xl lg:text-3xl" />
-                            <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.TV) ? " text-gray-400  line-through " : ""}`}
-                            >
-                              Cable Tv
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className=" grid w-[40%] grid-cols-1 lg:w-[33%]">
-                          <div className=" flex items-center  gap-4 justify-self-start">
-                            <FaHotTub className=" text-lg md:text-xl lg:text-3xl" />
-                            <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.HOT_TUB) ? " text-gray-400  line-through " : ""}`}
-                            >
-                              Hot Tub
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-
-                  <div className=" mt-6 w-[80%] md:mt-0 md:w-[45%]">
+                  <div className=" mt-6 w-[94%] sm:w-[80%] md:mt-0 md:w-[45%]">
                     <div className="   mx-auto   flex  max-w-[420px]  justify-center rounded-xl border border-neutral-300  py-6 shadow-2xl md:max-w-[325px]  lg:max-w-[400px] ">
                       <div>
                         <div className=" mt-1 flex items-center justify-between gap-3 px-1 font-Inter lg:mt-4 ">
@@ -980,7 +906,7 @@ const HotelDetailsPage = () => {
                             </button>
                           ) : (
                             <button
-                              className=" flex items-center justify-center max-h-10 w-full rounded-xl bg-black py-2 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
+                              className=" flex max-h-10 w-full items-center justify-center rounded-xl bg-black py-2 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
                               onClick={displayRazorpay}
                             >
                               Reserve
@@ -997,34 +923,39 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className="  flex flex-col items-center justify-center gap-4 pb-16 pt-6 md:flex-row  lg:gap-8   lg:py-16">
+                <div className="  flex flex-col  items-center justify-center gap-16 pb-16 pt-6 md:flex-row md:gap-4  lg:gap-8   lg:py-16">
                   {listingID && <AddReview listingID={listingID} />}
 
-                  <div className=" flex h-[200px] max-w-[400px] items-center justify-center  gap-6 rounded-xl  border-2 px-2  py-5  md:w-[46%]   md:max-w-none lg:h-[240px] ">
-                    <div className="w-1/2  md:w-[35%] lg:w-[45%] ">
-                      <img
-                        src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
-                        alt=""
-                      />
-                    </div>
+                  <div className="  h-[220px]  w-[90%] gap-6  rounded-xl border-2 px-2  py-5  sm:flex sm:h-[200px]  sm:max-w-[400px] sm:items-center  sm:justify-center  md:w-[46%]   md:max-w-none lg:h-[240px] ">
+                    <p className=" mt-2  py-2 ps-7 text-center   text-xl font-bold text-black sm:hidden lg:text-[24px]">
+                      Address and Location
+                    </p>
+                    <div className=" flex w-full items-center justify-center">
+                      <div className=" w-1/2  sm:block  md:w-[35%] lg:w-[45%] ">
+                        <img
+                          src="https://res.cloudinary.com/dfm8vhuea/image/upload/v1709117159/t4ysluc2qwiswlbxmdcz.svg"
+                          alt=""
+                        />
+                      </div>
 
-                    <div className="  w-1/2 text-neutral-500  md:w-[60%]  ">
-                      <p className=" mt-2  text-xl font-bold text-black lg:text-[24px]">
-                        Address & Location
-                      </p>
+                      <div className="   text-neutral-500  md:w-[60%]  ">
+                        <p className=" mt-2 hidden  text-lg font-bold text-black sm:block sm:text-xl lg:text-[24px]">
+                          Address & Location
+                        </p>
 
-                      <div className=" mt-3 flex flex-col gap-1 text-xs  font-bold md:gap-2   md:text-sm">
-                        <div className="flex gap-1 md:gap-2">
-                          <p>{propertyData?.hotelName}</p>
-                          <p>{propertyData?.city}</p>
+                        <div className=" flex flex-col gap-1 text-xs font-bold  sm:mt-3 md:gap-2   md:text-sm">
+                          <div className="flex gap-1 md:gap-2">
+                            <p>{propertyData?.hotelName}</p>
+                            <p>{propertyData?.city}</p>
+                          </div>
+
+                          <div className="flex gap-1 md:gap-2">
+                            <p>{propertyData?.district}</p>
+                            <p>{propertyData?.state}</p>
+                          </div>
+
+                          <p>{propertyData?.pinCode}</p>
                         </div>
-
-                        <div className="flex gap-1 md:gap-2">
-                          <p>{propertyData?.district}</p>
-                          <p>{propertyData?.state}</p>
-                        </div>
-
-                        <p>{propertyData?.pinCode}</p>
                       </div>
                     </div>
                   </div>
@@ -1036,7 +967,7 @@ const HotelDetailsPage = () => {
                       More About This Place
                     </p>
 
-                    <div className=" mt-14 text-center  text-sm font-semibold text-neutral-500 md:text-lg ">
+                    <div className=" mt-14 text-center  text-xs font-semibold text-neutral-500 sm:text-sm md:text-lg ">
                       <p>{propertyData?.aboutHotel}</p>
                     </div>
                   </div>
@@ -1090,6 +1021,7 @@ const HotelDetailsPage = () => {
               </div>
             </main>
           )}
+          <Footer bg="bg-white" />
         </>
       )}
     </>

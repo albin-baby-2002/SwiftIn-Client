@@ -29,6 +29,7 @@ import MainMenu from "../../Components/Navbar/SubComponents/MainMenu";
 import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
 import { AxiosError } from "axios";
 import { STATUS_CODES } from "../../Enums/statusCodes";
+import Footer from "../../Components/Footer/Footer";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -87,15 +88,11 @@ const SearchPage = () => {
           console.log(response.data);
 
           setTotalHotels(() => {
-            
             setIsLoading(false);
-            console.log('inside false')
+            console.log("inside false");
             return response.data.totalHotels;
           });
         }
-
-        
-        
       } catch (error) {
         setIsLoading(false);
         toast.error("Failed to load data");
@@ -270,9 +267,9 @@ const SearchPage = () => {
                 }}
                 className=" relative z-0   max-w-[90%] cursor-pointer  justify-self-center rounded-2xl  bg-white  sm:max-w-none "
               >
-                <div className="     w-full rounded-2xl sm:h-[240px]  ">
+                <div className="       w-full rounded-2xl sm:h-[240px]  ">
                   <img
-                    className=" h-full w-full rounded-b-xl rounded-t-2xl object-cover"
+                    className="  min-h-[240px]  h-full w-full rounded-b-xl rounded-t-2xl object-cover"
                     src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
                     alt=""
                   />
@@ -306,7 +303,6 @@ const SearchPage = () => {
                     } pt-[1px] font-bold`}
                     size={18}
                   />
-                  {/* <p className=" text-white">Wishlist</p> */}
                 </div>
 
                 <div className="   rounded-b-2xl    px-3  py-4 text-sm">
@@ -372,6 +368,8 @@ const SearchPage = () => {
           }}
         />
       </main>
+        <Footer bgWhite/>
+      
     </>
   );
 };

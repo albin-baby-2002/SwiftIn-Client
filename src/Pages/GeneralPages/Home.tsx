@@ -31,6 +31,7 @@ import { MdBedroomParent } from "react-icons/md";
 import { IoIosPeople } from "react-icons/io";
 
 import { Axios } from "../../Api/Axios";
+import Footer from "../../Components/Footer/Footer";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -176,24 +177,28 @@ const Home = () => {
 
       <main>
         <div className="mx-auto max-w-[1500px]">
-          <div className="   flex h-screen items-center  justify-center  bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1708764087/hkwzciljjmdjbv2l4aps.jpg')] bg-cover pt-[65px]  lg:h-max lg:min-h-[120vh] lg:pt-0">
-            <div className="   text-center  sm:pb-12 sm:pt-[0px] md:pb-0      ">
-              <div className=" xl:py-18  mx-auto  flex  max-w-[90%] flex-col  items-center justify-center gap-2  rounded-md bg-white/80 px-3 py-12 sm:mx-8 md:max-w-[700px] lg:max-w-[800px] lg:px-6 xl:max-w-none  ">
-                <div className=" text-xl font-bold    leading-[1.4] sm:text-[28px]  lg:text-3xl xl:text-4xl  ">
-                  <p className="  text ">
+          <div
+            className="   flex h-screen justify-center 
+         
+           bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1711018163/r2tnst3pomofjjormu7z.jpg')]   bg-cover  pt-[120px]  md:items-center  lg:h-max lg:min-h-[120vh] lg:pt-0"
+          >
+            <div className="     text-center  sm:pb-12 sm:pt-[0px] md:pb-0      ">
+              <div className=" mx-auto  flex min-h-[80%]  max-w-[93%]  flex-col items-center  justify-center gap-2 rounded-md  bg-white/80 px-[7px] py-12 sm:mx-8 md:max-w-[700px] lg:max-w-[800px] lg:px-6 xl:min-h-[70vh] xl:max-w-none xl:py-16 2xl:px-16 ">
+                <div className=" font-Inter text-[24px] font-extrabold    leading-8 sm:text-[28px] sm:leading-[1.4]  lg:text-3xl xl:text-4xl   ">
+                  <p className="   text    leading-loose">
                     Stay In The Best Place For Your Winter Travel{" "}
                   </p>
-                  <p className=" mt-2 hidden md:block xl:mt-8">
+                  <p className=" mt-2 hidden  md:block xl:mt-4">
                     For The Best Price
                   </p>
                 </div>
 
-                <p className=" mx-auto  mt-3 w-[85%]  text-sm  font-bold  leading-relaxed text-neutral-500 sm:w-[70%] md:mx-0 md:mr-6 lg:mt-6  lg:w-[60%] lg:text-base  xl:text-xl  ">
+                <p className=" mx-auto  mt-8 w-[93%]  text-[18px]  font-bold  leading-relaxed text-neutral-500 sm:w-[70%] md:mx-0 md:mr-6 lg:mt-6  lg:w-[60%] lg:text-base  xl:text-xl  ">
                   Reserve Your Dream Hotel Now Any Where in India By Paying Just
                   10% of the Hotel Fee{" "}
                 </p>
 
-                <div className="    mt-6   flex   justify-between      rounded-xl bg-black px-3 py-3 align-middle text-[10px] sm:gap-7 sm:text-base ">
+                <div className=" mt-10 flex  w-[80%]   max-w-[250px]   justify-center  gap-5  rounded-xl  bg-black  px-3     py-3 align-middle font-Sen text-sm sm:max-w-none sm:justify-between  sm:gap-7 sm:text-base ">
                   <div className=" flex  items-center gap-2 ps-2">
                     <FaMapLocationDot className=" text-white" size={20} />
                     <input
@@ -203,11 +208,11 @@ const Home = () => {
                       }}
                       type="text"
                       placeholder="Destination"
-                      className=" text- w-24 rounded-md bg-transparent px-1 py-1  font-semibold text-white placeholder-white outline-none "
+                      className=" w-24 rounded-md  bg-transparent px-1  py-1 text-center font-semibold  text-white placeholder-white outline-none sm:w-28 "
                     />
                   </div>
 
-                  <div className=" relative z-0 flex    items-center gap-2">
+                  <div className=" relative z-0 hidden  items-center    gap-2 sm:flex">
                     <IoIosPeople className=" text-white" size={25} />
                     <p className=" font-semibold text-white">Guests</p>
                     <input
@@ -292,7 +297,7 @@ const Home = () => {
             >
               <img
                 className=" h-[280px] w-full rounded-b-xl rounded-t-2xl object-cover"
-                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1710552406/p7lbhsgqqnvjq3b5xbes.jpg`}
+                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1711017071/lm4bdumvxry9z6szwbxh.jpg`}
                 alt=""
               />
               <p className=" ms-1 mt-6 text-lg font-semibold">New Delhi</p>
@@ -313,7 +318,7 @@ const Home = () => {
             >
               <img
                 className=" h-[280px] w-full rounded-b-xl rounded-t-2xl object-cover"
-                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1710554230/oana5hhiarknzausoabx.jpg`}
+                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1711017465/w6bvppp6ggizrlp66l1n.jpg`}
                 alt=""
               />
               <p className=" ms-1 mt-6 text-lg font-semibold">Maharashtra</p>
@@ -334,7 +339,7 @@ const Home = () => {
             >
               <img
                 className=" h-[280px] w-full rounded-b-xl rounded-t-2xl object-cover"
-                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1710554639/z7gbeyyyuvnvosfyzaoy.jpg`}
+                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1711017467/wppp8e5b5sjh6gfjer3h.jpg`}
                 alt=""
               />
               <p className=" ms-1 mt-6 text-lg font-semibold">Karnataka</p>
@@ -355,7 +360,7 @@ const Home = () => {
             >
               <img
                 className=" h-[280px] w-full rounded-b-xl rounded-t-2xl object-cover"
-                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1710554777/jqgv2pv50tkxherfviy2.jpg`}
+                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1711017467/g7lluwqbfig8cmpzhkcs.jpg`}
                 alt=""
               />
               <p className=" ms-1 mt-6 text-lg font-semibold">Kerala</p>
@@ -450,7 +455,7 @@ const Home = () => {
             <div className=" relative">
               <img
                 className=" h-[350px] w-full  rounded-xl  object-cover sm:h-[420px]"
-                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1710559354/e0dtg3j6yib5u4kafxjd.jpg`}
+                src={`https://res.cloudinary.com/dfm8vhuea/image/upload/v1711017760/cvp3vylgbh9e2vlmnbmt.jpg`}
                 alt=""
               />
 
@@ -492,33 +497,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="p mx-auto   flex   max-w-[1500px] items-center  justify-between   bg-slate-200  px-10  pb-7 pt-5 font-Sen ">
-          <div>
-            <img
-              className="hidden cursor-pointer sm:block    "
-              src={
-                "https://res.cloudinary.com/dfm8vhuea/image/upload/v1709179408/f1asvgvdlhfvhowhsnjf.png"
-              }
-              alt="Logo"
-              width={80}
-            />
-            <img
-              className=" cursor-pointer sm:hidden    "
-              src={
-                "https://res.cloudinary.com/dfm8vhuea/image/upload/v1709179408/f1asvgvdlhfvhowhsnjf.png"
-              }
-              alt="Logo"
-              width={50}
-            />
-          </div>
-
-          <div className=" flex gap-2 text-[10px] font-semibold  md:gap-4 md:text-xs">
-            <p>About Us</p>
-            <p>Contact</p>
-            <p>License</p>
-            <p>Copyrights</p>
-          </div>
-        </div>
+        <Footer />
       </main>
     </>
   );

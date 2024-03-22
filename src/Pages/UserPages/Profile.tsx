@@ -17,7 +17,6 @@ import toast from "react-hot-toast";
 import Container from "../../Components/UiComponents/Container";
 import Logo from "../../Components/Navbar/SubComponents/Logo";
 
-
 import { STATUS_CODES } from "../../Enums/statusCodes";
 import { AxiosError } from "axios";
 import {
@@ -134,8 +133,6 @@ const Profile = () => {
     };
   }, [triggerRefetch]);
 
- 
-
   return (
     <>
       <header>
@@ -197,7 +194,7 @@ const Profile = () => {
             </div>
 
             <div className="  mx-2  flex flex-col items-center  gap-10 pt-7 sm:mx-6  sm:flex-row sm:items-stretch ">
-              <div className="   flex h-[300px]  w-[90%]   flex-col items-center  justify-center rounded-xl   border-black bg-slate-50  px-10  py-12 shadow-lg sm:h-auto sm:w-1/3">
+              <div className="   flex h-[300px]  w-[90%]    flex-col items-center  justify-center rounded-xl   border-black bg-slate-50  px-10  py-12 shadow-lg sm:h-auto sm:w-1/3">
                 <div className=" relative flex  justify-center rounded-full ">
                   {profileInfo?.image ? (
                     <img
@@ -228,7 +225,7 @@ const Profile = () => {
                 </p>
               </div>
 
-              <div className=" flex h-[300px]  w-[90%] flex-col items-center justify-around gap-2  rounded-xl    border-black bg-slate-50  px-2   py-12 text-sm shadow-lg sm:h-auto sm:w-1/3">
+              <div className=" flex h-[300px]  w-[90%]  flex-col items-center justify-around gap-2  rounded-xl    border-black bg-slate-50  px-2   py-12 text-sm shadow-lg sm:h-auto sm:w-1/3">
                 <div className=" flex   w-full  items-center  justify-center gap-2 ">
                   <MdEmail className=" text-xl " />
                   <p className="   font-Sen  font-bold ">
@@ -252,7 +249,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className=" flex h-[300px]  w-[90%] flex-col items-center justify-center rounded-xl   border-black bg-slate-50  px-4   py-12 shadow-lg sm:h-auto sm:w-1/3">
+              <div className=" flex h-[300px]  w-[90%]  flex-col items-center justify-center rounded-xl   border-black bg-slate-50  px-4   py-12 shadow-lg sm:h-auto sm:w-1/3">
                 <div className=" mx-auto w-2/4 rounded-full border-4    border-black  py-8 sm:w-3/4">
                   <p className=" text-center font-Sen text-3xl font-bold">
                     {profileInfo?.wallet || " zero"}
@@ -265,8 +262,8 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className=" flex w-full items-center justify-center">
-              <div className="   mx-2   my-7 flex w-[90%] flex-col items-center justify-center  rounded-xl border-black bg-slate-50    text-center shadow-lg   sm:w-full sm:flex-row sm:text-start md:mx-6">
+            <div className="   flex  items-center justify-center sm:mx-6 sm:w-auto ">
+              <div className="  w-[90%]      my-7 flex   sm:w-full flex-col  items-center justify-center rounded-xl    border-black bg-slate-50   text-center shadow-lg sm:flex-row sm:text-start  ">
                 <div className="  flex w-[90%] flex-col gap-10 py-10 sm:ps-10  ">
                   <div className=" flex flex-col  items-center gap-6 sm:flex-row sm:gap-0">
                     <p className=" font-Sen text-lg font-bold sm:w-[40%] md:text-2xl">

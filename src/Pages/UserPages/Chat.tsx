@@ -9,7 +9,6 @@ import { IoMdArrowRoundBack, IoMdSend } from "react-icons/io";
 import toast from "react-hot-toast";
 import useChatState from "../../Hooks/zustandStore/useChatState";
 import io, { Socket } from "socket.io-client";
-import { BASE_URL } from "../../Api/Axios";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import {
   TChatUserData,
@@ -81,7 +80,7 @@ const Chat = () => {
 
   useEffect(() => {
     const makeSocketConnection = () => {
-      socket = io(BASE_URL, {
+      socket = io("https://swiftin.online", {
         timeout: 5000,
         query: {
           token: auth.accessToken,
@@ -377,10 +376,10 @@ const Chat = () => {
                 ) : (
                   <>
                     {chatState?.chats?.length > 0 && (
-                      <div className=" flex h-full flex-col gap-6 overflow-y-scroll  px-4 ">
-                        {chatState.chats.map((chat,i) => (
+                      <div className=" flex h-full flex-col gap-6 overflow-y-auto  px-4 ">
+                        {chatState.chats.map((chat, i) => (
                           <div
-                          key={i}
+                            key={i}
                             className={`  ${chatState.selectedChat?._id === chat._id ? "   border-slate-600 bg-slate-300  " : " border-gray-600   "}  flex cursor-pointer items-center gap-4  rounded-lg border-2  px-4 py-2  text-xs hover:bg-slate-300 `}
                             onClick={() => {
                               chatState.setSelectedChat(chat);
@@ -494,7 +493,7 @@ const Chat = () => {
                             {messages &&
                               messages.map((message, index) => (
                                 <div
-                                key={index}
+                                  key={index}
                                   className={`${message.sender._id === auth.userID ? " justify-end " : " justify-start "} flex `}
                                 >
                                   <p
@@ -515,7 +514,7 @@ const Chat = () => {
                       </div>
 
                       <div className=" flex items-center rounded-b-md bg-gray-200 pb-4">
-                        <div className=" mx-2 flex w-full    items-center justify-between rounded-md border bg-white   px-4 py-3 text-sm">
+                        <div className=" mx-2  flex  w-full   items-center justify-between rounded-md border bg-white   px-4 py-3 text-sm">
                           <input
                             type="text"
                             onKeyDown={sendMessage}

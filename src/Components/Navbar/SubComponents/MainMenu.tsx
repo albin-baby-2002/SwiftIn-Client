@@ -7,8 +7,11 @@ import useAuth from "../../../Hooks/zustandStore/useAuth";
 import { useNavigate } from "react-router-dom";
 import Menu from "./Menu";
 import MenuItem from "./MenuItem";
+import { TMainMenuProps } from "../../../Types/GeneralTypes/propsTypes";
 
-const MainMenu = () => {
+
+
+const MainMenu:React.FC<TMainMenuProps> = ({colorBlack}) => {
   // state of nav menu
   const [menu, setMenu] = useState(false);
 
@@ -42,7 +45,9 @@ const MainMenu = () => {
         className="
              cursor-pointer "
       >
-        <AiFillAppstore className=" transform text-[20px]  text-white transition duration-150  hover:scale-110 sm:text-[24px]" />
+        <AiFillAppstore
+          className={`${colorBlack ? "text-black" : "text-white"} transform text-[20px]    transition duration-150  hover:scale-110 sm:text-[24px]`}
+        />
 
         {menu && (
           <Menu>
@@ -78,6 +83,15 @@ const MainMenu = () => {
                   navigate("/property/listing");
                 }}
                 label="List Your Property"
+              />
+            )}
+
+            {auth.accessToken && (
+              <MenuItem
+                onClick={() => {
+                  navigate("/chat");
+                }}
+                label="Chats"
               />
             )}
 
