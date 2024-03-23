@@ -284,7 +284,6 @@ const HotelDetailsPage = () => {
 
   // api request to check if the room is available on specific days
 
-
   const checkAvailability = async () => {
     try {
       let data = { checkInDate, checkOutDate, rooms, listingID };
@@ -512,18 +511,18 @@ const HotelDetailsPage = () => {
           {propertyData && (
             <main>
               <div className=" mx-auto max-w-[1500px]">
-                <div className=" h-screen  bg-gray-100 font-Merriweather  sm:max-h-screen  lg:pb-6    xl:bg-white ">
-                  <div className=" flex  h-full justify-center  gap-5 ">
+                <div className=" h-[530px] bg-gray-100  font-Merriweather sm:h-screen  sm:max-h-screen  lg:pb-6    xl:bg-white ">
+                  <div className=" flex  h-full  justify-center  gap-5 ">
                     <div
                       className="   
                       grid h-full w-[90%] 
-                      grid-rows-[200px_minmax(300px,1fr)]
+                      grid-rows-[200px_minmax(300px,330px)]
                       pb-4 
                       sm:w-[95%] 
-                      sm:grid-rows-[160px_minmax(1fr,340px)] 
+                      sm:grid-rows-[200px_minmax(340px,1fr)] 
                       sm:pb-0   
                       lg:w-[85%] 
-                      lg:grid-rows-[190px_minmax(340px,1fr)] xl:grid-rows-[180px_minmax(1fr,340px)]
+                      lg:grid-rows-[190px_minmax(340px,1fr)] xl:grid-rows-[180px_minmax(1fr,400px)]
                       "
                     >
                       <div className=" flex  items-center  justify-center px-2 pt-[70px] md:pb-[10px] md:pt-[100px]">
@@ -542,7 +541,7 @@ const HotelDetailsPage = () => {
                         <SwiperSlide>
                           {" "}
                           <img
-                            className="      w-full rounded-xl"
+                            className="      w-full rounded-xl object-cover"
                             src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${propertyData?.mainImage}`}
                             alt=""
                           />
@@ -551,7 +550,7 @@ const HotelDetailsPage = () => {
                         {propertyData.otherImages.map((img, i) => (
                           <SwiperSlide key={i}>
                             <img
-                              className="     w-full rounded-xl"
+                              className="     w-full rounded-xl object-cover"
                               src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${img}`}
                               alt=""
                             />
@@ -600,7 +599,7 @@ const HotelDetailsPage = () => {
                         </div>
                       </Swiper>
 
-                      <div className=" hidden max-h-[280px] gap-2 px-10 sm:flex md:gap-3    lg:max-h-[320px] xl:max-h-[400px]">
+                      <div className=" hidden max-h-[320px] gap-2 px-10 sm:flex md:gap-3    lg:max-h-[320px] xl:max-h-[400px]">
                         <div className=" flex    w-[60%]   rounded-l-xl  ">
                           <img
                             className="  w-full    rounded-l-xl  object-cover"
@@ -679,7 +678,7 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className=" mx-auto flex justify-center bg-gray-100  py-8 font-Inter  sm:py-8  md:py-12 xl:bg-white ">
+                <div className=" mx-auto flex justify-center bg-gray-100  py-4 font-Inter  sm:py-8  md:py-12 xl:bg-white ">
                   <div className=" mr-6 flex  items-center gap-4  text-sm font-semibold sm:text-lg">
                     <div className="  h-10 w-10">
                       {propertyData?.hostImg ? (
