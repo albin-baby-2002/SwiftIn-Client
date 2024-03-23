@@ -110,7 +110,7 @@ const ManageReservations = () => {
       {navigation && <HostNav />}
 
       <main
-        className={`${navigation ? " max-w-[75%]" : ""} w-full   border-r-2  bg-gray-100    pb-10  font-Sen `}
+        className={`${navigation ? " max-w-[75%]" : ""} grid  w-full grid-rows-[65px,1fr,70px]  border-r-2  bg-gray-100      font-Sen `}
       >
         <div className="  flex max-w-full items-center justify-between  bg-white px-4 py-3">
           <div className="  mx-auto  flex w-[99%] items-center justify-between ">
@@ -123,7 +123,7 @@ const ManageReservations = () => {
               />
               <p className=" font-semibold">Manage Reservations</p>
             </div>
-            <div className=" ms-3  flex max-w-[190px] items-center gap-3 rounded-md  border-2   border-gray-400 text-xs sm:max-w-max sm:px-4 sm:py-2 ">
+            <div className=" ms-3  flex max-w-[190px] items-center gap-3 rounded-md  border-2   border-gray-400 text-xs sm:max-w-max px-2 py-1 sm:px-4 sm:py-2 ">
               <FaSearch />
               <input
                 className=" w-16 focus:outline-none"
@@ -139,11 +139,17 @@ const ManageReservations = () => {
           </div>
         </div>
 
-        <div className=" mx-auto mt-6   max-h-[74vh]  max-w-[95%]  overflow-x-scroll   overflow-y-scroll  rounded-md border-[2px]   border-neutral-200  bg-white font-sans   shadow-md xl:max-h-[78vh] 2xl:h-[90vh]">
+        <div className=" mx-auto mt-6   max-h-[74vh]  max-w-[95%]  overflow-x-auto   overflow-y-auto  rounded-md border-[2px]   border-neutral-200  bg-white font-sans   shadow-md xl:max-h-[78vh] 2xl:h-[90vh]">
           <div className="   ">
             <div className="    ">
-              <div className=" border-b-[2px]   px-6 py-5  font-Sen text-sm font-bold  ">
-                <div className=" grid grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]   ">
+              <div className=" border-b-[2px]    px-6 py-5  font-Sen text-sm font-bold  ">
+                <div
+                  className=" grid 
+                grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(4,120px)_100px] 
+                gap-2 text-center 
+                align-middle  
+                lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(95px,1fr))_90px]   "
+                >
                   <p className=" text-left  ">Hotel Name</p>
                   <p className="  ">Status</p>
                   <p className="  ">Rooms</p>
@@ -169,7 +175,7 @@ const ManageReservations = () => {
                           key={i}
                           className="   border-b-2 px-6 font-Sen  text-sm "
                         >
-                          <div className=" grid  grid-cols-[100px_170px_repeat(3,minmax(0,1fr))_100px] gap-2 py-4 text-center align-middle md:grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(3,120px)_100px]  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(100px,1fr))_100px]  ">
+                          <div className=" grid  grid-cols-[minmax(100px,1fr)_minmax(170px,200px)_repeat(4,120px)_100px] gap-2 py-4 text-center align-middle  lg:grid-cols-[minmax(150px,250px)_repeat(5,minmax(95px,1fr))_90px]  ">
                             <div className=" flex items-center  gap-2 text-left   ">
                               <p>{reservation.hotelName}</p>
                             </div>
@@ -224,7 +230,7 @@ const ManageReservations = () => {
           </div>
         </div>
 
-        <div className="  mx-auto mt-[18px]  flex max-w-[95%]  items-center justify-between   px-6 2xl:mt-12  ">
+        <div className=" mx-auto  flex   w-full max-w-[95%]  items-center justify-between   px-6 2xl:mt-12  ">
           <div className="flex items-center gap-4 text-sm 2xl:text-lg">
             <p>Total Pages : {totalPages}</p>
           </div>

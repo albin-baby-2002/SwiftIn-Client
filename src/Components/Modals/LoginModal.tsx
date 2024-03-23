@@ -54,12 +54,12 @@ const LoginModal = () => {
       auth.setAuth(
         response.data.accessToken,
         response.data.roles,
-        response.data.username,
+        response.data.user,
         response.data.image,
         response.data.userID,
       );
 
-      toast.success("login successful");
+      toast.success(`welcome ${response.data.user}`);
 
       loginModal.onClose();
     } catch (err) {
@@ -85,6 +85,7 @@ const LoginModal = () => {
 
       <Input id="email" label="Email" errors={errors} register={register} />
       <Input
+      type="password"
         id="password"
         label="password"
         errors={errors}

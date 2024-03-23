@@ -124,7 +124,7 @@ const Wishlist = () => {
         </div>
       </header>
 
-      <main className=" pb-10 pt-[130px]">
+      <main className=" min-h-screen pb-10 pt-[130px]">
         <div className=" mx-auto max-w-[1500px] px-2 sm:px-6 ">
           <div className=" px-4">
             <h1 className=" text-center font-Sen text-3xl font-bold sm:text-4xl  md:text-left">
@@ -175,7 +175,7 @@ const Wishlist = () => {
           )}
         </div>
       </main>
-      <Footer bg="bg-white"/>
+      <Footer bg="bg-white" />
     </>
   );
 };

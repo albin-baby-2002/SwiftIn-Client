@@ -186,7 +186,6 @@ const PropertyListingPage = () => {
   ]) as [number, number, number, number, string[], string, string[], string];
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data, "data");
 
     try {
       await AxiosPrivate.post(LIST_PROPERTY_URL, data);
@@ -249,9 +248,7 @@ const PropertyListingPage = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(errors, "error");
-  });
+  
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -363,7 +360,7 @@ const PropertyListingPage = () => {
                   <Logo />
                 </div>
 
-              <CenterNav/>
+                <CenterNav />
 
                 <div className=" flex gap-2 font-Inter  ">
                   <button className=" w-14 rounded-md bg-black    py-[6px] font-semibold text-white">
@@ -385,7 +382,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[140px]  ">
+      <main className="  h-screen  overflow-y-auto pt-[140px]  ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -509,7 +506,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[140px]">
+      <main className="  h-screen  overflow-y-auto pt-[140px] ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -695,7 +692,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pt-[140px]">
+      <main className="  h-screen  overflow-y-auto pt-[140px] ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -791,7 +788,7 @@ const PropertyListingPage = () => {
   const PageFour = (
     <>
       <header className=" ">
-        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6  ">
+        <nav className=" fixed z-10 w-full border-b-2 bg-white  px-2 text-sm lg:px-6   ">
           <div className=" py-6">
             <div className=" mx-auto max-w-[1100px] px-2 sm:px-6 lg:px-10">
               <div className=" flex flex-row items-center justify-between gap-3 md:gap-0">
@@ -832,7 +829,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  grid h-screen grid-rows-[60px,1fr] pt-[130px]">
+      <main className="  grid h-screen grid-rows-[60px,1fr] overflow-y-auto pt-[130px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10 ">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
@@ -855,12 +852,12 @@ const PropertyListingPage = () => {
 
         <div className=" mx-auto mt-9 flex w-full max-w-[75%] gap-4 pb-10">
           <div
-            className={`${mainImage ? "" : " border-4 "}  relative flex   min-h-[260px] w-[50%]  rounded-l-xl   border-gray-400`}
+            className={`${mainImage ? "" : " border-4 "}  relative flex   max-h-[290px] min-h-[260px] w-[50%] rounded-l-xl border-gray-400  xl:max-h-[350px]   2xl:max-h-[450px]`}
           >
             {mainImage ? (
               <>
                 <img
-                  className="  h-full w-full rounded-l-lg"
+                  className="  h-full w-full rounded-l-lg object-cover"
                   src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${mainImage}`}
                   alt=""
                 />
@@ -888,14 +885,14 @@ const PropertyListingPage = () => {
             )}
           </div>
 
-          <div className=" gap- flex min-h-[260px]  w-[25%] flex-col   justify-between   ">
+          <div className=" gap- flex max-h-[290px] min-h-[260px] w-[25%] flex-col  justify-between xl:max-h-[350px]   2xl:max-h-[450px]   ">
             <div
               className={`${otherImages[0] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
             >
               {otherImages[0] ? (
                 <>
                   <img
-                    className="  h-full w-full "
+                    className="  h-full w-full object-cover "
                     src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[0]}`}
                     alt=""
                   />
@@ -929,7 +926,7 @@ const PropertyListingPage = () => {
               {otherImages[1] ? (
                 <>
                   <img
-                    className="  h-full w-full "
+                    className="  h-full w-full object-cover "
                     src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[1]}`}
                     alt=""
                   />
@@ -958,14 +955,14 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" gap- flex min-h-[260px]  w-[25%] flex-col   justify-between   ">
+          <div className=" gap- flex max-h-[290px] min-h-[260px] w-[25%] flex-col  justify-between xl:max-h-[350px]   2xl:max-h-[450px]   ">
             <div
               className={`${otherImages[2] ? "" : "border-4"} relative  h-[47%]  rounded-tr-lg  border-gray-400 `}
             >
               {otherImages[2] ? (
                 <>
                   <img
-                    className="  h-full w-full rounded-tr-lg"
+                    className="  h-full w-full rounded-tr-lg object-cover"
                     src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[2]}`}
                     alt=""
                   />
@@ -999,7 +996,7 @@ const PropertyListingPage = () => {
               {otherImages[3] ? (
                 <>
                   <img
-                    className="  h-full w-full rounded-br-lg"
+                    className="  h-full w-full rounded-br-lg object-cover"
                     src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[3]}`}
                     alt=""
                   />
@@ -1068,11 +1065,11 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pb-10 pt-[140px]">
+      <main className="  h-screen overflow-y-auto  pb-10 pt-[140px] ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">
-              <div className=" flex h-full items-center  overflow-y-scroll bg-black px-4 py-1 text-3xl  font-bold text-white">
+              <div className=" flex h-full items-center   bg-black px-4 py-1 text-3xl  font-bold text-white">
                 <p>5</p>
               </div>
 
@@ -1208,7 +1205,7 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  pb-10 pt-[140px]">
+      <main className="  h-screen overflow-y-auto  pb-10 pt-[140px] ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
             <div className="flex items-center gap-6">

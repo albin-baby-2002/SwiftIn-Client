@@ -284,11 +284,6 @@ const HotelDetailsPage = () => {
 
   // api request to check if the room is available on specific days
 
-  useEffect(() => {
-    console.log(wishlist);
-
-    console.log(propertyData);
-  });
 
   const checkAvailability = async () => {
     try {

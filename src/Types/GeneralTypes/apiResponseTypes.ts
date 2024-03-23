@@ -67,7 +67,7 @@ export interface TGetProfileDataResp {
 export interface TAuthResponse {
   accessToken: string;
   roles: number[];
-  username: string;
+  user: string;
   image: string;
   userID: string;
 }

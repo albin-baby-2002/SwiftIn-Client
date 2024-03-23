@@ -49,7 +49,6 @@ const ListingManagement = () => {
 
           setTotalPages(response.data.totalPages);
 
-          console.log(response.data);
         }
       } catch (error) {
         setLoading(false);

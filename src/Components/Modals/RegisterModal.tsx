@@ -109,12 +109,14 @@ const RegisterModal = () => {
         <Input
           id="password"
           label="Password"
+          type="password"
           register={register}
           errors={errors}
         />
 
         <Input
           id="confirmPassword"
+          type="password"
           label="Confirm Password"
           register={register}
           errors={errors}

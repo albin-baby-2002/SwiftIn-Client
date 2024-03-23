@@ -40,7 +40,7 @@ const UseGoogleLogin = () => {
           LoginModalState.onClose();
         }
 
-        let message = `Welcome to SwiftIn ${res.data.user}`;
+        let message = `Welcome  ${res.data.user}`;
 
         toast.success(message);
       } catch (err) {

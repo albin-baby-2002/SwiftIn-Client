@@ -83,7 +83,6 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
-        console.log(searchState.destination, searchState.guests);
 
         const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
           WISHLIST_DETAILS_URL,
@@ -92,7 +91,6 @@ const Home = () => {
         if (isMounted) {
           setWishlist(response.data.wishLists);
 
-          console.log(response.data.wishLists);
         }
       } catch (error) {
         toast.error("Failed to load wishlist data");
@@ -400,7 +398,6 @@ const Home = () => {
                       onClick={(e) => {
                         e.stopPropagation();
 
-                        console.log(wishlist, "wis");
 
                         if (
                           wishlist?.find((val) => {

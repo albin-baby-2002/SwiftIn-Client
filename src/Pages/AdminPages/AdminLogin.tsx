@@ -41,7 +41,7 @@ const AdminLogin = () => {
       auth.setAuth(
         response.data.accessToken,
         response.data.roles,
-        response.data.username,
+        response.data.user,
         response.data.image,
         response.data.userID,
       );
@@ -102,6 +102,7 @@ const AdminLogin = () => {
               />
               <Input
                 id="password"
+                type="password"
                 label="Password"
                 register={register}
                 errors={errors}

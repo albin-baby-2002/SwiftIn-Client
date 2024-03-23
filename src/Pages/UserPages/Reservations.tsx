@@ -45,14 +45,12 @@ const Reservations = () => {
           await AxiosPrivate.get<TBookingDataResp>(USER_BOOKINGS_URL);
 
         if (isMounted) {
-          console.log(response.data);
 
           setBookings(() => {
             setLoading(false);
             return response.data.bookings;
           });
 
-          console.log(response.data);
         }
       } catch (error) {
         setLoading(false);

@@ -9,7 +9,7 @@ const HostNav = () => {
   const navigate = useNavigate();
   return (
     <nav
-      className={`  z-10 min-w-[25%] overflow-y-scroll border-x-[2px]   bg-white px-4 font-Inter`}
+      className={`  z-10  overflow-y-auto   border-x-[2px] bg-white px-4 font-Inter   min-w-[50%] sm:min-w-[33%] lg:min-w-[25%]`}
     >
       <div>
         <div>

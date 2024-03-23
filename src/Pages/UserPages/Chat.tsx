@@ -80,6 +80,9 @@ const Chat = () => {
 
   useEffect(() => {
     const makeSocketConnection = () => {
+      
+      // socket.io will autmatically route to baserUrl/socket.io so in nginx proxy pass to baserUrl/socket.io since because url is baserurl/api and socket.io autmatically calls baserurl plus socket.io  
+      
       socket = io("https://swiftin.online", {
         timeout: 5000,
         query: {
@@ -152,14 +155,12 @@ const Chat = () => {
 
   useEffect(() => {
     const handleMessageRecieved = (newMessage: TMessageData) => {
-      console.log("message recieved");
 
       if (
         !chatState.selectedChat ||
         chatState.selectedChat._id !== newMessage.chat._id
       ) {
         if (!chatState.notifications.includes(newMessage)) {
-          console.log(chatState.notifications, "notif");
 
           chatState.setNotifications([newMessage, ...chatState.notifications]);
 

@@ -66,7 +66,6 @@ const SearchPage = () => {
           behavior: "smooth",
         });
         setIsLoading(true);
-        console.log(searchState.destination, searchState.guests);
 
         const response = await AxiosPrivate.get<GetPropertiesData>(SEARCH_URL, {
           params: {
@@ -81,15 +80,12 @@ const SearchPage = () => {
         if (isMounted) {
           setPropertiesList(response.data.properties);
 
-          console.log(response.data);
 
           setTotalPages(response.data.totalPages);
 
-          console.log(response.data);
 
           setTotalHotels(() => {
             setIsLoading(false);
-            console.log("inside false");
             return response.data.totalHotels;
           });
         }
@@ -119,7 +115,6 @@ const SearchPage = () => {
 
     const fetchData = async () => {
       try {
-        console.log(searchState.destination, searchState.guests);
 
         const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
           WISHLIST_DETAILS_URL,
@@ -128,7 +123,6 @@ const SearchPage = () => {
         if (isMounted) {
           setWishlist(response.data.wishLists);
 
-          console.log(response.data.wishLists);
         }
       } catch (error) {
         toast.error("Failed to load wishlist data");
@@ -269,7 +263,7 @@ const SearchPage = () => {
               >
                 <div className="       w-full rounded-2xl sm:h-[240px]  ">
                   <img
-                    className="  min-h-[240px]  h-full w-full rounded-b-xl rounded-t-2xl object-cover"
+                    className="  h-full  min-h-[240px] w-full rounded-b-xl rounded-t-2xl object-cover"
                     src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
                     alt=""
                   />
@@ -280,7 +274,6 @@ const SearchPage = () => {
                   onClick={(e) => {
                     e.stopPropagation();
 
-                    console.log(wishlist, "wis");
 
                     if (
                       wishlist?.find((val) => {
@@ -368,8 +361,7 @@ const SearchPage = () => {
           }}
         />
       </main>
-        <Footer bgWhite/>
-      
+      <Footer bg="bg-white" />
     </>
   );
 };

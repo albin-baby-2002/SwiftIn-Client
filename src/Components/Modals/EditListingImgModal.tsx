@@ -178,7 +178,7 @@ const EditListingImageModal: React.FC<TEditListingImageModalProps> = ({
           {mainImage ? (
             <>
               <img
-                className="  h-full w-full rounded-l-lg"
+                className="  h-full w-full rounded-l-lg object-cover"
                 src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${mainImage}`}
                 alt=""
               />
@@ -213,7 +213,7 @@ const EditListingImageModal: React.FC<TEditListingImageModalProps> = ({
             {otherImages[0] ? (
               <>
                 <img
-                  className="  h-full w-full "
+                  className="  h-full w-full object-cover "
                   src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[0]}`}
                   alt=""
                 />
@@ -247,7 +247,7 @@ const EditListingImageModal: React.FC<TEditListingImageModalProps> = ({
             {otherImages[1] ? (
               <>
                 <img
-                  className="  h-full w-full "
+                  className="  h-full w-full object-cover "
                   src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[1]}`}
                   alt=""
                 />
@@ -283,7 +283,7 @@ const EditListingImageModal: React.FC<TEditListingImageModalProps> = ({
             {otherImages[2] ? (
               <>
                 <img
-                  className="  h-full w-full rounded-tr-lg"
+                  className="  h-full w-full rounded-tr-lg object-cover"
                   src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[2]}`}
                   alt=""
                 />
@@ -317,7 +317,7 @@ const EditListingImageModal: React.FC<TEditListingImageModalProps> = ({
             {otherImages[3] ? (
               <>
                 <img
-                  className="  h-full w-full rounded-br-lg"
+                  className="  h-full w-full rounded-br-lg object-cover"
                   src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${otherImages[3]}`}
                   alt=""
                 />
