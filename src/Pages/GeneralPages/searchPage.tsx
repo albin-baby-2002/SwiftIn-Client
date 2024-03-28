@@ -80,9 +80,7 @@ const SearchPage = () => {
         if (isMounted) {
           setPropertiesList(response.data.properties);
 
-
           setTotalPages(response.data.totalPages);
-
 
           setTotalHotels(() => {
             setIsLoading(false);
@@ -115,14 +113,12 @@ const SearchPage = () => {
 
     const fetchData = async () => {
       try {
-
         const response = await AxiosPrivate.get<{ wishLists: TWishlistData[] }>(
           WISHLIST_DETAILS_URL,
         );
 
         if (isMounted) {
           setWishlist(response.data.wishLists);
-
         }
       } catch (error) {
         toast.error("Failed to load wishlist data");
@@ -249,11 +245,13 @@ const SearchPage = () => {
           </p>
         </div>
 
-        <div className="  z-0 mt-8 grid grid-cols-1  justify-items-center  gap-4 gap-y-[40px]  font-Sen  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 ">
-          {loading ? (
+        {loading ? (
+          <div className="  z-0 mt-8 grid min-h-screen grid-cols-1  justify-items-center  gap-4 gap-y-[40px]  font-Sen  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 ">
             <ProductSkeleton count={30} />
-          ) : (
-            propertiesList?.map((property, i) => (
+          </div>
+        ) : propertiesList?.length ? (
+          <div className="  z-0 mt-8 grid min-h-screen grid-cols-1  justify-items-center  gap-4 gap-y-[40px]  font-Sen  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 ">
+            {propertiesList?.map((property, i) => (
               <div
                 key={i}
                 onClick={() => {
@@ -273,7 +271,6 @@ const SearchPage = () => {
                   className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
                   onClick={(e) => {
                     e.stopPropagation();
-
 
                     if (
                       wishlist?.find((val) => {
@@ -321,9 +318,101 @@ const SearchPage = () => {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className=" flex h-[75vh] w-full flex-col items-center  justify-center  gap-8">
+            <p className=" text-center font-Sen font-bold text-red-400">
+              No products match the filter conditions
+            </p>
+
+            <p
+              className=" cursor-pointer rounded-md bg-black px-2  py-2 font-Sen text-sm font-semibold text-white"
+              onClick={() => searchState.reset()}
+            >
+              Clear Filters
+            </p>
+          </div>
+        )}
+
+        {/* <div className="  z-0 mt-8 grid min-h-screen grid-cols-1  justify-items-center  gap-4 gap-y-[40px]  font-Sen  sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 ">
+          {loading ? (
+            <ProductSkeleton count={30} />
+          ) : propertiesList?.length ? (
+            propertiesList?.map((property, i) => (
+              <div
+                key={i}
+                onClick={() => {
+                  navigate(`/hotel/details/${property._id}`);
+                }}
+                className=" relative z-0   max-w-[90%] cursor-pointer  justify-self-center rounded-2xl  bg-white  sm:max-w-none "
+              >
+                <div className="       w-full rounded-2xl sm:h-[240px]  ">
+                  <img
+                    className="  h-full  min-h-[240px] w-full rounded-b-xl rounded-t-2xl object-cover"
+                    src={`https://res.cloudinary.com/dfm8vhuea/image/upload/${property.mainImage}`}
+                    alt=""
+                  />
+                </div>
+
+                <div
+                  className="   absolute  right-3 top-3 flex cursor-pointer items-center  gap-2  rounded-full    bg-black/70 px-[6px]  py-[4px]   font-bold   "
+                  onClick={(e) => {
+                    e.stopPropagation();
+
+                    if (
+                      wishlist?.find((val) => {
+                        return val._id === property._id;
+                      })
+                    ) {
+                      removeFromWishlist(property._id);
+                    } else {
+                      addToWishlist(property._id);
+                    }
+                  }}
+                >
+                  <TbHeartPlus
+                    className={`${
+                      wishlist?.find((val) => {
+                        return val._id === property._id;
+                      })
+                        ? "  text-rose-500 "
+                        : " text-white"
+                    } pt-[1px] font-bold`}
+                    size={18}
+                  />
+                </div>
+
+                <div className="   rounded-b-2xl    px-3  py-4 text-sm">
+                  <div className=" flex items-center justify-between ">
+                    <p className="     font-Roboto text-[16px] font-[500]  ">
+                      {property.buildingName}
+                    </p>
+                    <div className=" flex items-center gap-2">
+                      <p className=" ">4.5</p>
+                      <FaStar size={14} />
+                    </div>
+                  </div>
+
+                  <div className="  flex items-center justify-between pt-3 font-Roboto text-gray-700 ">
+                   
+
+                    <div className=" flex gap-1">
+                      <p className="  ps-[1px] ">Rs {property.rentPerNight}</p>
+                      <p className=" "> night</p>
+                    </div>
+
+                    <p className=" ">{property.location}</p>
+                  </div>
+                </div>
+              </div>
             ))
+          ) : (
+            <div className=" flex h-[70vh] w-full  items-center  justify-center">
+              <p>Failed to get products that match the filter</p>
+            </div>
           )}
-        </div>
+        </div> */}
 
         <div className=" flex w-full justify-center py-8 font-Sen">
           <div className=" flex gap-4">

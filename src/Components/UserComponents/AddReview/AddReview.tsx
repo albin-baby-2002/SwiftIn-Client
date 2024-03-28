@@ -56,73 +56,120 @@ const AddReview: React.FC<TAddReviewProps> = ({ listingID }) => {
   };
 
   return (
-    <div className=" flex h-[200px] w-[90%]  items-center justify-center gap-2  rounded-xl border-2 px-3 sm:max-w-[400px]  sm:gap-3  md:w-[46%]  md:max-w-none   lg:h-[240px]  lg:gap-6 lg:py-5">
-      <div className="  w-1/2 text-neutral-500 md:w-1/3 lg:w-1/2 ">
-        <div className=" ps-1">
-          <p className="  mt-2 hidden font-Sen text-lg font-bold text-black lg:block lg:text-[24px]">
-            Add Your Review
+    <>
+      <div className=" flex w-[90%] items-center justify-center gap-2   pb-6 pt-8  sm:max-w-[400px] sm:gap-3 sm:px-3 md:hidden ">
+        <div className="  flex  w-[93%]  max-w-[400px] flex-col justify-center gap-2 ">
+          <p className=" mx-2 mb-8 mt-3 text-center font-Sen text-3xl font-semibold sm:mx-4 sm:mb-14 ">
+            Share Your Experiences{" "}
           </p>
 
-          <p className="  mt-2 block font-Sen text-lg font-bold text-black lg:hidden lg:text-[24px]">
-            Add Review
-          </p>
-          <p className=" mt-3  text-xs font-bold   lg:text-sm">
-            {" "}
-            tell us about your experience
-          </p>
+          <div className=" flex justify-center gap-2 text-xs "></div>
 
-          <p className=" mt-2 hidden  w-[80%] text-xs font-bold sm:block   lg:text-sm">
-            {" "}
-            Also give rating
-          </p>
+          <div className="   flex items-center justify-between  gap-2 rounded-md border-2  border-gray-200  px-3 py-2  sm:px-4 sm:py-2   ">
+            <p className=" font-Sen text-xs font-bold  lg:text-base">Rating</p>
+
+            <div className=" flex  items-center gap-4">
+              <p
+                className=" cursor-pointer rounded-md border-2 px-1 py-1 hover:bg-black hover:text-white"
+                onClick={decreaseRating}
+              >
+                <FaMinus size={10} />
+              </p>
+              <p className=" font-bold"> {rating}</p>
+              <p
+                className=" cursor-pointer rounded-md border-2 px-1 py-1 hover:bg-black hover:text-white "
+                onClick={increaseRating}
+              >
+                <FaPlus size={10} />
+              </p>
+            </div>
+          </div>
+
+          <textarea
+            className="   mt-3 h-[200px] w-full rounded-lg border-2 border-gray-200 px-2 py-2 font-Sen text-sm font-semibold outline-none  focus:border-black  md:h-[80px] lg:h-[100px] "
+            value={review}
+            onChange={(e) => {
+              setReview(e.target.value);
+            }}
+          ></textarea>
+
+          <button
+            onClick={addReview}
+            className=" mt-7 rounded-md  bg-black px-4 py-4 font-Sen text-sm font-semibold text-white lg:mt-3   lg:text-sm"
+          >
+            Submit Your Review
+          </button>
         </div>
-
-        <button
-          onClick={addReview}
-          className=" mt-5 rounded-md bg-black px-4 py-2 text-xs font-semibold text-white  lg:hidden lg:text-sm"
-        >
-          Submit Now
-        </button>
-        <button
-          onClick={addReview}
-          className=" mt-5 hidden rounded-md bg-black px-4 py-2 text-xs font-semibold text-white  lg:block lg:text-sm"
-        >
-          Submit Your Review
-        </button>
       </div>
 
-      <div className="   flex  flex-col justify-center gap-2 ">
-        <div className=" flex justify-center gap-2 text-xs lg:text-sm"></div>
-
-        <div className="   flex items-center justify-between  gap-2 rounded-md border-2  border-gray-200  px-2  py-1 sm:px-4  sm:py-2 ">
-          <p className=" font-Sen text-xs font-bold  lg:text-base">Rating</p>
-
-          <div className=" flex  items-center gap-4">
-            <p
-              className=" cursor-pointer rounded-md border-2 px-1 py-1 hover:bg-black hover:text-white"
-              onClick={decreaseRating}
-            >
-              <FaMinus size={10} />
+      <div className=" hidden h-[200px] w-[90%] items-center  justify-center gap-2 rounded-xl  border-2 px-3 sm:max-w-[400px] sm:gap-3  md:flex  md:w-[46%]  md:max-w-none   lg:h-[240px]  lg:gap-6 lg:py-5">
+        <div className="  w-1/2 text-neutral-500 md:w-1/3 lg:w-1/2 ">
+          <div className=" ps-1">
+            <p className="  mt-2 hidden font-Sen text-lg font-bold text-black lg:block lg:text-[24px]">
+              Add Your Review
             </p>
-            <p className=" font-bold"> {rating}</p>
-            <p
-              className=" cursor-pointer rounded-md border-2 px-1 py-1 hover:bg-black hover:text-white "
-              onClick={increaseRating}
-            >
-              <FaPlus size={10} />
+
+            <p className="  mt-2 block font-Sen text-lg font-bold text-black lg:hidden lg:text-[24px]">
+              Add Review
+            </p>
+            <p className=" mt-3  text-xs font-bold   lg:text-sm">
+              {" "}
+              tell us about your experience
+            </p>
+
+            <p className=" mt-2 hidden  w-[80%] text-xs font-bold sm:block   lg:text-sm">
+              {" "}
+              Also give rating
             </p>
           </div>
+
+          <button
+            onClick={addReview}
+            className=" mt-5 rounded-md bg-black px-4 py-2 text-xs font-semibold text-white  lg:hidden lg:text-sm"
+          >
+            Submit Now
+          </button>
+          <button
+            onClick={addReview}
+            className=" mt-5 hidden rounded-md bg-black px-4 py-2 text-xs font-semibold text-white  lg:block lg:text-sm"
+          >
+            Submit Your Review
+          </button>
         </div>
 
-        <textarea
-          className="   mt-3 h-[80px] w-full rounded-lg border-2 border-gray-200 px-2 py-2 font-Sen text-sm font-semibold  outline-none  focus:border-black lg:h-[100px] "
-          value={review}
-          onChange={(e) => {
-            setReview(e.target.value);
-          }}
-        ></textarea>
+        <div className="   flex  flex-col justify-center gap-2 ">
+          <div className=" flex justify-center gap-2 text-xs lg:text-sm"></div>
+
+          <div className="   flex items-center justify-between  gap-2 rounded-md border-2  border-gray-200  px-2  py-1 sm:px-4  sm:py-2 ">
+            <p className=" font-Sen text-xs font-bold  lg:text-base">Rating</p>
+
+            <div className=" flex  items-center gap-4">
+              <p
+                className=" cursor-pointer rounded-md border-2 px-1 py-1 hover:bg-black hover:text-white"
+                onClick={decreaseRating}
+              >
+                <FaMinus size={10} />
+              </p>
+              <p className=" font-bold"> {rating}</p>
+              <p
+                className=" cursor-pointer rounded-md border-2 px-1 py-1 hover:bg-black hover:text-white "
+                onClick={increaseRating}
+              >
+                <FaPlus size={10} />
+              </p>
+            </div>
+          </div>
+
+          <textarea
+            className="   mt-3 h-[80px] w-full rounded-lg border-2 border-gray-200 px-2 py-2 font-Sen text-sm font-semibold  outline-none  focus:border-black lg:h-[100px] "
+            value={review}
+            onChange={(e) => {
+              setReview(e.target.value);
+            }}
+          ></textarea>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

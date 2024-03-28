@@ -11,7 +11,9 @@ import useChatState from "../../Hooks/zustandStore/useChatState";
 import io, { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import {
+  TChatData,
   TChatUserData,
+  TLatestMessageData,
   TMessageData,
 } from "../../Types/GeneralTypes/chatTypes";
 import SearchDrawer from "../../Components/UserComponents/ChatComponents/SearchDrawer";
@@ -80,15 +82,17 @@ const Chat = () => {
 
   useEffect(() => {
     const makeSocketConnection = () => {
-      
-      // socket.io will autmatically route to baserUrl/socket.io so in nginx proxy pass to baserUrl/socket.io since because url is baserurl/api and socket.io autmatically calls baserurl plus socket.io  
-      
+      // socket.io will autmatically route to baserUrl/socket.io so in nginx proxy pass to baserUrl/socket.io since because url is baserurl/api and socket.io autmatically calls baserurl plus socket.io
+
       socket = io("https://swiftin.online", {
         timeout: 5000,
         query: {
           token: auth.accessToken,
         },
       });
+
+      let lastErrorTime = 0;
+      const throttleInterval = 10000;
 
       socket.emit("setup", auth.userID);
 
@@ -103,7 +107,12 @@ const Chat = () => {
       });
 
       socket.on("connect_error", () => {
-        toast.error("Connection error : failed to connect to socket");
+        const currentTime = Date.now();
+        if (currentTime - lastErrorTime > throttleInterval) {
+          // Execute the error function only if enough time has passed since the last error
+          toast.error("Connection error: Failed to connect to socket");
+          lastErrorTime = currentTime;
+        }
       });
 
       socket.on("Unauthorized", () => {
@@ -155,16 +164,21 @@ const Chat = () => {
 
   useEffect(() => {
     const handleMessageRecieved = (newMessage: TMessageData) => {
+      console.log("message recieved");
 
       if (
         !chatState.selectedChat ||
         chatState.selectedChat._id !== newMessage.chat._id
       ) {
         if (!chatState.notifications.includes(newMessage)) {
-
           chatState.setNotifications([newMessage, ...chatState.notifications]);
 
-          setTriggerChatReFetch((val) => !val);
+          // setTriggerChatReFetch((val) => !val);
+
+          chatState.updateLatestMessageOfChat(
+            newMessage.chat._id,
+            newMessage as unknown as TLatestMessageData,
+          );
         }
       } else {
         setMessages([...messages, newMessage]);
@@ -267,23 +281,44 @@ const Chat = () => {
     if ((e && e.key === "Enter" && newMessage) || buttonClick) {
       if (!socketConnected) {
         toast.error("you are not connected ");
+        return;
       }
 
       try {
         setNewMessage("");
+
         socket.emit("stop typing", chatState.selectedChat?._id);
+
+        const newMessageData: TMessageData = {
+          sender: {
+            _id: auth.userID,
+            username: auth.username,
+            email: "",
+            image: "",
+          },
+          content: newMessage,
+          chat: chatState.selectedChat as TChatData,
+          _id: "",
+        };
+
+        // optimistic update of ui
+
+        setMessages([...messages, newMessageData]);
 
         const response = await AxiosPrivate.post(SEND_MESSAGES_URL, {
           content: newMessage,
           chatID: chatState.selectedChat?._id,
         });
 
-        setTriggerChatReFetch((val) => !val);
+        // setTriggerChatReFetch((val) => !val);
+        chatState.setLatestMessageOfSelectedChat(response.data);
 
         socket.emit("new message", response.data);
 
         setMessages([...messages, response.data]);
       } catch (err) {
+        setMessages(messages);
+
         if (!(err instanceof AxiosError)) {
           toast.error("No Server Response");
         } else if (err.response?.status === STATUS_CODES.BAD_REQUEST) {
@@ -298,6 +333,10 @@ const Chat = () => {
       }
     }
   };
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMessage(e.target.value);
@@ -371,7 +410,7 @@ const Chat = () => {
                 {loadingAllChats ? (
                   <div className=" w-full overflow-y-auto">
                     <div className=" flex flex-col gap-6   px-4   py-3">
-                      <ChatSkeleton count={4} />
+                      <ChatSkeleton count={10} />
                     </div>
                   </div>
                 ) : (
@@ -487,9 +526,9 @@ const Chat = () => {
 
                       <div
                         ref={messageBox}
-                        className=" h-full overflow-y-auto bg-gray-200"
+                        className="  h-full overflow-y-auto bg-gray-200"
                       >
-                        <div className=" flex h-full flex-col justify-between px-3 py-4 text-sm">
+                        <div className=" mb-3 flex h-full flex-col justify-between px-3 py-4 pb-8 text-sm">
                           <div>
                             {messages &&
                               messages.map((message, index) => (
@@ -507,14 +546,14 @@ const Chat = () => {
                           </div>
 
                           {isTyping ? (
-                            <div className="  my-1 text-xs">typing...</div>
+                            <div className="  pb-4 text-xs">typing...</div>
                           ) : (
                             ""
                           )}
                         </div>
                       </div>
 
-                      <div className=" flex items-center rounded-b-md bg-gray-200 pb-4">
+                      <div className=" flex  items-center rounded-b-md bg-gray-200 pb-4">
                         <div className=" mx-2  flex  w-full   items-center justify-between rounded-md border bg-white   px-4 py-3 text-sm">
                           <input
                             type="text"

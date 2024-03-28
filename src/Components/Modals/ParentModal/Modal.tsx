@@ -71,7 +71,7 @@ const Modal: React.FC<TModalProps> = ({
               <p className=" text-md font-bold">{title}</p>
             </div>
 
-            <div className="max-h-[95vh]  overflow-y-scroll">
+            <div className="max-h-[95vh]  overflow-y-auto">
               <div className=" px-4 py-4 sm:px-8 ">{body}</div>
 
               {submitActionLabel && (

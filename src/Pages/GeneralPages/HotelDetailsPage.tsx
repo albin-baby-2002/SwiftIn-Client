@@ -123,7 +123,7 @@ const HotelDetailsPage = () => {
     .split("T")[0];
 
   const [checkInDate, setCheckInDate] = useState(currentDate);
-  const [checkOutDate, setCheckOutnDate] = useState(tomorrowDate);
+  const [checkOutDate, setCheckOutDate] = useState(tomorrowDate);
 
   // function to calculate total days based on checkIn and checkOut Dates
 
@@ -402,6 +402,8 @@ const HotelDetailsPage = () => {
       return;
     }
 
+    setPaymentLoading(false);
+
     // Getting the order details back
     const { amount, id: order_id, currency } = result.data.order;
 
@@ -467,6 +469,11 @@ const HotelDetailsPage = () => {
       theme: {
         color: "#61dafb",
       },
+      modal: {
+        ondismiss: function () {
+          setPaymentLoading(false);
+        },
+      },
     };
 
     const paymentObject = new (window as any).Razorpay(options);
@@ -511,7 +518,7 @@ const HotelDetailsPage = () => {
           {propertyData && (
             <main>
               <div className=" mx-auto max-w-[1500px]">
-                <div className=" h-[530px] bg-gray-100  font-Merriweather sm:h-screen  sm:max-h-screen  lg:pb-6    xl:bg-white ">
+                <div className=" h-[530px] font-Merriweather  sm:h-screen sm:max-h-screen  sm:bg-gray-100  lg:pb-6    xl:bg-white ">
                   <div className=" flex  h-full  justify-center  gap-5 ">
                     <div
                       className="   
@@ -678,7 +685,7 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className=" mx-auto flex justify-center bg-gray-100  py-4 font-Inter  sm:py-8  md:py-12 xl:bg-white ">
+                <div className=" mx-auto flex justify-center pt-12   font-Inter  sm:bg-gray-100  md:py-12 xl:bg-white ">
                   <div className=" mr-6 flex  items-center gap-4  text-sm font-semibold sm:text-lg">
                     <div className="  h-10 w-10">
                       {propertyData?.hostImg ? (
@@ -712,21 +719,27 @@ const HotelDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className="  my-16  flex flex-col  items-center md:flex-row">
-                  <div className=" mx-auto mb-14  w-[90%]  font-Sen font-semibold sm:w-[85%] md:mb-0 md:w-[55%] md:max-w-[500px] lg:max-w-[600px]  ">
+                <div className=" flex  flex-col  items-center pt-16  sm:my-16 md:flex-row">
+                  <div className=" mx-auto w-[93%]  font-Sen  font-semibold sm:mb-14 sm:w-[85%] md:mb-0 md:w-[55%] md:max-w-[500px] lg:max-w-[600px]  ">
                     <p className=" text-center text-3xl md:text-2xl lg:text-3xl ">
                       What this place offers
                     </p>
 
-                    <div className=" mt-12 flex flex-col gap-9 text-xs  sm:text-base md:text-sm lg:text-base  ">
+                    <div className=" mt-[52px] flex flex-col gap-10 text-sm sm:mt-12 sm:gap-9  sm:text-base md:text-sm lg:text-base  ">
                       <div className="  grid grid-cols-2 ">
                         <div className="  w-[130px] justify-self-center sm:w-[175px]   ">
                           <div className=" flex items-center  gap-4 justify-self-start">
                             <FaRegSnowflake className=" text-lg md:text-xl lg:text-3xl" />
                             <p
-                              className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}`}
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""} hidden sm:block`}
                             >
-                              Air Conditioning
+                              Air Conditioner
+                            </p>
+
+                            <p
+                              className={`${!propertyData?.amenities.includes(amenitiesTypes.AC) ? " text-gray-400  line-through " : ""}sm:hidden`}
+                            >
+                              Air cooling
                             </p>
                           </div>
                         </div>
@@ -791,9 +804,13 @@ const HotelDetailsPage = () => {
                     </div>
                   </div>
 
-                  <div className=" mt-6 w-[94%] sm:w-[80%] md:mt-0 md:w-[45%]">
-                    <div className="   mx-auto   flex  max-w-[420px]  justify-center rounded-xl border border-neutral-300  py-6 shadow-2xl md:max-w-[325px]  lg:max-w-[400px] ">
-                      <div>
+                  <div className=" mt-20 w-[94%] sm:w-[80%] md:mt-0 md:w-[45%]">
+                    <p className=" mx-4 mb-9 text-center font-Sen text-3xl font-semibold sm:mb-14 md:hidden md:text-2xl lg:text-3xl ">
+                      Reserve Your Rooms{" "}
+                    </p>
+
+                    <div className="   mx-auto flex   w-full  max-w-[330px]   justify-center rounded-xl border-neutral-300 py-6 sm:max-w-[360px] sm:border  sm:py-10 sm:shadow-2xl md:max-w-[325px] md:py-6  lg:max-w-[400px] ">
+                      <div className=" w-[90%] sm:w-auto">
                         <div className=" mt-1 flex items-center justify-between gap-3 px-1 font-Inter lg:mt-4 ">
                           <div className=" flex  gap-1">
                             <div className=" flex items-center  rounded-full bg-black px-[6px] py-[6px]">
@@ -822,31 +839,71 @@ const HotelDetailsPage = () => {
 
                         <div className=" mt-8 min-w-[270px] rounded-xl border-2 border-black text-[10px] lg:text-xs ">
                           <div className=" flex  border-b-2 border-black  ">
-                            <div className="  flex w-1/2 flex-col items-center justify-between border-r-2  border-black py-2  lg:px-4 lg:py-3 ">
+                            <div className="  flex w-1/2 flex-col items-center justify-between border-r-2  border-black py-4 sm:py-2  lg:px-4 lg:py-3 ">
                               <p className=" pb-2 text-center font-bold">
                                 CHECK IN
                               </p>
                               <input
                                 type="date"
+                                className=" cursor-pointer"
                                 value={checkInDate}
-                                onChange={(e) => setCheckInDate(e.target.value)}
+                                onChange={(e) => {
+                                  let selectedDate = new Date(e.target.value);
+
+                                  selectedDate.setHours(0, 0, 0, 0);
+
+                                  let currentDate = new Date();
+
+                                  currentDate.setHours(0, 0, 0, 0);
+
+                                  console.log(selectedDate, currentDate);
+
+                                  if (selectedDate < currentDate) {
+                                    toast.error(
+                                      "Select today or a day in future",
+                                    );
+                                  } else {
+                                    // Update the state with the selected date
+                                    setCheckInDate(e.target.value);
+
+                                    let tomorrow = new Date(e.target.value);
+                                    tomorrow.setDate(tomorrow.getDate() + 1);
+                                    setCheckOutDate(
+                                      tomorrow.toISOString().split("T")[0],
+                                    );
+                                  }
+                                }}
                               />
                             </div>
 
-                            <div className=" flex  w-1/2 flex-col items-center justify-between py-2 text-center  lg:px-4 lg:py-3">
+                            <div className=" flex  w-1/2 flex-col items-center justify-between py-4 text-center sm:py-2  lg:px-4 lg:py-3">
                               <p className=" pb-2 font-bold">CHECK OUT</p>
                               <input
                                 type="date"
                                 value={checkOutDate}
-                                onChange={(e) =>
-                                  setCheckOutnDate(e.target.value)
-                                }
+                                onChange={(e) => {
+                                  let selectedDate = new Date(e.target.value);
+                                  selectedDate.setHours(0, 0, 0, 0);
+
+                                  let tomorrow = new Date(checkInDate);
+                                  tomorrow.setDate(tomorrow.getDate() + 1);
+
+                                  tomorrow.setHours(0, 0, 0, 0);
+
+                                  if (selectedDate < tomorrow) {
+                                    toast.error(
+                                      "CheckOutDate should be greater than checkInDate",
+                                    );
+                                  } else {
+                                    setCheckOutDate(e.target.value);
+                                  }
+                                }}
                               />
                             </div>
                           </div>
 
-                          <div className=" flex items-center justify-center gap-8 border-b-2 border-black py-3 lg:px-6   lg:py-3">
-                            <p className=" font-Inter  text-xs font-semibold  lg:text-xl">
+                          <div className=" flex items-center justify-center gap-8 border-b-2 border-black py-4 sm:py-3 lg:px-6   lg:py-3">
+                            <p className=" font-Inter text-lg  font-semibold sm:text-xs  lg:text-xl">
                               Rooms
                             </p>
 
@@ -878,12 +935,12 @@ const HotelDetailsPage = () => {
                           </div>
 
                           <div className=" flex   border-black  ">
-                            <div className=" w-1/2 border-r-2 border-black py-2 text-center  lg:px-4 lg:py-3 ">
+                            <div className=" w-1/2 border-r-2 border-black py-4 text-center sm:py-2  lg:px-4 lg:py-3 ">
                               <p className=" pb-2  font-bold">GUESTS</p>
                               <p>{guests}</p>
                             </div>
 
-                            <div className=" w-1/2  py-2 text-center  lg:px-4 lg:py-3">
+                            <div className=" w-1/2  py-4 text-center  sm:py-2  lg:px-4 lg:py-3">
                               <p className=" pb-2 font-bold">TOTAL RENT</p>
                               <p className=" ">{grandTotal}</p>
                             </div>
@@ -900,7 +957,7 @@ const HotelDetailsPage = () => {
                             </button>
                           ) : (
                             <button
-                              className=" flex max-h-10 w-full items-center justify-center rounded-xl bg-black py-2 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
+                              className=" flex max-h-10 w-full items-center justify-center rounded-md bg-black py-4 text-sm font-bold tracking-wide text-white hover:bg-black/85 lg:px-4 lg:py-3 lg:text-base"
                               onClick={displayRazorpay}
                             >
                               Reserve
@@ -908,22 +965,45 @@ const HotelDetailsPage = () => {
                           )}
                         </div>
 
-                        <div className=" flex   justify-center  gap-4   border-t-2 pt-6  font-Inter text-sm font-semibold   lg:pb-4 lg:pt-8  ">
-                          <p>Reservation Fee </p>
-                          <p>Rs.{FeePayable}</p>
+                        <div className=" flex justify-between   gap-4  border-t-2   pt-12 font-Sen   text-sm font-semibold   lg:pb-4 lg:pt-8  ">
+                          <p>Booking Cost </p>
+                          <p>Rs {FeePayable}</p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="  flex flex-col  items-center justify-center gap-16 pb-16 pt-6 md:flex-row md:gap-4  lg:gap-8   lg:py-16">
+                <div className="  flex flex-col  items-center justify-center  pb-16 pt-6 md:flex-row md:gap-4  lg:gap-8   lg:py-16">
                   {listingID && <AddReview listingID={listingID} />}
 
-                  <div className="  h-[220px]  w-[90%] gap-6  rounded-xl border-2 px-2  py-5  sm:flex sm:h-[200px]  sm:max-w-[400px] sm:items-center  sm:justify-center  md:w-[46%]   md:max-w-none lg:h-[240px] ">
-                    <p className=" mt-2  py-2 ps-7 text-center   text-xl font-bold text-black sm:hidden lg:text-[24px]">
+                  <div className="  w-[90%]  gap-6   px-2  pt-16 sm:max-w-[400px] sm:items-center  sm:justify-center  md:hidden        ">
+                    <p className="   py-2  text-center   font-Sen text-3xl  font-bold  text-black md:hidden lg:text-[24px] ">
                       Address and Location
                     </p>
+                    <div className=" mt-10 flex w-full justify-center  rounded-xl border-2">
+                      <div className="   text-neutral-500  lg:w-[75%]   ">
+                        <div className="  flex flex-col gap-1 py-10  text-lg font-bold sm:mt-3 md:mt-8  md:gap-2 md:text-base   ">
+                          <div className="flex justify-center gap-1  md:gap-2">
+                            <p>{propertyData?.hotelName}</p>
+                            <p>{propertyData?.city}</p>
+                          </div>
+
+                          <div className="flex justify-center gap-1  md:gap-2">
+                            <p>{propertyData?.district}</p>
+                            <p>{propertyData?.state}</p>
+                          </div>
+
+                          <p className=" text-center ">
+                            {propertyData.pinCode && "pincode:"}{" "}
+                            {propertyData?.pinCode}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className=" hidden h-[220px] w-[90%]  items-center  gap-6 rounded-xl  border-2 px-2 py-5    sm:h-[200px] sm:max-w-[400px]  sm:items-center sm:justify-center  md:flex  md:w-[46%]   md:max-w-none lg:h-[240px] ">
                     <div className=" flex w-full items-center justify-center">
                       <div className=" w-1/2  sm:block  md:w-[35%] lg:w-[45%] ">
                         <img
@@ -961,14 +1041,14 @@ const HotelDetailsPage = () => {
                       More About This Place
                     </p>
 
-                    <div className=" mt-14 text-center  text-xs font-semibold text-neutral-500 sm:text-sm md:text-lg ">
+                    <div className=" mt-14 rounded-xl border-2   px-4 py-8 text-center text-xs font-semibold  text-neutral-500 sm:border-none sm:text-sm md:py-0 md:text-lg ">
                       <p>{propertyData?.aboutHotel}</p>
                     </div>
                   </div>
                 </div>
 
                 {reviews?.length ? (
-                  <div className="  px-10 pb-14 lg:px-14">
+                  <div className="  px-4 pb-14 sm:px-10 lg:px-14">
                     <p className=" text-center font-Sen text-4xl font-bold">
                       Customer Reviews
                     </p>

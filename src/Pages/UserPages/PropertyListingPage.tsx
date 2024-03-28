@@ -186,7 +186,6 @@ const PropertyListingPage = () => {
   ]) as [number, number, number, number, string[], string, string[], string];
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-
     try {
       await AxiosPrivate.post(LIST_PROPERTY_URL, data);
 
@@ -247,8 +246,6 @@ const PropertyListingPage = () => {
       }
     }
   };
-
-  
 
   const AxiosPrivate = useAxiosPrivate();
 
@@ -382,20 +379,20 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  h-screen  overflow-y-auto pt-[140px]  ">
+      <main className="  h-screen  overflow-y-auto px-4  pt-[140px] md:px-0">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
-            <div className="flex items-center gap-6">
-              <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className=" flex h-full  items-center bg-black px-4 py-1 text-xl sm:text-3xl  font-bold text-white">
                 <p>1</p>
               </div>
 
               <div>
-                <h1 className="   text-[25px]  font-bold">
+                <h1 className="   text-lg  font-bold  sm:text-[25px]">
                   Enter Your Hotel Address And Location
                 </h1>
 
-                <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
+                <p className=" hidden  pt-[2px] font-semibold text-neutral-400 sm:block sm:text-sm">
                   This address will be visible by every user of the application{" "}
                 </p>
               </div>
@@ -506,20 +503,24 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  h-screen  overflow-y-auto pt-[140px] ">
+      <main className="  h-screen  overflow-y-auto px-4  pt-[140px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
-            <div className="flex items-center gap-6">
-              <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className=" flex h-full  items-center bg-black px-4 py-1 text-xl sm:text-3xl  font-bold text-white">
                 <p>2</p>
               </div>
 
               <div>
-                <h1 className="   text-[25px]  font-bold">
+                <h1 className="  text-lg font-bold   sm:hidden  sm:text-[25px]">
+                  Rooms And Facilities Property Have
+                </h1>
+
+                <h1 className=" hidden text-xl font-bold   sm:block  sm:text-[25px]">
                   Total Rooms And Facilities Property Have
                 </h1>
 
-                <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
+                <p className=" hidden pt-[2px] text-sm  font-semibold text-neutral-400 sm:block">
                   Give important details of the type of room you wish to list
                   now
                 </p>
@@ -527,11 +528,11 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" mt-8 flex flex-col  gap-6 text-sm">
+          <div className=" mt-8 flex flex-col  gap-6 text-xs sm:text-sm">
             <div className=" group  flex  items-center justify-between rounded-lg border-2 border-neutral-400   px-4 py-3 font-Inter ">
               <p className="   ms-2 font-bold">Total Rooms Available</p>
 
-              <div className=" flex items-center gap-4">
+              <div className=" flex items-center gap-1 sm:gap-4">
                 <div className=" rounded-lg px-[8px] py-[6px] ">
                   <FaMinus
                     className=" cursor-pointer text-xs"
@@ -561,7 +562,7 @@ const PropertyListingPage = () => {
                 Maximum Guests Allowed Per Room
               </p>
 
-              <div className=" flex items-center gap-4">
+              <div className=" flex items-center gap-1 sm:gap-4 ">
                 <div className=" rounded-lg px-[8px] py-[6px] ">
                   <FaMinus
                     className=" cursor-pointer text-xs"
@@ -589,7 +590,7 @@ const PropertyListingPage = () => {
             <div className=" group  flex  items-center justify-between rounded-lg border-2 border-neutral-400   px-4 py-3 font-Inter ">
               <p className="   ms-2 font-bold">Beds Available Per Room</p>
 
-              <div className=" flex items-center gap-4">
+              <div className=" flex items-center gap-1 sm:gap-4">
                 <div className=" rounded-lg px-[8px] py-[6px] ">
                   <FaMinus
                     className=" cursor-pointer text-xs"
@@ -617,7 +618,7 @@ const PropertyListingPage = () => {
             <div className=" group  flex  items-center justify-between rounded-lg border-2 border-neutral-400   px-4 py-3 font-Inter ">
               <p className="   ms-2 font-bold">Bathrooms Available Per Room</p>
 
-              <div className=" flex items-center gap-4">
+              <div className=" flex items-center gap-1 sm:gap-4">
                 <div className=" rounded-lg px-[8px] py-[6px] ">
                   <FaMinus
                     className=" cursor-pointer  text-xs"
@@ -692,20 +693,20 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  h-screen  overflow-y-auto pt-[140px] ">
+      <main className="  h-screen  overflow-y-auto px-4 pt-[140px] ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
-            <div className="flex items-center gap-6">
-              <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className=" flex h-full  items-center bg-black px-4 py-1 text-xl sm:text-3xl  font-bold text-white">
                 <p>3</p>
               </div>
 
               <div>
-                <h1 className="   text-[25px]  font-bold">
+                <h1 className=" text-lg   font-bold  sm:text-[25px]">
                   Choose Basic Amenities you will provide ?
                 </h1>
 
-                <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
+                <p className=" hidden pt-[2px] text-sm font-semibold text-neutral-400 sm:block">
                   Select facilities and services you offer to all the customers
                   as complimentary
                 </p>
@@ -713,7 +714,7 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" mt-10 flex flex-col gap-10 font-Inter text-sm font-bold">
+          <div className=" mt-10 flex flex-col gap-10 font-Inter text-xs font-bold sm:text-sm">
             <div className=" flex justify-between">
               <div
                 className={` flex w-[48%] cursor-pointer  items-center justify-center gap-4 rounded-lg border-2 px-4 py-3 ${amenities.includes(amenitiesTypes.WIFI) ? "border-black" : "border-neutral-400"}   `}
@@ -744,7 +745,8 @@ const PropertyListingPage = () => {
                 }}
               >
                 <FaRegSnowflake className=" text-xl" />
-                <p className=" ">Air Conditioning</p>
+                <p className=" hidden sm:block">Air Conditioning</p>
+                <p className=" sm:hidden ">Air Conditioner</p>
               </div>
 
               <div
@@ -829,20 +831,20 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  grid h-screen grid-rows-[60px,1fr] overflow-y-auto pt-[130px]">
+      <main className="  grid min-h-screen grid-rows-[60px,1fr] overflow-y-auto px-4 pt-[130px]">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10 ">
           <div className=" mx-auto flex  font-Inter">
-            <div className="flex items-center gap-6">
-              <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className=" flex h-full  items-center bg-black px-4 py-1 text-xl sm:text-3xl  font-bold text-white">
                 <p>4</p>
               </div>
 
               <div>
-                <h1 className="   text-[25px]  font-bold">
+                <h1 className="   text-lg font-bold  sm:text-[25px]">
                   Photos Of Your Property And Rooms
                 </h1>
 
-                <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
+                <p className=" hidden  pt-[2px] text-sm font-semibold text-neutral-400 sm:block">
                   Add Minimum 5 photos of rooms and amenities and surroundings
                 </p>
               </div>
@@ -850,9 +852,9 @@ const PropertyListingPage = () => {
           </div>
         </div>
 
-        <div className=" mx-auto mt-9 flex w-full max-w-[75%] gap-4 pb-10">
+        <div className=" mx-auto mt-9 flex w-full gap-1  pb-10 sm:max-w-[75%] sm:gap-4">
           <div
-            className={`${mainImage ? "" : " border-4 "}  relative flex   max-h-[290px] min-h-[260px] w-[50%] rounded-l-xl border-gray-400  xl:max-h-[350px]   2xl:max-h-[450px]`}
+            className={`${mainImage ? "" : " border-2 sm:border-4 "}  relative flex max-h-[180px]   w-[50%] rounded-l-xl border-gray-400 sm:max-h-[290px] lg:min-h-[260px]  xl:max-h-[350px]   2xl:max-h-[450px]`}
           >
             {mainImage ? (
               <>
@@ -885,9 +887,9 @@ const PropertyListingPage = () => {
             )}
           </div>
 
-          <div className=" gap- flex max-h-[290px] min-h-[260px] w-[25%] flex-col  justify-between xl:max-h-[350px]   2xl:max-h-[450px]   ">
+          <div className=" gap- flex max-h-[180px]  w-[25%] flex-col justify-between sm:max-h-[290px]  lg:min-h-[260px] xl:max-h-[350px]   2xl:max-h-[450px]   ">
             <div
-              className={`${otherImages[0] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
+              className={`${otherImages[0] ? "" : "  border-2 sm:border-4"} relative  h-[47%]    border-gray-400 `}
             >
               {otherImages[0] ? (
                 <>
@@ -921,7 +923,7 @@ const PropertyListingPage = () => {
             </div>
 
             <div
-              className={`${otherImages[1] ? "" : "  border-4"} relative  h-[47%]    border-gray-400 `}
+              className={`${otherImages[1] ? "" : "  border-2 sm:border-4"} relative  h-[47%]    border-gray-400 `}
             >
               {otherImages[1] ? (
                 <>
@@ -955,9 +957,9 @@ const PropertyListingPage = () => {
             </div>
           </div>
 
-          <div className=" gap- flex max-h-[290px] min-h-[260px] w-[25%] flex-col  justify-between xl:max-h-[350px]   2xl:max-h-[450px]   ">
+          <div className=" gap- flex max-h-[180px]  w-[25%] flex-col justify-between sm:max-h-[290px]  lg:min-h-[260px] xl:max-h-[350px]   2xl:max-h-[450px]   ">
             <div
-              className={`${otherImages[2] ? "" : "border-4"} relative  h-[47%]  rounded-tr-lg  border-gray-400 `}
+              className={`${otherImages[2] ? "" : "border-2 sm:border-4"} relative  h-[47%]  rounded-tr-lg  border-gray-400 `}
             >
               {otherImages[2] ? (
                 <>
@@ -991,7 +993,7 @@ const PropertyListingPage = () => {
             </div>
 
             <div
-              className={`${otherImages[3] ? "" : "border-4"} relative  h-[47%]  rounded-br-lg  border-gray-400 `}
+              className={`${otherImages[3] ? "" : "border-2 sm:border-4"} relative  h-[47%]  rounded-br-lg  border-gray-400 `}
             >
               {otherImages[3] ? (
                 <>
@@ -1065,20 +1067,20 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  h-screen overflow-y-auto  pb-10 pt-[140px] ">
+      <main className="  h-screen overflow-y-auto  px-4 pb-10 pt-[140px] ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
-            <div className="flex items-center gap-6">
-              <div className=" flex h-full items-center   bg-black px-4 py-1 text-3xl  font-bold text-white">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className=" flex h-full items-center   bg-black px-4 py-1 text-xl sm:text-3xl  font-bold text-white">
                 <p>5</p>
               </div>
 
               <div>
-                <h1 className="   text-[25px]  font-bold">
+                <h1 className=" text-lg   font-bold  sm:text-[25px]">
                   Title And More Details Of The Property
                 </h1>
 
-                <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
+                <p className=" hidden  pt-[2px] text-sm font-semibold text-neutral-400 sm:block">
                   Tell more about hotel and add a valid document to verify the
                   hotel
                 </p>
@@ -1129,7 +1131,7 @@ const PropertyListingPage = () => {
                     </p>
                   </a>
                 ) : (
-                  <p className=" text-[15px]  text-neutral-400">
+                  <p className=" text-sm text-neutral-400  sm:text-[15px]">
                     {" "}
                     your listing will be verified based on hotel license
                   </p>
@@ -1205,20 +1207,20 @@ const PropertyListingPage = () => {
         </nav>
       </header>
 
-      <main className="  h-screen overflow-y-auto  pb-10 pt-[140px] ">
+      <main className="  h-screen overflow-y-auto  pb-10 pt-[140px] px-4 ">
         <div className="  mx-auto max-w-[680px] px-2 sm:px-6 lg:px-10">
           <div className=" mx-auto flex  font-Inter">
-            <div className="flex items-center gap-6">
-              <div className=" flex h-full  items-center bg-black px-4 py-1 text-3xl  font-bold text-white">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className=" flex h-full  items-center bg-black px-4 py-1 text-xl sm:text-3xl  font-bold text-white">
                 <p>6</p>
               </div>
 
               <div>
-                <h1 className="   text-[25px]  font-bold">
+                <h1 className="text-lg    sm:text-[25px]  font-bold">
                   Set The Standard Price For The Rooms
                 </h1>
 
-                <p className=" pt-[2px]  text-sm font-semibold text-neutral-400">
+                <p className=" pt-[2px] hidden sm:block  text-sm font-semibold text-neutral-400">
                   Give the standard rate per night basis. You can change it any
                   time
                 </p>

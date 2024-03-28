@@ -10,8 +10,8 @@ export interface TMessageData {
   content: string;
   chat: TChatData;
   _id: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TSender {

@@ -87,6 +87,11 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
 
     handleDrawerClose();
   };
+  
+  useEffect(()=>{
+    
+    handleSearch()
+  },[])
 
   return (
     <div
@@ -127,7 +132,7 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
             </div>
           </div>
 
-          <div className=" mt-6 flex max-h-[65vh] flex-col   gap-6  overflow-y-scroll  px-5 xl:mt-8 xl:gap-8">
+          <div className=" mt-6 flex max-h-[65vh] flex-col   gap-6  overflow-y-auto  px-5 xl:mt-8 xl:gap-8">
             {processingSelectedChat ? (
               <div>
                 <DataLoader />
@@ -140,40 +145,46 @@ const SearchDrawer: React.FC<TSearchDrawerProps> = ({ open }) => {
                   </div>
                 ) : (
                   <>
-                    {searchResult?.map((user,i) => (
-                      <div
-                      key={i}
-                        className=" flex cursor-pointer  items-center gap-4  rounded-lg border-2 border-black px-4 py-2  text-xs hover:bg-black hover:text-white xl:text-lg "
-                        onClick={() => {
-                          handleSelectedUser(user._id);
-                        }}
-                      >
-                        <div>
-                          {user.image ? (
-                            <div className=" h-8 w-8 cursor-pointer rounded-full  xl:h-12 xl:w-12">
-                              <img
-                                className=" h-full w-full rounded-full px-[2px] py-[2px]"
-                                src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${user.image}`}
-                                alt=""
-                              />
-                            </div>
-                          ) : (
-                            <div className=" flex h-7 w-7 items-center justify-center  rounded-full border-2  border-slate-700 bg-black ">
-                              {<FaUser size={14} className=" text-white" />}
-                            </div>
-                          )}
-                        </div>
+                    {searchResult?.length ? (
+                      searchResult?.map((user, i) => (
+                        <div
+                          key={i}
+                          className=" flex cursor-pointer  items-center gap-4  rounded-lg border-2 border-black px-4 py-2  text-xs hover:bg-black hover:text-white xl:text-lg "
+                          onClick={() => {
+                            handleSelectedUser(user._id);
+                          }}
+                        >
+                          <div>
+                            {user.image ? (
+                              <div className=" h-8 w-8 cursor-pointer rounded-full  xl:h-12 xl:w-12">
+                                <img
+                                  className=" h-full w-full rounded-full px-[2px] py-[2px]"
+                                  src={` https://res.cloudinary.com/dfm8vhuea/image/upload/${user.image}`}
+                                  alt=""
+                                />
+                              </div>
+                            ) : (
+                              <div className=" flex h-7 w-7 items-center justify-center  rounded-full border-2  border-slate-700 bg-black ">
+                                {<FaUser size={14} className=" text-white" />}
+                              </div>
+                            )}
+                          </div>
 
-                        <div>
-                          <p className=" font-bold lowercase ">
-                            {user.username}
-                          </p>
-                          <p className=" mt-1 text-[10px] font-semibold xl:text-base">
-                            {user.email}
-                          </p>
+                          <div>
+                            <p className=" font-bold lowercase ">
+                              {user.username}
+                            </p>
+                            <p className=" mt-1 text-[10px] font-semibold xl:text-base">
+                              {user.email}
+                            </p>
+                          </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className=" flex w-full items-center justify-center">
+                        <p className=" mt-4">No Results Found</p>
                       </div>
-                    ))}
+                    )}
                   </>
                 )}
               </>
