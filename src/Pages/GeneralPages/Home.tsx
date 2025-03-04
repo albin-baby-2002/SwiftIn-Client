@@ -67,6 +67,7 @@ const Home = () => {
           setPropertiesList(response.data.properties);
         }
       } catch (error) {
+        console.log(error)
         toast.error("Failed to load data");
       }
     };
@@ -176,13 +177,13 @@ const Home = () => {
       <main>
         <div className="mx-auto max-w-[1500px]">
           <div
-            className="   flex h-screen justify-center 
-         
-           bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1711018163/r2tnst3pomofjjormu7z.jpg')]   bg-cover  pt-[120px]  md:items-center  lg:h-max lg:min-h-[120vh] lg:pt-0"
+            className="   flex h-screen justify-center
+
+           bg-[url('https://res.cloudinary.com/dfm8vhuea/image/upload/v1711018163/r2tnst3pomofjjormu7z.jpg')]   bg-cover  pt-[120px]  md:items-center  lg:h-max lg:min-h-[100vh] lg:pt-0"
           >
             <div className="     text-center  sm:pb-12 sm:pt-[0px] md:pb-0      ">
               <div className=" mx-auto  flex min-h-[80%]  max-w-[93%]  flex-col items-center  justify-center gap-2 rounded-md  bg-white/80 px-[7px] py-12 sm:mx-8 md:max-w-[700px] lg:max-w-[800px] lg:px-6 xl:min-h-[70vh] xl:max-w-none xl:py-16 2xl:px-16 ">
-                <div className=" font-Inter text-[24px] font-extrabold    leading-8 sm:text-[28px] sm:leading-[1.4]  lg:text-3xl xl:text-4xl   ">
+                <div className=" font-Inter text-[24px] font-extrabold    leading-8 sm:text-[28px] sm:leading-[1.4]  lg:text-3xl xl:text-4xl 2xl:text-[44px]   ">
                   <p className="   text    leading-loose">
                     Stay In The Best Place For Your Winter Travel{" "}
                   </p>

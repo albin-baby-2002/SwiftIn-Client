@@ -9,9 +9,10 @@ import { TGoogleAuthResponse } from "../../Types/GeneralTypes/apiResponseTypes";
 import { AxiosError } from "axios";
 import { STATUS_CODES } from "../../Enums/statusCodes";
 
+
 const UseGoogleLogin = () => {
   const registerModalState = useRegisterModal();
-
+  
   const LoginModalState = useLoginModal();
 
   const auth = useAuth();

@@ -6,7 +6,7 @@ const CenterNav = () => {
     <>
       <div className="  hidden items-center justify-between gap-3 md:flex ">
         <div
-          className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] tracking-wider text-white   shadow-md  
+          className=" flex gap-6 rounded-full bg-black    px-8 py-3  font-Righteous text-[12px] xl:text-base tracking-wider text-white   shadow-md
               "
         >
           <p

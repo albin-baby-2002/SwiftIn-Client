@@ -51,7 +51,7 @@ const Chat = () => {
 
   const [newMessage, setNewMessage] = useState("");
 
-  const [triggerChatReFetch, setTriggerChatReFetch] = useState(false);
+  // const [triggerChatReFetch, setTriggerChatReFetch] = useState(false);
 
   const [socketConnected, setSocketConnected] = useState(false);
 
@@ -226,7 +226,7 @@ const Chat = () => {
     return () => {
       isMounted = false;
     };
-  }, [triggerChatReFetch]);
+  }, []);
 
   // get all the messages of selected chat
 

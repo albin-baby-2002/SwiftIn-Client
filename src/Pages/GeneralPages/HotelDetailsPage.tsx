@@ -518,17 +518,17 @@ const HotelDetailsPage = () => {
           {propertyData && (
             <main>
               <div className=" mx-auto max-w-[1500px]">
-                <div className=" h-[530px] font-Merriweather  sm:h-screen sm:max-h-screen  sm:bg-gray-100  lg:pb-6    xl:bg-white ">
+                <div className=" h-[530px] font-Merriweather   sm:max-h-screen   sm:bg-gray-100  lg:pb-6    xl:bg-white ">
                   <div className=" flex  h-full  justify-center  gap-5 ">
                     <div
-                      className="   
-                      grid h-full w-[90%] 
+                      className="
+                      grid h-full w-[90%]
                       grid-rows-[200px_minmax(300px,330px)]
-                      pb-4 
-                      sm:w-[95%] 
-                      sm:grid-rows-[200px_minmax(340px,1fr)] 
-                      sm:pb-0   
-                      lg:w-[85%] 
+                      pb-4
+                      sm:w-[95%]
+                      sm:grid-rows-[200px_minmax(340px,1fr)]
+                      sm:pb-0
+                      lg:w-[85%]
                       lg:grid-rows-[190px_minmax(340px,1fr)] xl:grid-rows-[180px_minmax(1fr,400px)]
                       "
                     >
