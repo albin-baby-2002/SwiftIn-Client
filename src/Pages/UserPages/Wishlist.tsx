@@ -14,7 +14,7 @@ import {
 import { AxiosError } from "axios";
 import { TWishlistData } from "../../Types/GeneralTypes/apiResponseTypes";
 import CenterNav from "../../Components/Navbar/SubComponents/CenterNav";
-import WishlistSkeleton from "../../Components/Skeletons/WishlistSkeleton";
+import WishlistSkeleton from "../../Components/Skeletons/wishlistSkeleton";
 import Footer from "../../Components/Footer/Footer";
 
 const Wishlist = () => {

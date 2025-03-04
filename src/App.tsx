@@ -16,7 +16,7 @@ import HotelDetailsPage from "./Pages/GeneralPages/HotelDetailsPage";
 import PropertyListingPage from "./Pages/UserPages/PropertyListingPage";
 import ManageListings from "./Pages/Host Pages/ManageListings";
 import ListingManagement from "./Pages/AdminPages/ListingManagement";
-import SearchPage from "./Pages/GeneralPages/SearchPage";
+import SearchPage from "./Pages/GeneralPages/searchPage";
 import Reservations from "./Pages/UserPages/Reservations";
 import ManageReservations from "./Pages/Host Pages/ManageReservations";
 import Chat from "./Pages/UserPages/Chat";
